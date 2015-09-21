@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.intuso.housemate</groupId>
+    <artifactId>housemate-comms-1-0</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Housemate Comms 1.0</name>
+    <description>Housemate Comms 1.0</description>
+
+    <profiles>
+        <profile>
+            <id>intuso</id>
+        </profile>
+    </profiles>
+
+    <properties>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <junit.version>4.8.1</junit.version>
+        <guava.version>16.0.1</guava.version>
+        <guice.version>4.0</guice.version>
+        <intuso.housemate.object.version>1.0.0-SNAPSHOT</intuso.housemate.object.version>
+        <intuso.utilities.version>1.1.0-SNAPSHOT</intuso.utilities.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
+    </properties>
+
+    <modules>
+        <module>api</module>
+        <module>client</module>
+        <module>serialiser</module>
+        <module>transport</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <!-- Attach sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Attach javadocs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <scm>
+        <connection>scm:svn:svn+ssh://tom@dev.intuso.com/svn/intuso.com/housemate/trunk</connection>
+        <developerConnection>scm:svn:svn+ssh://tom@dev.intuso.com/svn/intuso.com/housemate/trunk</developerConnection>
+    </scm>
+    
+     <distributionManagement>
+        <repository>
+            <id>dev.intuso.com</id>
+            <name>libs-releases</name>
+            <url>http://dev.intuso.com/maven/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>dev.intuso.com-snapshots</id>
+            <name>libs-snapshots</name>
+            <url>http://dev.intuso.com/maven/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
