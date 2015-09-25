@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.intuso.housemate</groupId>
-    <artifactId>housemate-comms-1-0</artifactId>
+    <artifactId>housemate-client-1-0</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Housemate Comms 1.0</name>
-    <description>Housemate Comms 1.0</description>
+    <name>Housemate Client 1.0</name>
+    <description>Housemate Client 1.0</description>
 
     <profiles>
         <profile>
@@ -23,16 +23,15 @@
         <guava.version>16.0.1</guava.version>
         <guice.version>4.0</guice.version>
         <intuso.housemate.object.version>1.0.0-SNAPSHOT</intuso.housemate.object.version>
+        <intuso.housemate.comms.version>1.0.0-SNAPSHOT</intuso.housemate.comms.version>
         <intuso.utilities.version>1.1.0-SNAPSHOT</intuso.utilities.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
     </properties>
 
     <modules>
-        <module>api</module>
-        <module>client</module>
-        <module>serialiser</module>
-        <module>transport</module>
+        <module>proxy</module>
+        <module>real</module>
     </modules>
 
     <build>
