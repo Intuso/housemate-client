@@ -128,14 +128,14 @@ public class AnnotationProcessor {
                 return isGetter.invoke(object);
             } catch(NoSuchMethodException e) { // do nothing
             } catch(InvocationTargetException|IllegalAccessException e) {
-                log.e("Problem getting proeprty initial value using isGetter " + isGetterName + " of " + object.getClass().getName());
+                log.e("Problem getting property initial value using isGetter " + isGetterName + " of " + object.getClass().getName());
             }
         }
         log.w("No initial value or getter found for " + Property.class.getSimpleName() + " method " + methodName + " of " + object.getClass().getName());
         return null;
     }
 
-    private void parseFeatures(RealDevice device, Class<? extends RealDevice> deviceClass) {
+    private void parseFeatures(RealDevice<?> device, Class<? extends RealDevice> deviceClass) {
         for(Class<?> interfaceClass : deviceClass.getInterfaces())
             if(RealFeature.class.isAssignableFrom(interfaceClass))
                 addFeatureId(device, interfaceClass);
@@ -143,7 +143,7 @@ public class AnnotationProcessor {
             parseFeatures(device, (Class<? extends RealDevice>) deviceClass.getSuperclass());
     }
 
-    private void addFeatureId(RealDevice device, Class<?> featureClass) {
+    private void addFeatureId(RealDevice<?> device, Class<?> featureClass) {
         FeatureId featureId = featureClass.getAnnotation(FeatureId.class);
         if(featureId != null) {
             List<String> featureIds = device.getFeatureIds() == null ? Lists.<String>newArrayList() : Lists.newArrayList(device.getFeatureIds());

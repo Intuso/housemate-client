@@ -19,13 +19,15 @@ import com.intuso.utilities.log.Log;
 public abstract class ProxyCondition<
             COMMAND extends ProxyCommand<?, ?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
+            PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
             PROPERTIES extends ProxyList<PropertyData, ? extends ProxyProperty<?, ?, ?>, PROPERTIES>,
-            CONDITION extends ProxyCondition<COMMAND, VALUE, PROPERTIES, CONDITION, CONDITIONS>,
+            CONDITION extends ProxyCondition<COMMAND, VALUE, PROPERTY, PROPERTIES, CONDITION, CONDITIONS>,
             CONDITIONS extends ProxyList<ConditionData, CONDITION, CONDITIONS>>
         extends ProxyObject<ConditionData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, CONDITION, Condition.Listener<? super CONDITION>>
-        implements Condition<COMMAND, VALUE, VALUE, PROPERTIES, COMMAND, CONDITION, CONDITIONS>,
+        implements Condition<COMMAND, VALUE, PROPERTY, VALUE, VALUE, PROPERTIES, COMMAND, CONDITION, CONDITIONS, CONDITION>,
             ProxyFailable<VALUE>,
-        ProxyRemoveable<COMMAND> {
+            ProxyRemoveable<COMMAND>,
+            ProxyUsesDriver<PROPERTY, VALUE> {
 
     /**
      * @param log {@inheritDoc}
@@ -69,12 +71,22 @@ public abstract class ProxyCondition<
                     @Override
                     public void valueChanged(VALUE value) {
                         for(Condition.Listener<? super CONDITION> listener : getObjectListeners())
-                            listener.conditionError(getThis(), getError());
+                            listener.error(getThis(), getError());
                     }
                 }));
             }
         });
         return result;
+    }
+
+    @Override
+    public COMMAND getAddConditionCommand() {
+        return (COMMAND) getChild(ConditionData.ADD_CONDITION_ID);
+    }
+
+    @Override
+    public CONDITIONS getConditions() {
+        return (CONDITIONS) getChild(ConditionData.CONDITIONS_ID);
     }
 
     @Override
@@ -88,20 +100,29 @@ public abstract class ProxyCondition<
     }
 
     @Override
-    public CONDITIONS getConditions() {
-        return (CONDITIONS) getChild(ConditionData.CONDITIONS_ID);
-    }
-
-    @Override
-    public COMMAND getAddConditionCommand() {
-        return (COMMAND) getChild(ConditionData.ADD_CONDITION_ID);
-    }
-
-    @Override
     public final VALUE getErrorValue() {
         return (VALUE) getChild(ConditionData.ERROR_ID);
     }
 
+    @Override
+    public PROPERTY getDriverProperty() {
+        return (PROPERTY) getChild(ConditionData.DRIVER_ID);
+    }
+
+    @Override
+    public VALUE getDriverLoadedValue() {
+        return (VALUE) getChild(ConditionData.DRIVER_LOADED_ID);
+    }
+
+    @Override
+    public final boolean isDriverLoaded() {
+        VALUE driverLoaded = getDriverLoadedValue();
+        return driverLoaded.getValue() != null
+                && driverLoaded.getValue().getFirstValue() != null
+                && Boolean.parseBoolean(driverLoaded.getValue().getFirstValue());
+    }
+
+    @Override
     public final String getError() {
         VALUE error = getErrorValue();
         return error.getValue() != null ? error.getValue().getFirstValue() : null;

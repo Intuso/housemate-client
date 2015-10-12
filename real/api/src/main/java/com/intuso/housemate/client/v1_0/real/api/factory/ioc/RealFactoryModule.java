@@ -3,8 +3,9 @@ package com.intuso.housemate.client.v1_0.real.api.factory.ioc;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
+import com.intuso.housemate.client.v1_0.real.api.RealUser;
 import com.intuso.housemate.client.v1_0.real.api.factory.automation.AddAutomationCommand;
-import com.intuso.housemate.client.v1_0.real.api.factory.automation.RealAutomationFactory;
 import com.intuso.housemate.client.v1_0.real.api.factory.condition.AddConditionCommand;
 import com.intuso.housemate.client.v1_0.real.api.factory.condition.ConditionFactoryType;
 import com.intuso.housemate.client.v1_0.real.api.factory.device.AddDeviceCommand;
@@ -14,7 +15,6 @@ import com.intuso.housemate.client.v1_0.real.api.factory.hardware.HardwareFactor
 import com.intuso.housemate.client.v1_0.real.api.factory.task.AddTaskCommand;
 import com.intuso.housemate.client.v1_0.real.api.factory.task.TaskFactoryType;
 import com.intuso.housemate.client.v1_0.real.api.factory.user.AddUserCommand;
-import com.intuso.housemate.client.v1_0.real.api.factory.user.RealUserFactory;
 
 /**
  * Created by tomc on 20/03/15.
@@ -24,7 +24,7 @@ public class RealFactoryModule extends AbstractModule {
     protected void configure() {
 
         // automations
-        install(new FactoryModuleBuilder().build(RealAutomationFactory.class));
+        install(new FactoryModuleBuilder().build(RealAutomation.Factory.class));
         install(new FactoryModuleBuilder().build(AddAutomationCommand.Factory.class));
 
         // conditions
@@ -44,7 +44,7 @@ public class RealFactoryModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(AddTaskCommand.Factory.class));
 
         // users
-        install(new FactoryModuleBuilder().build(RealUserFactory.class));
+        install(new FactoryModuleBuilder().build(RealUser.Factory.class));
         install(new FactoryModuleBuilder().build(AddUserCommand.Factory.class));
     }
 }

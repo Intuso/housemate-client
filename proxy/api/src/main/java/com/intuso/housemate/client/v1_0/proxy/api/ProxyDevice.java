@@ -30,11 +30,12 @@ public abstract class ProxyDevice<
             FEATURE extends ProxyFeature<?, DEVICE>,
             DEVICE extends ProxyDevice<COMMAND, COMMANDS, VALUE, VALUES, PROPERTY, PROPERTIES, FEATURE, DEVICE>>
         extends ProxyObject<DeviceData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, DEVICE, Device.Listener<? super DEVICE>>
-        implements Device<COMMAND, COMMAND, COMMAND, COMMAND, COMMANDS, VALUE, VALUE, VALUE, VALUES, PROPERTY, PROPERTIES, DEVICE>,
+        implements Device<COMMAND, COMMAND, COMMAND, COMMAND, COMMANDS, VALUE, VALUE, PROPERTY, VALUE, VALUE, VALUES, PROPERTY, PROPERTIES, DEVICE>,
         ProxyFailable<VALUE>,
         ProxyRemoveable<COMMAND>,
         ProxyRenameable<COMMAND>,
-        ProxyRunnable<COMMAND, VALUE> {
+        ProxyRunnable<COMMAND, VALUE>,
+        ProxyUsesDriver<PROPERTY, VALUE> {
 
     /**
      * @param log {@inheritDoc}
@@ -54,10 +55,12 @@ public abstract class ProxyDevice<
         return (COMMAND) getChild(DeviceData.REMOVE_ID);
     }
 
+    @Override
     public final boolean isRunning() {
         VALUE running = getRunningValue();
-        return running.getValue() != null && running.getValue().getFirstValue() != null
-                ? Boolean.parseBoolean(running.getValue().getFirstValue()) : false;
+        return running.getValue() != null
+                && running.getValue().getFirstValue() != null
+                && Boolean.parseBoolean(running.getValue().getFirstValue());
     }
 
     @Override
@@ -75,6 +78,7 @@ public abstract class ProxyDevice<
         return (COMMAND) getChild(DeviceData.STOP_ID);
     }
 
+    @Override
     public final String getError() {
         VALUE error = getErrorValue();
         return error.getValue() != null ? error.getValue().getFirstValue() : null;
@@ -83,6 +87,24 @@ public abstract class ProxyDevice<
     @Override
     public VALUE getErrorValue() {
         return (VALUE) getChild(DeviceData.ERROR_ID);
+    }
+
+    @Override
+    public PROPERTY getDriverProperty() {
+        return (PROPERTY) getChild(DeviceData.DRIVER_ID);
+    }
+
+    @Override
+    public VALUE getDriverLoadedValue() {
+        return (VALUE) getChild(DeviceData.DRIVER_LOADED_ID);
+    }
+
+    @Override
+    public final boolean isDriverLoaded() {
+        VALUE driverLoaded = getDriverLoadedValue();
+        return driverLoaded.getValue() != null
+                && driverLoaded.getValue().getFirstValue() != null
+                && Boolean.parseBoolean(driverLoaded.getValue().getFirstValue());
     }
 
     @Override

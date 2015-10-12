@@ -18,6 +18,9 @@ import com.intuso.utilities.log.Log;
 * To change this template use File | Settings | File Templates.
 */
 public final class SimpleProxyHardware extends ProxyHardware<
+        SimpleProxyCommand,
+        SimpleProxyValue,
+        SimpleProxyProperty,
         SimpleProxyList<PropertyData, SimpleProxyProperty>,
         SimpleProxyHardware> {
 

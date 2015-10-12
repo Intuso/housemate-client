@@ -1,10 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.simple.comms;
 
 import com.google.common.collect.Lists;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRoot;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestProxyRoot;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestRealRoot;
@@ -42,9 +39,9 @@ public class TestModule extends AbstractModule {
         bind(PropertyRepository.class).toInstance(WriteableMapPropertyRepository.newEmptyRepository(listenersFactory));
         bind(RealRoot.class).to(TestRealRoot.class).in(Scopes.SINGLETON);
         bind(ProxyRoot.class).to(TestProxyRoot.class).in(Scopes.SINGLETON);
-        bind(Router.class).to(ProxyRouterImpl.class);
-        bind(Router.class).annotatedWith(Proxy.class).to(ProxyRouterImpl.class);
-        bind(Router.class).annotatedWith(Real.class).to(RealRouterImpl.class);
+        bind(new Key<Router<?>>() {}).to(ProxyRouterImpl.class);
+        bind(new Key<Router<?>>(Proxy.class) {}).to(ProxyRouterImpl.class);
+        bind(new Key<Router<?>>(Real.class) {}).to(RealRouterImpl.class);
         bind(RealRouterImpl.class).in(Scopes.SINGLETON);
         bind(ProxyRouterImpl.class).in(Scopes.SINGLETON);
         bind(RegexMatcher.Factory.class).toInstance(new RegexMatcher.Factory() {

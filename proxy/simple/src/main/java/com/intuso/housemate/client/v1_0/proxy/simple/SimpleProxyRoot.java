@@ -28,7 +28,7 @@ public final class SimpleProxyRoot extends ProxyRoot<
                            ListenersFactory listenersFactory,
                            PropertyRepository properties,
                            ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
-                           Router router) {
+                           Router<?> router) {
         super(log, listenersFactory, properties, router);
         this.objectFactory = objectFactory;
     }

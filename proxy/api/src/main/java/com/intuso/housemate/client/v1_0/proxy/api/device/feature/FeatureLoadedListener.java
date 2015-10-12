@@ -7,7 +7,7 @@ import com.intuso.housemate.object.v1_0.api.Device;
  * @param <DEVICE> the device type
  * @param <FEATURE> the feature type
  */
-public interface FeatureLoadedListener<DEVICE extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, FEATURE extends Device.Feature> {
+public interface FeatureLoadedListener<DEVICE extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, FEATURE extends Device.Feature> {
 
     public void loadFailed(DEVICE device, FEATURE feature);
 

@@ -6,7 +6,6 @@ import com.google.common.collect.Sets;
 import com.intuso.housemate.comms.v1_0.api.*;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationDetails;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationRegistration;
-import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.*;
 import com.intuso.utilities.listener.ListenerRegistration;
@@ -19,7 +18,6 @@ import com.intuso.utilities.properties.api.PropertyRepository;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @param <ROOT> the type of the root
@@ -28,9 +26,11 @@ public abstract class ProxyRoot<
         SERVER extends ProxyServer<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>,
         SERVERS extends ProxyList<?, SERVER, SERVERS>,
         ROOT extends ProxyRoot<SERVER, SERVERS, ROOT>>
-        extends ProxyObject<RootData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, ROOT, ClientRoot.Listener<? super ROOT>>
-        implements ClientRoot<ClientRoot.Listener<? super ROOT>, ROOT>,
-        ObjectRoot<ClientRoot.Listener<? super ROOT>, ROOT>,
+        extends ProxyObject<RootData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, ROOT, ProxyRoot.Listener<? super ROOT>>
+        implements Root<ProxyRoot.Listener<? super ROOT>, ROOT>,
+        RequiresAccess,
+        Message.Sender,
+        ObjectRoot<ProxyRoot.Listener<? super ROOT>, ROOT>,
         Server.Container<SERVERS>,
         ObjectListener<ProxyObject<?, ?, ?, ?, ?>> {
 
@@ -39,43 +39,43 @@ public abstract class ProxyRoot<
     private final Map<String, Listeners<ObjectLifecycleListener>> objectLifecycleListeners = Maps.newHashMap();
 
     private final Router.Registration routerRegistration;
-    private final ConnectionManager connectionManager;
+    private final AccessManager accessManager;
 
     /**
      * @param log {@inheritDoc}
      * @param router The router to connect through
      */
-    public ProxyRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, Router router) {
+    public ProxyRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, Router<?> router) {
         super(log, listenersFactory, new RootData());
-        connectionManager = new ConnectionManager(listenersFactory, properties, ApplicationRegistration.ClientType.Proxy, this);
+        accessManager = new AccessManager(listenersFactory, properties, ApplicationRegistration.ClientType.Proxy, this);
         init(null);
-        routerRegistration = router.registerReceiver(this);
+        routerRegistration = router.registerReceiver(new Message.Receiver<Message.Payload>() {
+            @Override
+            public void messageReceived(Message<Message.Payload> message) {
+                distributeMessage(message);
+            }
+        });
     }
 
     @Override
     public Application.Status getApplicationStatus() {
-        return connectionManager.getApplicationStatus();
+        return accessManager.getApplicationStatus();
     }
 
     @Override
     public ApplicationInstance.Status getApplicationInstanceStatus() {
-        return connectionManager.getApplicationInstanceStatus();
+        return accessManager.getApplicationInstanceStatus();
     }
 
     @Override
     public void register(ApplicationDetails applicationDetails, String component) {
-        connectionManager.register(applicationDetails, component);
+        accessManager.register(applicationDetails, component);
     }
 
     @Override
     public void unregister() {
-        connectionManager.unregister();
+        accessManager.unregister();
         routerRegistration.unregister();
-    }
-
-    @Override
-    public void messageReceived(Message<Message.Payload> message) {
-        distributeMessage(message);
     }
 
     @Override
@@ -93,73 +93,42 @@ public abstract class ProxyRoot<
     protected List<ListenerRegistration> registerListeners() {
         List<ListenerRegistration> result = super.registerListeners();
         result.add(addChildListener(this));
-        result.add(connectionManager.addStatusChangeListener(new ConnectionListener() {
+        result.add(accessManager.addStatusChangeListener(new RequiresAccess.Listener<AccessManager>() {
 
             @Override
-            public void serverConnectionStatusChanged(ServerConnectionStatus serverConnectionStatus) {
-                for (ClientRoot.Listener<? super ROOT> listener : getObjectListeners())
-                    listener.serverConnectionStatusChanged(getThis(), serverConnectionStatus);
-            }
-
-            @Override
-            public void applicationStatusChanged(Application.Status applicationStatus) {
-                for (ClientRoot.Listener<? super ROOT> listener : getObjectListeners())
+            public void applicationStatusChanged(AccessManager accessManager, Application.Status applicationStatus) {
+                for (ProxyRoot.Listener<? super ROOT> listener : getObjectListeners())
                     listener.applicationStatusChanged(getThis(), applicationStatus);
             }
 
             @Override
-            public void applicationInstanceStatusChanged(ApplicationInstance.Status applicationInstanceStatus) {
-                for (ClientRoot.Listener<? super ROOT> listener : getObjectListeners())
+            public void applicationInstanceStatusChanged(AccessManager accessManager, ApplicationInstance.Status applicationInstanceStatus) {
+                for (ProxyRoot.Listener<? super ROOT> listener : getObjectListeners())
                     listener.applicationInstanceStatusChanged(getThis(), applicationInstanceStatus);
             }
 
             @Override
-            public void newApplicationInstance(String instanceId) {
-                for (ClientRoot.Listener<? super ROOT> listener : getObjectListeners())
+            public void newApplicationInstance(AccessManager accessManager, String instanceId) {
+                for (ProxyRoot.Listener<? super ROOT> listener : getObjectListeners())
                     listener.newApplicationInstance(getThis(), instanceId);
-            }
-
-            @Override
-            public void newServerInstance(String serverId) {
-                Set<String> ids = Sets.newHashSet();
-                for (RemoteObject<?, ?, ?, ?> child : getChildren()) {
-                    child.uninit();
-                    ids.add(child.getId());
-                }
-                for (String id : ids)
-                    removeChild(id);
-                for (ClientRoot.Listener<? super ROOT> listener : getObjectListeners())
-                    listener.newServerInstance(getThis(), serverId);
-            }
-        }));
-        result.add(addMessageListener(RootData.SERVER_INSTANCE_ID_TYPE, new Message.Receiver<StringPayload>() {
-            @Override
-            public void messageReceived(Message<StringPayload> message) {
-                connectionManager.setServerInstanceId(message.getPayload().getValue());
             }
         }));
         result.add(addMessageListener(RootData.APPLICATION_INSTANCE_ID_TYPE, new Message.Receiver<StringPayload>() {
             @Override
             public void messageReceived(Message<StringPayload> message) {
-                connectionManager.setApplicationInstanceId(message.getPayload().getValue());
-            }
-        }));
-        result.add(addMessageListener(RootData.SERVER_CONNECTION_STATUS_TYPE, new Message.Receiver<ServerConnectionStatus>() {
-            @Override
-            public void messageReceived(Message<ServerConnectionStatus> message) {
-                connectionManager.setServerConnectionStatus(message.getPayload());
+                accessManager.setApplicationInstanceId(message.getPayload().getValue());
             }
         }));
         result.add(addMessageListener(RootData.APPLICATION_STATUS_TYPE, new Message.Receiver<ApplicationData.StatusPayload>() {
             @Override
             public void messageReceived(Message<ApplicationData.StatusPayload> message) {
-                connectionManager.setApplicationStatus(message.getPayload().getStatus());
+                accessManager.setApplicationStatus(message.getPayload().getStatus());
             }
         }));
         result.add(addMessageListener(RootData.APPLICATION_INSTANCE_STATUS_TYPE, new Message.Receiver<ApplicationInstanceData.StatusPayload>() {
             @Override
             public void messageReceived(Message<ApplicationInstanceData.StatusPayload> message) {
-                connectionManager.setApplicationInstanceStatus(message.getPayload().getStatus());
+                accessManager.setApplicationInstanceStatus(message.getPayload().getStatus());
             }
         }));
         return result;
@@ -238,4 +207,6 @@ public abstract class ProxyRoot<
         for(String childName : Sets.newHashSet(getChildNames()))
             removeChild(childName);
     }
+
+    public interface Listener<ROOT extends ProxyRoot<?, ?, ?>> extends Root.Listener<ROOT>, RequiresAccess.Listener<ROOT> {}
 }

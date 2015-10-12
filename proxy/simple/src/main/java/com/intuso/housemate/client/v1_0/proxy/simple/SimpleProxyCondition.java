@@ -18,7 +18,9 @@ import com.intuso.utilities.log.Log;
 * To change this template use File | Settings | File Templates.
 */
 public final class SimpleProxyCondition extends ProxyCondition<
-        SimpleProxyCommand, SimpleProxyValue,
+        SimpleProxyCommand,
+        SimpleProxyValue,
+        SimpleProxyProperty,
         SimpleProxyList<PropertyData, SimpleProxyProperty>,
         SimpleProxyCondition,
         SimpleProxyList<ConditionData, SimpleProxyCondition>> {

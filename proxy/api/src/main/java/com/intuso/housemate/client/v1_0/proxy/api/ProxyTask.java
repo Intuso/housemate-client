@@ -17,12 +17,14 @@ import com.intuso.utilities.log.Log;
 public abstract class ProxyTask<
             COMMAND extends ProxyCommand<?, ?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
+            PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
             PROPERTIES extends ProxyList<PropertyData, ? extends ProxyProperty<?, ?, ?>, PROPERTIES>,
-            TASK extends ProxyTask<COMMAND, VALUE, PROPERTIES, TASK>>
+            TASK extends ProxyTask<COMMAND, VALUE, PROPERTY, PROPERTIES, TASK>>
         extends ProxyObject<TaskData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, TASK, Task.Listener<? super TASK>>
-        implements Task<COMMAND, VALUE, VALUE, PROPERTIES, TASK>,
+        implements Task<COMMAND, VALUE, VALUE, PROPERTY, VALUE, PROPERTIES, TASK>,
         ProxyFailable<VALUE>,
-        ProxyRemoveable<COMMAND> {
+        ProxyRemoveable<COMMAND>,
+        ProxyUsesDriver<PROPERTY, VALUE> {
 
     /**
      * @param log {@inheritDoc}
@@ -66,7 +68,7 @@ public abstract class ProxyTask<
                     @Override
                     public void valueChanged(VALUE value) {
                         for(Task.Listener listener : getObjectListeners())
-                            listener.taskError(getThis(), getError());
+                            listener.error(getThis(), getError());
                     }
                 }));
             }
@@ -89,9 +91,28 @@ public abstract class ProxyTask<
         return (VALUE) getChild(TaskData.ERROR_ID);
     }
 
+    @Override
     public final String getError() {
         VALUE error = getErrorValue();
         return error.getValue() != null ? error.getValue().getFirstValue() : null;
+    }
+
+    @Override
+    public PROPERTY getDriverProperty() {
+        return (PROPERTY) getChild(TaskData.DRIVER_ID);
+    }
+
+    @Override
+    public VALUE getDriverLoadedValue() {
+        return (VALUE) getChild(TaskData.DRIVER_LOADED_ID);
+    }
+
+    @Override
+    public final boolean isDriverLoaded() {
+        VALUE driverLoaded = getDriverLoadedValue();
+        return driverLoaded.getValue() != null
+                && driverLoaded.getValue().getFirstValue() != null
+                && Boolean.parseBoolean(driverLoaded.getValue().getFirstValue());
     }
 
     @Override

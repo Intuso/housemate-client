@@ -19,7 +19,6 @@ import com.intuso.housemate.client.v1_0.real.api.impl.type.IntegerType;
 import com.intuso.housemate.client.v1_0.real.api.impl.type.StringType;
 import com.intuso.housemate.comms.v1_0.api.Message;
 import com.intuso.housemate.comms.v1_0.api.Router;
-import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
 import com.intuso.housemate.comms.v1_0.api.payload.ApplicationData;
 import com.intuso.housemate.comms.v1_0.api.payload.ApplicationInstanceData;
 import com.intuso.housemate.comms.v1_0.api.payload.RootData;
@@ -37,7 +36,7 @@ import org.junit.Ignore;
 public class TestRealRoot extends RealRoot {
 
     @Inject
-    public TestRealRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, @Real Router router,
+    public TestRealRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, @Real Router<?> router,
                         RealList<TypeData<?>, RealType<?, ?, ?>> types,
                         AddHardwareCommand.Factory addHardwareCommandFactory, AddDeviceCommand.Factory addDeviceCommandFactory,
                         AddAutomationCommand.Factory addAutomationCommandFactory, AddUserCommand.Factory addUserCommandFactory,
@@ -47,7 +46,6 @@ public class TestRealRoot extends RealRoot {
                 addHardwareCommandFactory, addDeviceCommandFactory, addAutomationCommandFactory, addUserCommandFactory,
                 conditionFactoryType, deviceFactoryType, hardwareFactoryType, taskFactoryType);
         try {
-            distributeMessage(new Message<>(new String[] {""}, RootData.SERVER_CONNECTION_STATUS_TYPE, ServerConnectionStatus.ConnectedToServer));
             distributeMessage(new Message<>(new String[] {""}, RootData.APPLICATION_STATUS_TYPE, new ApplicationData.StatusPayload(Application.Status.AllowInstances)));
             distributeMessage(new Message<>(new String[] {""}, RootData.APPLICATION_INSTANCE_STATUS_TYPE, new ApplicationInstanceData.StatusPayload(ApplicationInstance.Status.Allowed)));
         } catch (Throwable t) {

@@ -20,6 +20,7 @@ import com.intuso.utilities.log.Log;
 public final class SimpleProxyTask extends ProxyTask<
         SimpleProxyCommand,
         SimpleProxyValue,
+        SimpleProxyProperty,
         SimpleProxyList<PropertyData, SimpleProxyProperty>,
         SimpleProxyTask> {
 

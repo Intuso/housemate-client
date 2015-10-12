@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.api;
 
 import com.google.common.collect.Lists;
-import com.intuso.housemate.comms.v1_0.api.RemoteObject;
+import com.intuso.housemate.comms.v1_0.api.TreeLoadInfo;
 
 import java.util.List;
 
@@ -11,13 +11,13 @@ import java.util.List;
 public class LoadManager {
 
     private final Callback callback;
-    private final List<RemoteObject.TreeLoadInfo> toLoad;
+    private final List<TreeLoadInfo> toLoad;
 
-    public LoadManager(Callback callback, RemoteObject.TreeLoadInfo... toLoad) {
+    public LoadManager(Callback callback, TreeLoadInfo... toLoad) {
         this(callback, Lists.newArrayList(toLoad));
     }
 
-    public LoadManager(Callback callback, List<RemoteObject.TreeLoadInfo> toLoad) {
+    public LoadManager(Callback callback, List<TreeLoadInfo> toLoad) {
         this.callback = callback;
         this.toLoad = toLoad;
     }
@@ -26,7 +26,7 @@ public class LoadManager {
      * Get the info of the objects to load
      * @return the info of the objects to load
      */
-    public final List<RemoteObject.TreeLoadInfo> getToLoad() {
+    public final List<TreeLoadInfo> getToLoad() {
         return toLoad;
     }
 

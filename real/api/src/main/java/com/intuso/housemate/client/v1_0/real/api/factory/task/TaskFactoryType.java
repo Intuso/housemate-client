@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.api.factory.task;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.real.api.driver.TaskDriver;
 import com.intuso.housemate.client.v1_0.real.api.factory.FactoryType;
 import com.intuso.utilities.listener.ListenersFactory;
 import com.intuso.utilities.log.Log;
@@ -8,7 +9,7 @@ import com.intuso.utilities.log.Log;
 /**
  * Created by tomc on 19/03/15.
  */
-public class TaskFactoryType extends FactoryType<RealTaskFactory<?>> {
+public class TaskFactoryType extends FactoryType<TaskDriver.Factory<?>> {
 
     public final static String TYPE_ID = "task-factory";
     public final static String TYPE_NAME = "Task Factory";

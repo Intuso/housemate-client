@@ -22,9 +22,9 @@ import java.util.List;
 public abstract class ProxyAutomation<
             COMMAND extends ProxyCommand<?, ?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
-            CONDITION extends ProxyCondition<?, ?, ?, CONDITION, CONDITIONS>,
+            CONDITION extends ProxyCondition<?, ?, ?, ?, CONDITION, CONDITIONS>,
             CONDITIONS extends ProxyList<ConditionData, CONDITION, CONDITIONS>,
-            TASK extends ProxyTask<?, ?, ?, TASK>,
+            TASK extends ProxyTask<?, ?, ?, ?, TASK>,
             TASKS extends ProxyList<TaskData, TASK, TASKS>,
             AUTOMATION extends ProxyAutomation<COMMAND, VALUE, CONDITION, CONDITIONS, TASK, TASKS, AUTOMATION>>
         extends ProxyObject<AutomationData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, AUTOMATION, Automation.Listener<? super AUTOMATION>>
@@ -52,10 +52,12 @@ public abstract class ProxyAutomation<
         return (COMMAND) getChild(AutomationData.REMOVE_ID);
     }
 
+    @Override
     public final boolean isRunning() {
         VALUE running = getRunningValue();
-        return running.getValue() != null && running.getValue().getFirstValue() != null
-                ? Boolean.parseBoolean(running.getValue().getFirstValue()) : false;
+        return running.getValue() != null
+                && running.getValue().getFirstValue() != null
+                && Boolean.parseBoolean(running.getValue().getFirstValue());
     }
 
     @Override
@@ -73,6 +75,7 @@ public abstract class ProxyAutomation<
         return (COMMAND) getChild(AutomationData.STOP_ID);
     }
 
+    @Override
     public final String getError() {
         VALUE error = getErrorValue();
         return error.getValue() != null ? error.getValue().getFirstValue() : null;

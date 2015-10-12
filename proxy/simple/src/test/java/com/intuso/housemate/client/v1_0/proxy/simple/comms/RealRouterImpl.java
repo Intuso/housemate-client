@@ -2,25 +2,21 @@ package com.intuso.housemate.client.v1_0.proxy.simple.comms;
 
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestProxyRoot;
+import com.intuso.housemate.comms.v1_0.api.BaseRouter;
 import com.intuso.housemate.comms.v1_0.api.Message;
-import com.intuso.housemate.comms.v1_0.api.Router;
-import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
 import com.intuso.utilities.listener.ListenersFactory;
 import com.intuso.utilities.log.Log;
-import com.intuso.utilities.properties.api.PropertyRepository;
 
 /**
  */
-public class RealRouterImpl extends Router {
+public class RealRouterImpl extends BaseRouter<RealRouterImpl> {
 
     private TestProxyRoot proxyRoot;
 
     @Inject
-    public RealRouterImpl(Log log, ListenersFactory listenersFactory, PropertyRepository properties) {
-        super(log, listenersFactory, properties);
-        connect();
-        setServerConnectionStatus(ServerConnectionStatus.ConnectedToServer);
-        register(TestEnvironment.APP_DETAILS, "test");
+    public RealRouterImpl(Log log, ListenersFactory listenersFactory) {
+        super(log, listenersFactory);
+        connectionEstablished();
     }
 
     public void setProxyRoot(TestProxyRoot proxyRoot) {
@@ -30,18 +26,25 @@ public class RealRouterImpl extends Router {
     @Override
     public final void connect() {
         // do nothing
+        connectionEstablished();
     }
 
     @Override
     public final void disconnect() {
         // do nothing
+        connectionLost(false);
+    }
+
+    @Override
+    protected void sendMessageNow(Message<?> message) {
+        if(proxyRoot != null)
+            proxyRoot.distributeMessage(message);
     }
 
     @Override
     public void sendMessage(Message message) {
         try {
-            if(proxyRoot != null)
-                proxyRoot.distributeMessage(message);
+            sendMessageNow(message);
         } catch(Throwable t) {
             getLog().e("Could not send message to proxy root", t);
         }

@@ -37,7 +37,7 @@ public abstract class ProxyServer<
             AUTOMATIONS extends ProxyList<?, AUTOMATION, AUTOMATIONS>,
             DEVICE extends ProxyDevice<?, ?, ?, ?, ?, ?, ?, ?>,
             DEVICES extends ProxyList<?, DEVICE, DEVICES>,
-            HARDWARE extends ProxyHardware<?, ?>,
+            HARDWARE extends ProxyHardware<?, ?, ?, ?, ?>,
             HARDWARES extends ProxyList<?, HARDWARE, HARDWARES>,
             TYPE extends ProxyType<?, ?, ?, ?>,
             TYPES extends ProxyList<?, TYPE, TYPES>,

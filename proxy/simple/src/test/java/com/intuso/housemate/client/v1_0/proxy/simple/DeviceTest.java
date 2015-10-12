@@ -43,12 +43,12 @@ public class DeviceTest {
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<DeviceData>(DEVICES, DEVICES, DEVICES));
-    private RealList<DeviceData, RealDevice> realList = new RealList<>(
+    private RealList<DeviceData, RealDevice<?>> realList = new RealList<>(
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-            DEVICES, DEVICES, DEVICES, new ArrayList<RealDevice>());
+            DEVICES, DEVICES, DEVICES, new ArrayList<RealDevice<?>>());
     private RealDevice realPrimary;
-    private SimpleProxyDevice proxyPrimary;
+    private SimpleProxyDevice proxyDevice;
 
     public DeviceTest() {
     }
@@ -59,37 +59,43 @@ public class DeviceTest {
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
         realPrimary = new RealDevice(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-                "test",
-                new DeviceData("my-primary", "My Primary", "description"));
+                null,
+                new DeviceData("my-primary", "My Primary", "description"),
+                new RealDevice.RemovedListener() {
+                    @Override
+                    public void deviceRemoved(RealDevice device) {
+                        // do nothing, just a test
+                    }
+                });
         realList.add(realPrimary);
-        proxyPrimary = proxyList.get("my-primary");
+        proxyDevice = proxyList.get("my-primary");
     }
 
     @Test
     public void testCreateProxyDevice() {
-        Assert.assertNotNull(proxyPrimary);
+        Assert.assertNotNull(proxyDevice);
     }
 
     @Test
     public void testStartStopPrimary() {
-        Assert.assertFalse(proxyPrimary.isRunning());
+        Assert.assertFalse(proxyDevice.isRunning());
         realPrimary.getRunningValue().setTypedValues(Boolean.TRUE);
-        Assert.assertTrue(proxyPrimary.isRunning());
+        Assert.assertTrue(proxyDevice.isRunning());
         realPrimary.getRunningValue().setTypedValues(Boolean.FALSE);
-        Assert.assertFalse(proxyPrimary.isRunning());
-        proxyPrimary.getStartCommand().perform(EMPTY_LISTENER);
-        Assert.assertTrue(proxyPrimary.isRunning());
-        proxyPrimary.getStopCommand().perform(EMPTY_LISTENER);
-        Assert.assertFalse(proxyPrimary.isRunning());
+        Assert.assertFalse(proxyDevice.isRunning());
+        proxyDevice.getStartCommand().perform(EMPTY_LISTENER);
+        Assert.assertTrue(proxyDevice.isRunning());
+        proxyDevice.getStopCommand().perform(EMPTY_LISTENER);
+        Assert.assertFalse(proxyDevice.isRunning());
     }
 
     @Test
     public void testError() {
-        Assert.assertNull(proxyPrimary.getError());
+        Assert.assertNull(proxyDevice.getError());
         realPrimary.getErrorValue().setTypedValues("error");
-        assertEquals("error", proxyPrimary.getError());
+        assertEquals("error", proxyDevice.getError());
         realPrimary.getErrorValue().setTypedValues((String)null);
-        Assert.assertNull(proxyPrimary.getError());
+        Assert.assertNull(proxyDevice.getError());
     }
 
     @Test
@@ -97,8 +103,9 @@ public class DeviceTest {
         final AtomicBoolean connectedUpdated = new AtomicBoolean(false);
         final AtomicBoolean nameUpdated = new AtomicBoolean(false);
         final AtomicBoolean runningUpdated = new AtomicBoolean(false);
+        final AtomicBoolean driverLoadedUpdated = new AtomicBoolean(false);
         final AtomicBoolean errorUpdated = new AtomicBoolean(false);
-        proxyPrimary.addObjectListener(new Device.Listener<SimpleProxyDevice>() {
+        proxyDevice.addObjectListener(new Device.Listener<SimpleProxyDevice>() {
 
             @Override
             public void renamed(SimpleProxyDevice primaryObject, String oldName, String newName) {
@@ -107,21 +114,26 @@ public class DeviceTest {
 
             @Override
             public void error(SimpleProxyDevice entityWrapper, String description) {
-                runningUpdated.set(true);
+                errorUpdated.set(true);
+            }
+
+            @Override
+            public void driverLoaded(SimpleProxyDevice usesDriver, boolean loaded) {
+                driverLoadedUpdated.set(true);
             }
 
             @Override
             public void running(SimpleProxyDevice entityWrapper, boolean running) {
-                errorUpdated.set(true);
+                runningUpdated.set(true);
             }
         });
         TypeInstanceMap values = new TypeInstanceMap();
         values.getChildren().put(DeviceData.NAME_ID, new TypeInstances(new TypeInstance("newName")));
-        proxyPrimary.getRenameCommand().perform(values, EMPTY_LISTENER);
-        proxyPrimary.getStartCommand().perform(EMPTY_LISTENER);
-        proxyPrimary.getStopCommand().perform(EMPTY_LISTENER);
+        proxyDevice.getRenameCommand().perform(values, EMPTY_LISTENER);
+        proxyDevice.getStartCommand().perform(EMPTY_LISTENER);
+        proxyDevice.getStopCommand().perform(EMPTY_LISTENER);
         realPrimary.getErrorValue().setTypedValues("error");
-        proxyPrimary.getRemoveCommand().perform(EMPTY_LISTENER);
+        proxyDevice.getRemoveCommand().perform(EMPTY_LISTENER);
 //        assertTrue(connectedUpdated.get());
         Assert.assertTrue(nameUpdated.get());
         Assert.assertTrue(errorUpdated.get());
