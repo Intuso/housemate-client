@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.intuso.housemate.comms.v1_0.api.*;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationDetails;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationRegistration;
+import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.*;
 import com.intuso.utilities.listener.ListenerRegistration;
@@ -49,10 +50,20 @@ public abstract class ProxyRoot<
         super(log, listenersFactory, new RootData());
         accessManager = new AccessManager(listenersFactory, properties, ApplicationRegistration.ClientType.Proxy, this);
         init(null);
-        routerRegistration = router.registerReceiver(new Message.Receiver<Message.Payload>() {
+        routerRegistration = router.registerReceiver(new Router.Receiver() {
             @Override
-            public void messageReceived(Message<Message.Payload> message) {
+            public void messageReceived(Message message) {
                 distributeMessage(message);
+            }
+
+            @Override
+            public void serverConnectionStatusChanged(ClientConnection clientConnection, ServerConnectionStatus serverConnectionStatus) {
+
+            }
+
+            @Override
+            public void newServerInstance(ClientConnection clientConnection, String serverId) {
+
             }
         });
     }

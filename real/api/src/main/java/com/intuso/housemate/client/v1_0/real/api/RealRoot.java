@@ -14,6 +14,7 @@ import com.intuso.housemate.client.v1_0.real.api.factory.user.AddUserCommand;
 import com.intuso.housemate.comms.v1_0.api.*;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationDetails;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationRegistration;
+import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.*;
 import com.intuso.utilities.listener.ListenerRegistration;
@@ -79,7 +80,7 @@ public class RealRoot
     private final AccessManager accessManager;
 
     @Inject
-    public RealRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, Router router,
+    public RealRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, Router<?> router,
                     RealList<TypeData<?>, RealType<?, ?, ?>> types,
                     AddHardwareCommand.Factory addHardwareCommandFactory, AddDeviceCommand.Factory addDeviceCommandFactory,
                     AddAutomationCommand.Factory addAutomationCommandFactory, AddUserCommand.Factory addUserCommandFactory,
@@ -102,10 +103,20 @@ public class RealRoot
         this.accessManager = new AccessManager(listenersFactory, properties, ApplicationRegistration.ClientType.Real, this);
 
         // need to do this once the connection manager is created and once the object is init'ed so the path is not null
-        this.routerRegistration = router.registerReceiver(new Message.Receiver<Message.Payload>() {
+        this.routerRegistration = router.registerReceiver(new Router.Receiver() {
             @Override
-            public void messageReceived(Message<Message.Payload> message) {
+            public void messageReceived(Message message) {
                 distributeMessage(message);
+            }
+
+            @Override
+            public void serverConnectionStatusChanged(ClientConnection clientConnection, ServerConnectionStatus serverConnectionStatus) {
+
+            }
+
+            @Override
+            public void newServerInstance(ClientConnection clientConnection, String serverId) {
+
             }
         });
 
