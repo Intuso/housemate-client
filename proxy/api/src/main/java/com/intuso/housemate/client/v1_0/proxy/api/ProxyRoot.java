@@ -41,6 +41,12 @@ public abstract class ProxyRoot<
 
     private final Router.Registration routerRegistration;
     private final AccessManager accessManager;
+    private final MessageSequencer messageSequencer = new MessageSequencer(new Message.Receiver<Message.Payload>() {
+        @Override
+        public void messageReceived(Message<Message.Payload> message) {
+            distributeMessage(message);
+        }
+    });
 
     /**
      * @param log {@inheritDoc}
@@ -53,7 +59,9 @@ public abstract class ProxyRoot<
         routerRegistration = router.registerReceiver(new Router.Receiver() {
             @Override
             public void messageReceived(Message message) {
-                distributeMessage(message);
+                if(message.getSequenceId() != null)
+                    sendMessage(new Message<Message.Payload>(new String[] {""}, Message.RECEIVED_TYPE, new Message.ReceivedPayload(message.getSequenceId())));
+                messageSequencer.messageReceived(message);
             }
 
             @Override
@@ -95,7 +103,8 @@ public abstract class ProxyRoot<
         if(getApplicationInstanceStatus() != ApplicationInstance.Status.Allowed
                 && !(message.getPath().length == 1 &&
                 (message.getType().equals(ApplicationRegistration.APPLICATION_REGISTRATION_TYPE)
-                        || message.getType().equals(ApplicationRegistration.APPLICATION_UNREGISTRATION_TYPE))))
+                        || message.getType().equals(ApplicationRegistration.APPLICATION_UNREGISTRATION_TYPE)
+                        || message.getType().equals(Message.RECEIVED_TYPE))))
             throw new HousemateCommsException("Client application instance is not allowed access to the server");
         routerRegistration.sendMessage(message);
     }

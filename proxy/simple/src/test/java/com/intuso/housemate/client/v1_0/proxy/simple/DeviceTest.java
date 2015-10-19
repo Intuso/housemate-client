@@ -60,6 +60,7 @@ public class DeviceTest {
         realPrimary = new RealDevice(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 null,
+                null,
                 new DeviceData("my-primary", "My Primary", "description"),
                 new RealDevice.RemovedListener() {
                     @Override

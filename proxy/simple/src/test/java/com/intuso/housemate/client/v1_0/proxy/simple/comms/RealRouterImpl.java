@@ -38,7 +38,7 @@ public class RealRouterImpl extends BaseRouter<RealRouterImpl> {
     @Override
     protected void sendMessageNow(Message<?> message) {
         if(proxyRoot != null)
-            proxyRoot.distributeMessage(message);
+            proxyRoot.distributeMessage((Message<Message.Payload>) message);
     }
 
     @Override

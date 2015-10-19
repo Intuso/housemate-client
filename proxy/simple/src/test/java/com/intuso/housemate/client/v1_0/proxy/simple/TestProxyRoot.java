@@ -27,8 +27,8 @@ public class TestProxyRoot extends ProxyRoot<
     public TestProxyRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory, @Proxy Router<?> router) {
         super(log, listenersFactory, properties, router);
         try {
-            distributeMessage(new Message<>(new String[] {""}, RootData.APPLICATION_STATUS_TYPE, new ApplicationData.StatusPayload(Application.Status.AllowInstances)));
-            distributeMessage(new Message<>(new String[] {""}, RootData.APPLICATION_INSTANCE_STATUS_TYPE, new ApplicationInstanceData.StatusPayload(ApplicationInstance.Status.Allowed)));
+            distributeMessage(new Message<Message.Payload>(new String[] {""}, RootData.APPLICATION_STATUS_TYPE, new ApplicationData.StatusPayload(Application.Status.AllowInstances)));
+            distributeMessage(new Message<Message.Payload>(new String[] {""}, RootData.APPLICATION_INSTANCE_STATUS_TYPE, new ApplicationInstanceData.StatusPayload(ApplicationInstance.Status.Allowed)));
         } catch (Throwable t) {
             t.printStackTrace();
         }
