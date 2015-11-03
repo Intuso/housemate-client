@@ -3,9 +3,9 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Key;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.TestEnvironment;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
-import com.intuso.housemate.client.v1_0.real.api.RealProperty;
-import com.intuso.housemate.client.v1_0.real.api.impl.type.IntegerType;
+import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealPropertyImpl;
+import com.intuso.housemate.client.v1_0.real.impl.type.IntegerType;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ListData;
 import com.intuso.housemate.comms.v1_0.api.payload.PropertyData;
@@ -35,11 +35,11 @@ public class PropertyTest {
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<PropertyData>(PROPERTIES, PROPERTIES, PROPERTIES));
-    private RealList<PropertyData, RealProperty<?>> realList = new RealList<>(
+    private RealListImpl<PropertyData, RealPropertyImpl<?>> realList = new RealListImpl<>(
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-            PROPERTIES, PROPERTIES, PROPERTIES, new ArrayList<RealProperty<?>>());
-    private RealProperty<Integer> realProperty;
+            PROPERTIES, PROPERTIES, PROPERTIES, new ArrayList<RealPropertyImpl<?>>());
+    private RealPropertyImpl<Integer> realProperty;
     private SimpleProxyProperty proxyProperty;
 
     public PropertyTest() {

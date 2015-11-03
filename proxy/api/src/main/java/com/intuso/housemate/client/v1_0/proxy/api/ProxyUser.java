@@ -14,8 +14,8 @@ public abstract class ProxyUser<
             COMMAND extends ProxyCommand<?, ?, ?, COMMAND>,
             PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
             USER extends ProxyUser<COMMAND, PROPERTY, USER>>
-        extends ProxyObject<UserData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, USER, User.Listener>
-        implements User<COMMAND, PROPERTY>,
+        extends ProxyObject<UserData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, USER, User.Listener<? super USER>>
+        implements User<COMMAND, PROPERTY, USER>,
         ProxyRemoveable<COMMAND> {
 
     /**

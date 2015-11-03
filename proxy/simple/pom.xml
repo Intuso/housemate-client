@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>housemate-client-1-0-real-api</artifactId>
+            <artifactId>housemate-client-1-0-real-impl</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

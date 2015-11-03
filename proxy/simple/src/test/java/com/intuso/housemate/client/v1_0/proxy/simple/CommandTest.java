@@ -3,10 +3,10 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Key;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.TestEnvironment;
-import com.intuso.housemate.client.v1_0.real.api.RealCommand;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
-import com.intuso.housemate.client.v1_0.real.api.RealParameter;
-import com.intuso.housemate.client.v1_0.real.api.impl.type.IntegerType;
+import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
+import com.intuso.housemate.client.v1_0.real.impl.type.IntegerType;
 import com.intuso.housemate.comms.v1_0.api.payload.CommandData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ListData;
@@ -47,11 +47,11 @@ public class CommandTest {
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<CommandData>(COMMANDS, COMMANDS, COMMANDS));
-    private RealList<CommandData, RealCommand> realList = new RealList<>(
+    private RealListImpl<CommandData, RealCommandImpl> realList = new RealListImpl<>(
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-            COMMANDS, COMMANDS, COMMANDS, new ArrayList<RealCommand>());
-    private RealCommand realCommand;
+            COMMANDS, COMMANDS, COMMANDS, new ArrayList<RealCommandImpl>());
+    private RealCommandImpl realCommand;
     private SimpleProxyCommand proxyCommand;
 
     public CommandTest() {
@@ -61,9 +61,9 @@ public class CommandTest {
     public void addLists() {
         TestEnvironment.TEST_INSTANCE.getProxyRoot().addChild(proxyList);
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
-        realCommand = new RealCommand(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+        realCommand = new RealCommandImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-                "my-command", "My Command", "description", new ArrayList<RealParameter<?>>()) {
+                "my-command", "My Command", "description", new ArrayList<RealParameterImpl<?>>()) {
             @Override
             public void perform(TypeInstanceMap values) {
                 //To change body of implemented methods use File | Settings | File Templates.
@@ -81,9 +81,9 @@ public class CommandTest {
     @Test
     public void testPerformProxyFunction() {
         final AtomicBoolean called = new AtomicBoolean(false);
-        RealCommand realCommand = new RealCommand(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+        RealCommandImpl realCommand = new RealCommandImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-                "my-other-command", "My Other Command", "description", new ArrayList<RealParameter<?>>()) {
+                "my-other-command", "My Other Command", "description", new ArrayList<RealParameterImpl<?>>()) {
             @Override
             public void perform(TypeInstanceMap values) {
                 called.set(true);
@@ -98,10 +98,10 @@ public class CommandTest {
     @Test
     public void testParameter() {
         final AtomicBoolean correctParam = new AtomicBoolean(false);
-        RealCommand realCommand = new RealCommand(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+        RealCommandImpl realCommand = new RealCommandImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 "my-other-command", "My Other Command",
-                "description", Arrays.<RealParameter<?>>asList(
+                "description", Arrays.<RealParameterImpl<?>>asList(
                         IntegerType.createParameter(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                                 "my-parameter", "My Parameter", "description"))) {

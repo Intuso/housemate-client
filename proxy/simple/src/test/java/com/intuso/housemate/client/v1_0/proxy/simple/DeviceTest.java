@@ -3,8 +3,8 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Key;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.TestEnvironment;
-import com.intuso.housemate.client.v1_0.real.api.RealDevice;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
+import com.intuso.housemate.client.v1_0.real.impl.RealDeviceImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
 import com.intuso.housemate.comms.v1_0.api.payload.DeviceData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ListData;
@@ -43,11 +43,11 @@ public class DeviceTest {
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<DeviceData>(DEVICES, DEVICES, DEVICES));
-    private RealList<DeviceData, RealDevice<?>> realList = new RealList<>(
+    private RealListImpl<DeviceData, RealDeviceImpl<?>> realList = new RealListImpl<>(
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-            DEVICES, DEVICES, DEVICES, new ArrayList<RealDevice<?>>());
-    private RealDevice realPrimary;
+            DEVICES, DEVICES, DEVICES, new ArrayList<RealDeviceImpl<?>>());
+    private RealDeviceImpl realPrimary;
     private SimpleProxyDevice proxyDevice;
 
     public DeviceTest() {
@@ -57,14 +57,14 @@ public class DeviceTest {
     public void addLists() {
         TestEnvironment.TEST_INSTANCE.getProxyRoot().addChild(proxyList);
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
-        realPrimary = new RealDevice(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+        realPrimary = new RealDeviceImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 null,
                 null,
                 new DeviceData("my-primary", "My Primary", "description"),
-                new RealDevice.RemovedListener() {
+                new RealDeviceImpl.RemovedListener() {
                     @Override
-                    public void deviceRemoved(RealDevice device) {
+                    public void deviceRemoved(RealDeviceImpl device) {
                         // do nothing, just a test
                     }
                 });

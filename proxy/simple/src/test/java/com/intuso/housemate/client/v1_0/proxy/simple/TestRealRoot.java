@@ -2,21 +2,21 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.Real;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
-import com.intuso.housemate.client.v1_0.real.api.RealObject;
-import com.intuso.housemate.client.v1_0.real.api.RealRoot;
-import com.intuso.housemate.client.v1_0.real.api.RealType;
-import com.intuso.housemate.client.v1_0.real.api.factory.automation.AddAutomationCommand;
-import com.intuso.housemate.client.v1_0.real.api.factory.condition.ConditionFactoryType;
-import com.intuso.housemate.client.v1_0.real.api.factory.device.AddDeviceCommand;
-import com.intuso.housemate.client.v1_0.real.api.factory.device.DeviceFactoryType;
-import com.intuso.housemate.client.v1_0.real.api.factory.hardware.AddHardwareCommand;
-import com.intuso.housemate.client.v1_0.real.api.factory.hardware.HardwareFactoryType;
-import com.intuso.housemate.client.v1_0.real.api.factory.task.TaskFactoryType;
-import com.intuso.housemate.client.v1_0.real.api.factory.user.AddUserCommand;
-import com.intuso.housemate.client.v1_0.real.api.impl.type.BooleanType;
-import com.intuso.housemate.client.v1_0.real.api.impl.type.IntegerType;
-import com.intuso.housemate.client.v1_0.real.api.impl.type.StringType;
+import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealObject;
+import com.intuso.housemate.client.v1_0.real.impl.RealRootImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
+import com.intuso.housemate.client.v1_0.real.impl.factory.automation.AddAutomationCommand;
+import com.intuso.housemate.client.v1_0.real.impl.factory.condition.ConditionFactoryType;
+import com.intuso.housemate.client.v1_0.real.impl.factory.device.AddDeviceCommand;
+import com.intuso.housemate.client.v1_0.real.impl.factory.device.DeviceFactoryType;
+import com.intuso.housemate.client.v1_0.real.impl.factory.hardware.AddHardwareCommand;
+import com.intuso.housemate.client.v1_0.real.impl.factory.hardware.HardwareFactoryType;
+import com.intuso.housemate.client.v1_0.real.impl.factory.task.TaskFactoryType;
+import com.intuso.housemate.client.v1_0.real.impl.factory.user.AddUserCommand;
+import com.intuso.housemate.client.v1_0.real.impl.type.BooleanType;
+import com.intuso.housemate.client.v1_0.real.impl.type.IntegerType;
+import com.intuso.housemate.client.v1_0.real.impl.type.StringType;
 import com.intuso.housemate.comms.v1_0.api.Message;
 import com.intuso.housemate.comms.v1_0.api.Router;
 import com.intuso.housemate.comms.v1_0.api.payload.ApplicationData;
@@ -33,11 +33,11 @@ import org.junit.Ignore;
 /**
  */
 @Ignore
-public class TestRealRoot extends RealRoot {
+public class TestRealRoot extends RealRootImpl {
 
     @Inject
     public TestRealRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, @Real Router<?> router,
-                        RealList<TypeData<?>, RealType<?, ?, ?>> types,
+                        RealListImpl<TypeData<?>, RealTypeImpl<?, ?, ?>> types,
                         AddHardwareCommand.Factory addHardwareCommandFactory, AddDeviceCommand.Factory addDeviceCommandFactory,
                         AddAutomationCommand.Factory addAutomationCommandFactory, AddUserCommand.Factory addUserCommandFactory,
                         ConditionFactoryType conditionFactoryType, DeviceFactoryType deviceFactoryType,

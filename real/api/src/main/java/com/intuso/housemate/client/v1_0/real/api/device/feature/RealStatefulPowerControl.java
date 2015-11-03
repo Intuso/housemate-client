@@ -9,6 +9,9 @@ import com.intuso.housemate.object.v1_0.api.feature.StatefulPowerControl;
  */
 @FeatureId(StatefulPowerControl.ID)
 public interface RealStatefulPowerControl extends RealPowerControl {
+
+    void setOn(boolean on);
+
     interface Values {
 
         /**

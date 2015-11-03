@@ -3,9 +3,9 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Key;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.TestEnvironment;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
-import com.intuso.housemate.client.v1_0.real.api.RealValue;
-import com.intuso.housemate.client.v1_0.real.api.impl.type.IntegerType;
+import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealValueImpl;
+import com.intuso.housemate.client.v1_0.real.impl.type.IntegerType;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -31,11 +31,11 @@ public class ValueTest {
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<ValueData>(VALUES, VALUES, VALUES));
-    private RealList<ValueBaseData<NoChildrenData>, RealValue<?>> realList = new RealList<>(
+    private RealListImpl<ValueBaseData<NoChildrenData>, RealValueImpl<?>> realList = new RealListImpl<>(
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-            VALUES, VALUES, VALUES, new ArrayList<RealValue<?>>());
-    private RealValue<Integer> realValue;
+            VALUES, VALUES, VALUES, new ArrayList<RealValueImpl<?>>());
+    private RealValueImpl<Integer> realValue;
     private SimpleProxyValue proxyValue;
 
     public ValueTest() {
