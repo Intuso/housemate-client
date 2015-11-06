@@ -14,26 +14,31 @@ public interface RealDevice<DRIVER extends DeviceDriver>
         RealCommand,
         RealCommand,
         RealCommand,
-        RealList<? extends RealCommand>,
+        RealList<RealCommand>,
         RealValue<Boolean>,
         RealValue<String>,
         RealProperty<PluginResource<DeviceDriver.Factory<DRIVER>>>,
         RealValue<Boolean>,
         RealValue<?>,
-        RealList<? extends RealValue<?>>,
+        RealList<RealValue<?>>,
         RealProperty<?>,
-        RealList<? extends RealProperty<?>>,
+        RealList<RealProperty<?>>,
         RealDevice<DRIVER>>, DeviceDriver.Callback {
 
     DRIVER getDriver();
 
     boolean isDriverLoaded();
 
-    interface RemovedListener {
-        void deviceRemoved(RealDevice device);
+    interface Container extends Device.Container<RealList<RealDevice<?>>>, RemoveCallback {
+        <DRIVER extends DeviceDriver> RealDevice<DRIVER> createAndAddDevice(DeviceData data);
+        void addDevice(RealDevice<?> device);
+    }
+
+    interface RemoveCallback {
+        void removeDevice(RealDevice<?> device);
     }
 
     interface Factory {
-        RealDevice<?> create(DeviceData data, RemovedListener removedListener);
+        RealDevice<?> create(DeviceData data, RemoveCallback removeCallback);
     }
 }

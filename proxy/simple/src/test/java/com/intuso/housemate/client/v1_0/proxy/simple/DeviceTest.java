@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Key;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.TestEnvironment;
+import com.intuso.housemate.client.v1_0.real.api.RealDevice;
 import com.intuso.housemate.client.v1_0.real.impl.RealDeviceImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
 import com.intuso.housemate.comms.v1_0.api.payload.DeviceData;
@@ -62,9 +63,9 @@ public class DeviceTest {
                 null,
                 null,
                 new DeviceData("my-primary", "My Primary", "description"),
-                new RealDeviceImpl.RemovedListener() {
+                new RealDevice.RemoveCallback() {
                     @Override
-                    public void deviceRemoved(RealDeviceImpl device) {
+                    public void removeDevice(RealDevice device) {
                         // do nothing, just a test
                     }
                 });

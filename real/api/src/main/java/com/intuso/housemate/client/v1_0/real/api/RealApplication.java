@@ -7,8 +7,14 @@ public interface RealApplication
             RealValue<Application.Status>,
             RealCommand,
             RealApplicationInstance,
-            RealList<? extends RealApplicationInstance>,
-            RealApplication> {
+            RealList<RealApplicationInstance>,
+            RealApplication>,
+            RealApplicationInstance.Container {
 
     void setStatus(Application.Status status);
+
+    interface Container extends Application.Container<RealList<RealApplication>> {
+        void addApplication(RealApplication application);
+        void removeApplication(RealApplication application);
+    }
 }

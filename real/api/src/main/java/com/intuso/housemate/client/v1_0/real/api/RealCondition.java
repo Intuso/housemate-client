@@ -11,8 +11,10 @@ public interface RealCondition<DRIVER extends ConditionDriver>
         RealProperty<PluginResource<ConditionDriver.Factory<DRIVER>>>,
         RealValue<Boolean>,
         RealValue<Boolean>,
-        RealList<? extends RealProperty<?>>, RealCommand, RealCondition<?>,
-        RealList<? extends RealCondition<?>>,
+        RealList<RealProperty<?>>,
+        RealCommand,
+        RealCondition<?>,
+        RealList<RealCondition<?>>,
         RealCondition<DRIVER>>,
         Condition.Listener<RealCondition<?>>,
         ConditionDriver.Callback {
@@ -41,11 +43,15 @@ public interface RealCondition<DRIVER extends ConditionDriver>
 
     void stop();
 
-    interface RemovedListener {
-        void conditionRemoved(RealCondition condition);
+    interface Container extends Condition.Container<RealList<RealCondition<?>>>, RemoveCallback {
+        void addCondition(RealCondition<?> condition);
+    }
+
+    interface RemoveCallback {
+        void removeCondition(RealCondition<?> condition);
     }
 
     interface Factory {
-        RealCondition<?> create(ConditionData data, RemovedListener removedListener);
+        RealCondition<?> create(ConditionData data, RemoveCallback removeCallback);
     }
 }

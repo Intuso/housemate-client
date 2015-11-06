@@ -17,7 +17,7 @@ public interface RealHardware<DRIVER extends HardwareDriver>
         RealValue<String>,
         RealProperty<PluginResource<HardwareDriver.Factory<DRIVER>>>,
         RealValue<Boolean>,
-        RealList<? extends RealProperty<?>>,
+        RealList<RealProperty<?>>,
         RealHardware<DRIVER>>,HardwareDriver.Callback {
 
     DRIVER getDriver();
@@ -26,11 +26,15 @@ public interface RealHardware<DRIVER extends HardwareDriver>
 
     boolean isRunning();
 
-    interface RemovedListener {
-        void hardwareRemoved(RealHardware hardware);
+    interface Container extends Hardware.Container<RealList<RealHardware<?>>>, RemoveCallback {
+        void addHardware(RealHardware<?> hardware);
+    }
+
+    interface RemoveCallback {
+        void removeHardware(RealHardware<?> hardware);
     }
 
     interface Factory {
-        RealHardware<?> create(HardwareData data, RemovedListener removedListener);
+        RealHardware<?> create(HardwareData data, RemoveCallback removeCallback);
     }
 }

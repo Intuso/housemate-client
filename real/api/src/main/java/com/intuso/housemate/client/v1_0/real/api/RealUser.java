@@ -7,11 +7,15 @@ import com.intuso.housemate.object.v1_0.api.User;
 public interface RealUser
         extends User<RealCommand, RealProperty<Email>, RealUser> {
 
-    interface RemovedListener {
-        void userRemoved(RealUser user);
+    interface Container extends User.Container<RealList<RealUser>>, RemoveCallback {
+        void addUser(RealUser user);
+    }
+
+    interface RemoveCallback {
+        void removeUser(RealUser user);
     }
 
     interface Factory {
-        RealUser create(UserData data, RemovedListener removedListener);
+        RealUser create(UserData data, RemoveCallback removeCallback);
     }
 }

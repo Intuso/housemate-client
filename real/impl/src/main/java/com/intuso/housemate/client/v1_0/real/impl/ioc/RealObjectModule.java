@@ -8,11 +8,9 @@ import com.intuso.housemate.client.v1_0.real.api.RealList;
 import com.intuso.housemate.client.v1_0.real.api.RealType;
 import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealRootImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.annotations.ioc.RealAnnotationsModule;
 import com.intuso.housemate.client.v1_0.real.impl.factory.ioc.RealFactoryModule;
 import com.intuso.housemate.client.v1_0.real.impl.type.*;
-import com.intuso.housemate.comms.v1_0.api.payload.TypeData;
 import com.intuso.utilities.listener.ListenersFactory;
 import com.intuso.utilities.log.Log;
 
@@ -42,13 +40,7 @@ public class RealObjectModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public RealListImpl<TypeData<?>, RealTypeImpl<?, ?, ?>> getTypesImpl(Log log, ListenersFactory listenersFactory) {
-        return new RealListImpl<>(log, listenersFactory, RealRootImpl.TYPES_ID, "Types", "Types");
-    }
-
-    @Provides
-    @Singleton
-    public RealList<RealType<?>> getTypes(RealListImpl<TypeData<?>, RealTypeImpl<?, ?, ?>> typesImpl) {
-        return (RealList<RealType<?>>)(RealListImpl)typesImpl;
+    public RealList<RealType<?>> getTypes(Log log, ListenersFactory listenersFactory) {
+        return (RealList)new RealListImpl<>(log, listenersFactory, RealRootImpl.TYPES_ID, "Types", "Types");
     }
 }

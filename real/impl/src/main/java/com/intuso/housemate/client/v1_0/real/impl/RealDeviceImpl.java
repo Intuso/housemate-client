@@ -11,7 +11,9 @@ import com.intuso.housemate.client.v1_0.real.impl.factory.device.DeviceFactoryTy
 import com.intuso.housemate.client.v1_0.real.impl.type.BooleanType;
 import com.intuso.housemate.client.v1_0.real.impl.type.StringType;
 import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.comms.v1_0.api.payload.*;
+import com.intuso.housemate.comms.v1_0.api.payload.DeviceData;
+import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
+import com.intuso.housemate.comms.v1_0.api.payload.StringPayload;
 import com.intuso.housemate.object.v1_0.api.Device;
 import com.intuso.housemate.object.v1_0.api.Property;
 import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
@@ -45,11 +47,11 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
     private final RealValueImpl<String> errorValue;
     private final RealPropertyImpl<PluginResource<DeviceDriver.Factory<DRIVER>>> driverProperty;
     private final RealValueImpl<Boolean> driverLoadedValue;
-    private final RealListImpl<CommandData, RealCommandImpl> commands;
-    private final RealListImpl<ValueData, RealValueImpl<?>> values;
-    private final RealListImpl<PropertyData, RealPropertyImpl<?>> properties;
+    private final RealList<RealCommand> commands;
+    private final RealList<RealValue<?>> values;
+    private final RealList<RealProperty<?>> properties;
 
-    private final RemovedListener removedListener;
+    private final RemoveCallback removeCallback;
 
     private DRIVER driver;
 
@@ -64,10 +66,10 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
                           AnnotationProcessor annotationProcessor,
                           DeviceFactoryType driverFactoryType,
                           @Assisted DeviceData data,
-                          @Assisted RemovedListener removedListener) {
+                          @Assisted RemoveCallback removeCallback) {
         super(log, listenersFactory, new DeviceData(data.getId(), data.getName(), data.getDescription()));
         this.annotationProcessor = annotationProcessor;
-        this.removedListener = removedListener;
+        this.removeCallback = removeCallback;
         this.renameCommand = new RealCommandImpl(log, listenersFactory, DeviceData.RENAME_ID, DeviceData.RENAME_ID, "Rename the device", Lists.<RealParameterImpl<?>>newArrayList(StringType.createParameter(log, listenersFactory, DeviceData.NAME_ID, DeviceData.NAME_ID, "The new name"))) {
             @Override
             public void perform(TypeInstanceMap values) {
@@ -112,9 +114,9 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
         this.errorValue = StringType.createValue(log, listenersFactory, DeviceData.ERROR_ID, DeviceData.ERROR_ID, "Current error for the device", null);
         this.driverProperty = (RealPropertyImpl<PluginResource<DeviceDriver.Factory<DRIVER>>>) new RealPropertyImpl(log, listenersFactory, "driver", "Driver", "The device's driver", driverFactoryType);
         this.driverLoadedValue = BooleanType.createValue(log, listenersFactory, DeviceData.DRIVER_LOADED_ID, DeviceData.DRIVER_LOADED_ID, "Whether the device's driver is loaded or not", false);
-        this.commands = new RealListImpl<>(log, listenersFactory, DeviceData.COMMANDS_ID, DeviceData.COMMANDS_ID, COMMANDS_DESCRIPTION);
-        this.values = new RealListImpl<>(log, listenersFactory, DeviceData.VALUES_ID, DeviceData.VALUES_ID, VALUES_DESCRIPTION);
-        this.properties = new RealListImpl<>(log, listenersFactory, DeviceData.PROPERTIES_ID, DeviceData.PROPERTIES_ID, PROPERTIES_DESCRIPTION);
+        this.commands = (RealList)new RealListImpl<>(log, listenersFactory, DeviceData.COMMANDS_ID, DeviceData.COMMANDS_ID, COMMANDS_DESCRIPTION);
+        this.values = (RealList)new RealListImpl<>(log, listenersFactory, DeviceData.VALUES_ID, DeviceData.VALUES_ID, VALUES_DESCRIPTION);
+        this.properties = (RealList)new RealListImpl<>(log, listenersFactory, DeviceData.PROPERTIES_ID, DeviceData.PROPERTIES_ID, PROPERTIES_DESCRIPTION);
         addChild(renameCommand);
         addChild(removeCommand);
         addChild(runningValue);
@@ -123,9 +125,9 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
         addChild(errorValue);
         addChild(driverProperty);
         addChild(driverLoadedValue);
-        addChild(commands);
-        addChild(values);
-        addChild(properties);
+        addChild((RealListImpl)commands);
+        addChild((RealListImpl)values);
+        addChild((RealListImpl)properties);
         driverProperty.addObjectListener(new Property.Listener<RealProperty<PluginResource<DeviceDriver.Factory<DRIVER>>>>() {
             @Override
             public void valueChanging(RealProperty<PluginResource<DeviceDriver.Factory<DRIVER>>> factoryRealProperty) {
@@ -159,11 +161,11 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
             driverLoadedValue.setTypedValues(false);
             errorValue.setTypedValues("Driver not loaded");
             driver = null;
-            for (RealCommand command : Lists.newArrayList(commands.getChildren()))
+            for (RealCommand command : Lists.newArrayList(commands))
                 commands.remove(command.getId());
-            for (RealValue<?> value : Lists.newArrayList(values.getChildren()))
+            for (RealValue<?> value : Lists.newArrayList(values))
                 values.remove(value.getId());
-            for (RealProperty<?> property : Lists.newArrayList(properties.getChildren()))
+            for (RealProperty<?> property : Lists.newArrayList(properties))
                 properties.remove(property.getId());
         }
     }
@@ -221,22 +223,22 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
     }
 
     @Override
-    public final RealList<? extends RealCommand> getCommands() {
+    public final RealList<RealCommand> getCommands() {
         return commands;
     }
 
     @Override
-    public final RealList<? extends RealValue<?>> getValues() {
+    public final RealList<RealValue<?>> getValues() {
         return values;
     }
 
     @Override
-    public final RealList<? extends RealProperty<?>> getProperties() {
+    public final RealList<RealProperty<?>> getProperties() {
         return properties;
     }
 
     protected final void remove() {
-        removedListener.deviceRemoved(this);
+        removeCallback.removeDevice(this);
     }
 
     protected final void _start() {
