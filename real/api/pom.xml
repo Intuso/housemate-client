@@ -19,6 +19,12 @@
             <artifactId>housemate-comms-1-0-api</artifactId>
             <version>${intuso.housemate.comms.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

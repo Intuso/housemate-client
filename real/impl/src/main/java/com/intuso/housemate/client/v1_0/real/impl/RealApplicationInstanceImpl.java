@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.real.api.RealApplicationInstance;
 import com.intuso.housemate.client.v1_0.real.api.RealCommand;
+import com.intuso.housemate.client.v1_0.real.api.RealParameter;
 import com.intuso.housemate.client.v1_0.real.api.RealValue;
 import com.intuso.housemate.client.v1_0.real.impl.type.ApplicationInstanceStatusType;
 import com.intuso.housemate.comms.v1_0.api.payload.ApplicationInstanceData;
@@ -30,14 +31,14 @@ public class RealApplicationInstanceImpl
                                        ApplicationInstanceStatusType applicationInstanceStatusType) {
         super(log, listenersFactory, new ApplicationInstanceData(instanceId, instanceId, instanceId));
         allowCommand = new RealCommandImpl(log, listenersFactory, ApplicationInstanceData.ALLOW_COMMAND_ID, ApplicationInstanceData.ALLOW_COMMAND_ID, "Allow access to the application instance",
-                Lists.<RealParameterImpl<?>>newArrayList()) {
+                Lists.<RealParameter<?>>newArrayList()) {
             @Override
             public void perform(TypeInstanceMap values) {
                 statusValue.setTypedValues(Status.Allowed);
             }
         };
         rejectCommand = new RealCommandImpl(log, listenersFactory, ApplicationInstanceData.REJECT_COMMAND_ID, ApplicationInstanceData.REJECT_COMMAND_ID, "Reject access to the application instance",
-                Lists.<RealParameterImpl<?>>newArrayList()) {
+                Lists.<RealParameter<?>>newArrayList()) {
             @Override
             public void perform(TypeInstanceMap values) {
                 statusValue.setTypedValues(Status.Rejected);

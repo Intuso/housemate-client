@@ -1,6 +1,5 @@
 package com.intuso.housemate.client.v1_0.proxy.api;
 
-import com.intuso.housemate.client.v1_0.proxy.api.device.feature.ProxyFeature;
 import com.intuso.housemate.comms.v1_0.api.Message;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.Device;
@@ -13,24 +12,19 @@ import java.util.List;
 
 /**
  * @param <COMMAND> the type of the commands
- * @param <COMMANDS> the type of the commands list
  * @param <VALUE> the type of the values
- * @param <VALUES> the type of the values list
  * @param <PROPERTY> the type of the properties
- * @param <PROPERTIES> the type of the properties list
  * @param <DEVICE> the type of the device
  */
 public abstract class ProxyDevice<
-            COMMAND extends ProxyCommand<?, ?, ?, COMMAND>,
-            COMMANDS extends ProxyList<CommandData, COMMAND, COMMANDS>,
-            VALUE extends ProxyValue<?, VALUE>,
-            VALUES extends ProxyList<ValueData, VALUE, VALUES>,
-            PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
-            PROPERTIES extends ProxyList<PropertyData, PROPERTY, PROPERTIES>,
-            FEATURE extends ProxyFeature<?, DEVICE>,
-            DEVICE extends ProxyDevice<COMMAND, COMMANDS, VALUE, VALUES, PROPERTY, PROPERTIES, FEATURE, DEVICE>>
+        COMMAND extends ProxyCommand<?, ?, ?, COMMAND>,
+        PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
+        VALUE extends ProxyValue<?, VALUE>,
+        PROPERTIES extends ProxyList<PropertyData, ? extends ProxyProperty<?, ?, ?>, PROPERTIES>,
+        FEATURES extends ProxyList<FeatureData, ? extends ProxyFeature<?, ?, ?>, FEATURES>,
+        DEVICE extends ProxyDevice<COMMAND, PROPERTY, VALUE, PROPERTIES, FEATURES, DEVICE>>
         extends ProxyObject<DeviceData, HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>, DEVICE, Device.Listener<? super DEVICE>>
-        implements Device<COMMAND, COMMAND, COMMAND, COMMAND, COMMANDS, VALUE, VALUE, PROPERTY, VALUE, VALUE, VALUES, PROPERTY, PROPERTIES, DEVICE>,
+        implements Device<COMMAND, COMMAND, COMMAND, VALUE, VALUE, PROPERTY, VALUE, PROPERTIES, FEATURES, DEVICE>,
         ProxyFailable<VALUE>,
         ProxyRemoveable<COMMAND>,
         ProxyRenameable<COMMAND>,
@@ -160,39 +154,12 @@ public abstract class ProxyDevice<
     }
 
     @Override
-    public final COMMANDS getCommands() {
-        return (COMMANDS) getChild(DeviceData.COMMANDS_ID);
-    }
-
-    @Override
-    public final VALUES getValues() {
-        return (VALUES) getChild(DeviceData.VALUES_ID);
-    }
-
-    @Override
     public final PROPERTIES getProperties() {
         return (PROPERTIES) getChild(DeviceData.PROPERTIES_ID);
     }
 
     @Override
-    public final List<String> getFeatureIds() {
-        return getData().getFeatureIds();
+    public final FEATURES getFeatures() {
+        return (FEATURES) getChild(DeviceData.FEATURES_ID);
     }
-
-    @Override
-    public final List<String> getCustomCommandIds() {
-        return getData().getCustomCommandIds();
-    }
-
-    @Override
-    public final List<String> getCustomValueIds() {
-        return getData().getCustomValueIds();
-    }
-
-    @Override
-    public final List<String> getCustomPropertyIds() {
-        return getData().getCustomPropertyIds();
-    }
-
-    public abstract <F extends FEATURE> F getFeature(String featureId);
 }

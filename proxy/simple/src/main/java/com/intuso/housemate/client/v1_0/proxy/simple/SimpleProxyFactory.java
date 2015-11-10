@@ -22,6 +22,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
     private final Provider<ProxyObject.Factory<CommandData, SimpleProxyCommand>> commandFactory;
     private final Provider<ProxyObject.Factory<ConditionData, SimpleProxyCondition>> conditionFactory;
     private final Provider<ProxyObject.Factory<DeviceData, SimpleProxyDevice>> deviceFactory;
+    private final Provider<ProxyObject.Factory<FeatureData, SimpleProxyFeature>> featureFactory;
     private final Provider<ProxyObject.Factory<HardwareData, SimpleProxyHardware>> hardwareFactory;
     private final Provider<ProxyObject.Factory<ListData<HousemateData<?>>, SimpleProxyList<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>> listFactory;
     private final Provider<ProxyObject.Factory<OptionData, SimpleProxyOption>> optionFactory;
@@ -42,6 +43,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
                               Provider<ProxyObject.Factory<CommandData, SimpleProxyCommand>> commandFactory,
                               Provider<ProxyObject.Factory<ConditionData, SimpleProxyCondition>> conditionFactory,
                               Provider<ProxyObject.Factory<DeviceData, SimpleProxyDevice>> deviceFactory,
+                              Provider<ProxyObject.Factory<FeatureData, SimpleProxyFeature>> featureFactory,
                               Provider<ProxyObject.Factory<HardwareData, SimpleProxyHardware>> hardwareFactory,
                               Provider<ProxyObject.Factory<ListData<HousemateData<?>>, SimpleProxyList<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>> listFactory,
                               Provider<ProxyObject.Factory<OptionData, SimpleProxyOption>> optionFactory,
@@ -60,6 +62,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
         this.commandFactory = commandFactory;
         this.conditionFactory = conditionFactory;
         this.deviceFactory = deviceFactory;
+        this.featureFactory = featureFactory;
         this.hardwareFactory = hardwareFactory;
         this.listFactory = listFactory;
         this.optionFactory = optionFactory;
@@ -91,6 +94,8 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
             return taskFactory.get().create((TaskData) data);
         else if(data instanceof DeviceData)
             return deviceFactory.get().create((DeviceData) data);
+        else if(data instanceof FeatureData)
+            return featureFactory.get().create((FeatureData) data);
         else if(data instanceof HardwareData)
             return hardwareFactory.get().create((HardwareData) data);
         else if(data instanceof ListData)

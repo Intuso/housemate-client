@@ -1,40 +1,45 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
-import com.intuso.housemate.client.v1_0.proxy.api.device.feature.ProxyFeatureFactory;
+import com.intuso.housemate.client.v1_0.proxy.api.feature.ProxyFeature;
+import com.intuso.housemate.client.v1_0.proxy.api.feature.ProxyFeatureFactory;
 
 /**
  * Feature factory for simple proxy features
  */
-public class SimpleProxyFeatureFactory
-        extends ProxyFeatureFactory<SimpleProxyFeature, SimpleProxyDevice> {
+public class SimpleProxyFeatureFactory extends ProxyFeatureFactory<SimpleProxyFeature, ProxyFeature> {
 
     @Override
-    public SimpleProxyFeature.PowerControl getPowerControl(SimpleProxyDevice device) {
-        return new SimpleProxyFeature.PowerControl(device);
+    public SimpleProxyFeatureImpls.PowerControl getPowerControl(SimpleProxyFeature feature) {
+        return new SimpleProxyFeatureImpls.PowerControl(feature);
     }
 
     @Override
-    public SimpleProxyFeature.StatefulPowerControl getStatefulPowerControl(SimpleProxyDevice device) {
-        return new SimpleProxyFeature.StatefulPowerControl(device);
+    public SimpleProxyFeatureImpls.StatefulPowerControl getStatefulPowerControl(SimpleProxyFeature feature) {
+        return new SimpleProxyFeatureImpls.StatefulPowerControl(feature);
     }
 
     @Override
-    public SimpleProxyFeature.PlaybackControl getPlaybackControl(SimpleProxyDevice device) {
-        return new SimpleProxyFeature.PlaybackControl(device);
+    public SimpleProxyFeatureImpls.PlaybackControl getPlaybackControl(SimpleProxyFeature feature) {
+        return new SimpleProxyFeatureImpls.PlaybackControl(feature);
     }
 
     @Override
-    public SimpleProxyFeature.StatefulPlaybackControl getStatefulPlaybackControl(SimpleProxyDevice device) {
-        return new SimpleProxyFeature.StatefulPlaybackControl(device);
+    public SimpleProxyFeatureImpls.StatefulPlaybackControl getStatefulPlaybackControl(SimpleProxyFeature feature) {
+        return new SimpleProxyFeatureImpls.StatefulPlaybackControl(feature);
     }
 
     @Override
-    public SimpleProxyFeature.VolumeControl getVolumeControl(SimpleProxyDevice device) {
-        return new SimpleProxyFeature.VolumeControl(device);
+    public SimpleProxyFeatureImpls.VolumeControl getVolumeControl(SimpleProxyFeature feature) {
+        return new SimpleProxyFeatureImpls.VolumeControl(feature);
     }
 
     @Override
-    public SimpleProxyFeature.StatefulVolumeControl getStatefulVolumeControl(SimpleProxyDevice device) {
-        return new SimpleProxyFeature.StatefulVolumeControl(device);
+    public SimpleProxyFeatureImpls.StatefulVolumeControl getStatefulVolumeControl(SimpleProxyFeature feature) {
+        return new SimpleProxyFeatureImpls.StatefulVolumeControl(feature);
+    }
+
+    @Override
+    protected <F extends ProxyFeature> F getUnknown(SimpleProxyFeature feature) {
+        return null;
     }
 }

@@ -3,9 +3,9 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Key;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.comms.TestEnvironment;
+import com.intuso.housemate.client.v1_0.real.api.RealParameter;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.type.IntegerType;
 import com.intuso.housemate.comms.v1_0.api.payload.CommandData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
@@ -63,7 +63,7 @@ public class CommandTest {
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
         realCommand = new RealCommandImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-                "my-command", "My Command", "description", new ArrayList<RealParameterImpl<?>>()) {
+                "my-command", "My Command", "description", new ArrayList<RealParameter<?>>()) {
             @Override
             public void perform(TypeInstanceMap values) {
                 //To change body of implemented methods use File | Settings | File Templates.
@@ -83,7 +83,7 @@ public class CommandTest {
         final AtomicBoolean called = new AtomicBoolean(false);
         RealCommandImpl realCommand = new RealCommandImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
-                "my-other-command", "My Other Command", "description", new ArrayList<RealParameterImpl<?>>()) {
+                "my-other-command", "My Other Command", "description", new ArrayList<RealParameter<?>>()) {
             @Override
             public void perform(TypeInstanceMap values) {
                 called.set(true);
@@ -101,7 +101,7 @@ public class CommandTest {
         RealCommandImpl realCommand = new RealCommandImpl(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 "my-other-command", "My Other Command",
-                "description", Arrays.<RealParameterImpl<?>>asList(
+                "description", Arrays.<RealParameter<?>>asList(
                         IntegerType.createParameter(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
                                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                                 "my-parameter", "My Parameter", "description"))) {
