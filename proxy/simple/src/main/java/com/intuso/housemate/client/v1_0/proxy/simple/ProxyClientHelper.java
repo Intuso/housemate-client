@@ -11,7 +11,7 @@ import com.intuso.housemate.comms.v1_0.api.RemoteObject;
 import com.intuso.housemate.comms.v1_0.api.Router;
 import com.intuso.housemate.comms.v1_0.api.TreeLoadInfo;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationDetails;
-import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
+import com.intuso.housemate.comms.v1_0.api.access.ConnectionStatus;
 import com.intuso.housemate.object.v1_0.api.Application;
 import com.intuso.housemate.object.v1_0.api.ApplicationInstance;
 import com.intuso.utilities.listener.ListenerRegistration;
@@ -110,7 +110,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
         proxyListenerRegistration = proxyRoot.addObjectListener(new ProxyRootListener());
         RouterListener routerListener = new RouterListener();
         routerListenerRegistration = router.addListener(routerListener);
-        routerListener.serverConnectionStatusChanged(null, ServerConnectionStatus.DisconnectedPermanently);
+        routerListener.serverConnectionStatusChanged(null, ConnectionStatus.DisconnectedPermanently);
         return this;
     }
 
@@ -134,9 +134,9 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     private class RouterListener implements Router.Listener<Router> {
 
         @Override
-        public void serverConnectionStatusChanged(Router root, ServerConnectionStatus serverConnectionStatus) {
-            log.d("Router serverConnectionStatus = " + serverConnectionStatus);
-            if(serverConnectionStatus == ServerConnectionStatus.DisconnectedPermanently) {
+        public void serverConnectionStatusChanged(Router root, ConnectionStatus connectionStatus) {
+            log.d("Router serverConnectionStatus = " + connectionStatus);
+            if(connectionStatus == ConnectionStatus.DisconnectedPermanently) {
                 router.connect();
                 proxyRoot.register(applicationDetails, component);
             }

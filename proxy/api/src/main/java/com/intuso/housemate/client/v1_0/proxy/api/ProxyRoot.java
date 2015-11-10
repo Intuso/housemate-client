@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import com.intuso.housemate.comms.v1_0.api.*;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationDetails;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationRegistration;
-import com.intuso.housemate.comms.v1_0.api.access.ServerConnectionStatus;
+import com.intuso.housemate.comms.v1_0.api.access.ConnectionStatus;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.*;
 import com.intuso.utilities.listener.ListenerRegistration;
@@ -65,7 +65,7 @@ public abstract class ProxyRoot<
             }
 
             @Override
-            public void serverConnectionStatusChanged(ClientConnection clientConnection, ServerConnectionStatus serverConnectionStatus) {
+            public void serverConnectionStatusChanged(ClientConnection clientConnection, ConnectionStatus connectionStatus) {
 
             }
 
