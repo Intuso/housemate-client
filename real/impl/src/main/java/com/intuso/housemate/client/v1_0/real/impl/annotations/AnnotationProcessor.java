@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.real.api.*;
 import com.intuso.housemate.client.v1_0.real.api.annotations.*;
-import com.intuso.housemate.client.v1_0.real.impl.RealDeviceImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
@@ -42,9 +41,11 @@ public class AnnotationProcessor {
 
     public Iterable<RealCommand> findCommands(Object driver) {
         List<RealCommand> commands = Lists.newArrayList();
-        for(Map.Entry<Method, Command> commandMethod : getAnnotatedMethods(driver.getClass(), Command.class).entrySet())
-            commands.add(commandFactory.create(commandMethod.getValue().id(), commandMethod.getValue().name(),
-                    commandMethod.getValue().description(), parseParameters(commandMethod.getKey()), commandMethod.getKey(), driver));
+        for(Map.Entry<Method, Command> commandMethod : getAnnotatedMethods(driver.getClass(), Command.class).entrySet()) {
+            TypeInfo typeInfo = commandMethod.getKey().getAnnotation(TypeInfo.class);
+            commands.add(commandFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    parseParameters(commandMethod.getKey()), commandMethod.getKey(), driver));
+        }
         return commands;
     }
 
@@ -53,13 +54,14 @@ public class AnnotationProcessor {
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         for(int a = 0; a < parameterAnnotations.length; a++) {
             Parameter parameterAnnotation = getAnnotation(parameterAnnotations[a], Parameter.class);
+            TypeInfo typeInfo = getAnnotation(parameterAnnotations[a], TypeInfo.class);
             if(parameterAnnotation == null)
                 throw new HousemateCommsException("Parameter " + a + " of command method " + method.getName()
                         + " is not annotated with " + Parameter.class.getName());
-            if(types.get(parameterAnnotation.typeId()) == null)
-                throw new HousemateCommsException(parameterAnnotation.typeId() + " type does not exist");
-            result.add(parameterFactory.create(parameterAnnotation.id(), parameterAnnotation.name(),
-                    parameterAnnotation.description(), types.get(parameterAnnotation.typeId())));
+            if(types.get(parameterAnnotation.value()) == null)
+                throw new HousemateCommsException(parameterAnnotation.value() + " type does not exist");
+            result.add(parameterFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    types.get(parameterAnnotation.value())));
         }
         return result;
     }
@@ -78,10 +80,11 @@ public class AnnotationProcessor {
                 throw new HousemateCommsException("Failed to assign proxy instance to " + valuesField.getKey().getName());
             }
             for(Map.Entry<Method, Value> valueMethod : getAnnotatedMethods(valuesField.getKey().getType(), Value.class).entrySet()) {
-                if(types.get(valueMethod.getValue().typeId()) == null)
-                    throw new HousemateCommsException(valueMethod.getValue().typeId() + " type does not exist");
-                RealValue<?> value = valueFactory.create(valueMethod.getValue().id(), valueMethod.getValue().name(),
-                        valueMethod.getValue().description(), types.get(valueMethod.getValue().typeId()), null);
+                if(types.get(valueMethod.getValue().value()) == null)
+                    throw new HousemateCommsException(valueMethod.getValue().value() + " type does not exist");
+                TypeInfo typeInfo = valueMethod.getKey().getAnnotation(TypeInfo.class);
+                RealValue<?> value = valueFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                        types.get(valueMethod.getValue().value()), null);
                 valuesFunctions.put(valueMethod.getKey(), value);
                 values.add(value);
             }
@@ -98,34 +101,25 @@ public class AnnotationProcessor {
             } catch(IllegalAccessException e) {
                 log.w("Failed to get initial value of annotated property field " + propertyField.getKey().getName());
             }
-            if(types.get(propertyField.getValue().typeId()) == null)
-                throw new HousemateCommsException(propertyField.getValue().typeId() + " type does not exist");
-            RealTypeImpl<?, ?, Object> type = (RealTypeImpl<?, ?, Object>) types.get(propertyField.getValue().typeId());
+            if(types.get(propertyField.getValue().value()) == null)
+                throw new HousemateCommsException(propertyField.getValue().value() + " type does not exist");
+            RealTypeImpl<?, ?, Object> type = (RealTypeImpl<?, ?, Object>) types.get(propertyField.getValue().value());
             if(value == null && propertyField.getValue().initialValue().length() > 0)
                 value = type.deserialise(new TypeInstance(propertyField.getValue().initialValue()));
-            properties.add(fieldPropertyFactory.create(propertyField.getValue().id(),
-                    propertyField.getValue().name(),
-                    propertyField.getValue().description(),
-                    type,
-                    value,
-                    propertyField.getKey(),
-                    driver));
+            TypeInfo typeInfo = propertyField.getKey().getAnnotation(TypeInfo.class);
+            properties.add(fieldPropertyFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    type, value, propertyField.getKey(), driver));
         }
         for(Map.Entry<Method, Property> propertyMethod : getAnnotatedMethods(driver.getClass(), Property.class).entrySet()) {
             if(propertyMethod.getKey().getParameterTypes().length != 1)
                 throw new HousemateCommsException(propertyMethod.getKey().getName() + " must take a single argument");
-            if(types.get(propertyMethod.getValue().typeId()) == null)
-                throw new HousemateCommsException(propertyMethod.getValue().typeId() + " type does not exist");
-            RealTypeImpl<?, ?, Object> type = (RealTypeImpl<?, ?, Object>) types.get(propertyMethod.getValue().typeId());
+            if(types.get(propertyMethod.getValue().value()) == null)
+                throw new HousemateCommsException(propertyMethod.getValue().value() + " type does not exist");
+            RealTypeImpl<?, ?, Object> type = (RealTypeImpl<?, ?, Object>) types.get(propertyMethod.getValue().value());
             Object value = getInitialValue(driver, propertyMethod.getValue(), type, propertyMethod.getKey().getName());
-            properties.add(methodPropertyFactory.create(
-                    propertyMethod.getValue().id(),
-                    propertyMethod.getValue().name(),
-                    propertyMethod.getValue().description(),
-                    type,
-                    value,
-                    propertyMethod.getKey(),
-                    driver));
+            TypeInfo typeInfo = propertyMethod.getKey().getAnnotation(TypeInfo.class);
+            properties.add(methodPropertyFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    type, value, propertyMethod.getKey(), driver));
         }
         return properties;
     }
@@ -164,27 +158,6 @@ public class AnnotationProcessor {
         if(RealDevice.class.isAssignableFrom(driverClass.getSuperclass()))
             parseFeatures(device, driverClass.getSuperclass());*/
         return features;
-    }
-
-    private void addFeatureId(RealDeviceImpl<?> device, Class<?> featureClass) {
-        String featureId = null;
-        FeatureId featureIdAnnotation = featureClass.getAnnotation(FeatureId.class);
-        if(featureId != null)
-            featureId = featureIdAnnotation.value();
-        else {
-            try {
-                Field field = featureClass.getField("ID");
-                Object value = field.get(null);
-                if (value instanceof String) {
-                    featureId = (String) value;
-                } else
-                    throw new HousemateCommsException("Could not get id for feature class. ID field is not of type string " + featureClass.getName());
-            } catch (NoSuchFieldException e) {
-                throw new HousemateCommsException("Could not get id for feature class " + featureClass.getName(), e);
-            } catch (IllegalAccessException e) {
-                throw new HousemateCommsException("Could not get id for feature class " + featureClass.getName(), e);
-            }
-        }
     }
 
     private <A extends Annotation> Map<Method, A> getAnnotatedMethods(Class<?> objectClass, Class<A> annotationClass) {

@@ -10,11 +10,4 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface FeatureId {
-
-    /**
-     * The property's id
-     * @return the property's id
-     */
-    String value();
-}
+public @interface Feature {}

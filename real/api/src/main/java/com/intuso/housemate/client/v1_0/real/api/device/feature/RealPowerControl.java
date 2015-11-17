@@ -1,23 +1,27 @@
 package com.intuso.housemate.client.v1_0.real.api.device.feature;
 
 import com.intuso.housemate.client.v1_0.real.api.annotations.Command;
-import com.intuso.housemate.client.v1_0.real.api.annotations.FeatureId;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Feature;
+import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
 
 /**
  * Interface to mark real devices that provide power control
  */
-@FeatureId("power")
-public interface RealPowerControl extends RealFeature {
+@Feature
+@TypeInfo(id = "power", name = "Power", description = "Power")
+public interface RealPowerControl {
 
     /**
      * Callback to turn the device on
      */
-    @Command(id = "on", name = "Turn On", description = "Turn the device on")
+    @Command
+    @TypeInfo(id = "on", name = "Turn On", description = "Turn the device on")
     void turnOn();
 
     /**
      * Callback to turn the device off
      */
-    @Command(id = "off", name = "Turn Off", description = "Turn the device off")
+    @Command
+    @TypeInfo(id = "off", name = "Turn Off", description = "Turn the device off")
     void turnOff();
 }
