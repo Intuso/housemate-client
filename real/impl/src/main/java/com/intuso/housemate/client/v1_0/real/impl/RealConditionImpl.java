@@ -106,7 +106,8 @@ public final class RealConditionImpl<DRIVER extends ConditionDriver>
             PluginResource<ConditionDriver.Factory<DRIVER>> driverFactoryEntry = driverProperty.getTypedValue();
             if(driverFactoryEntry != null) {
                 driver = driverFactoryEntry.getResource().create(this);
-                annotationProcessor.process(driver, this);
+                for(RealProperty<?> property : annotationProcessor.findProperties(driver))
+                    properties.add(property);
                 errorValue.setTypedValues((String) null);
                 driverLoadedValue.setTypedValues(false);
             }

@@ -141,7 +141,10 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
             PluginResource<DeviceDriver.Factory<DRIVER>> driverFactory = driverProperty.getTypedValue();
             if(driverFactory != null) {
                 driver = driverFactory.getResource().create(this);
-                annotationProcessor.process(driver, this);
+                for(RealFeature feature : annotationProcessor.findFeatures(driver))
+                    features.add(feature);
+                for(RealProperty<?> property : annotationProcessor.findProperties(driver))
+                    properties.add(property);
                 errorValue.setTypedValues((String) null);
                 driverLoadedValue.setTypedValues(false);
                 _start();
@@ -157,6 +160,8 @@ public final class RealDeviceImpl<DRIVER extends DeviceDriver>
             driver = null;
             for (RealFeature feature : Lists.newArrayList(features))
                 features.remove(feature.getId());
+            for (RealProperty<?> property : Lists.newArrayList(properties))
+                properties.remove(property.getId());
         }
     }
 

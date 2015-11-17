@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.real.api.*;
 import com.intuso.housemate.client.v1_0.real.api.annotations.*;
 import com.intuso.housemate.client.v1_0.real.impl.RealDeviceImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealObject;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
@@ -41,21 +40,12 @@ public class AnnotationProcessor {
         this.valueFactory = valueFactory;
     }
 
-    public void process(Object driver, RealObject<?, ?, ?, ?> object) {
-        if(object instanceof com.intuso.housemate.object.v1_0.api.Command.Container)
-            parseCommands(driver, ((com.intuso.housemate.object.v1_0.api.Command.Container<RealList<RealCommand>>)object).getCommands());
-        if(object instanceof com.intuso.housemate.object.v1_0.api.Property.Container)
-            parseProperties(driver, ((com.intuso.housemate.object.v1_0.api.Property.Container<RealList<RealProperty<?>>>) object).getProperties());
-        if(object instanceof com.intuso.housemate.object.v1_0.api.Value.Container)
-            parseValues(driver, ((com.intuso.housemate.object.v1_0.api.Value.Container<RealList<RealValue<?>>>) object).getValues());
-        if(object instanceof com.intuso.housemate.object.v1_0.api.Feature.Container)
-            parseFeatures(driver, ((com.intuso.housemate.object.v1_0.api.Feature.Container<RealList<RealFeature>>)object).getFeatures());
-    }
-
-    private void parseCommands(Object driver, RealList<RealCommand> commands) {
+    public Iterable<RealCommand> findCommands(Object driver) {
+        List<RealCommand> commands = Lists.newArrayList();
         for(Map.Entry<Method, Command> commandMethod : getAnnotatedMethods(driver.getClass(), Command.class).entrySet())
             commands.add(commandFactory.create(commandMethod.getValue().id(), commandMethod.getValue().name(),
                     commandMethod.getValue().description(), parseParameters(commandMethod.getKey()), commandMethod.getKey(), driver));
+        return commands;
     }
 
     private List<RealParameter<?>> parseParameters(Method method) {
@@ -74,7 +64,33 @@ public class AnnotationProcessor {
         return result;
     }
 
-    private void parseProperties(Object driver, RealList<RealProperty<?>> properties) {
+    public Iterable<RealValue<?>> findValues(Object driver) {
+        List<RealValue<?>> values = Lists.newArrayList();
+        for(Map.Entry<Field, Values> valuesField : getAnnotatedFields(driver.getClass(), Values.class).entrySet()) {
+            Map<Method, RealValue<?>> valuesFunctions = Maps.newHashMap();
+            InvocationHandler invocationHandler = new ValuesInvocationHandler(valuesFunctions);
+            Object instance = Proxy.newProxyInstance(valuesField.getKey().getType().getClassLoader(),
+                    new Class<?>[] {valuesField.getKey().getType()},
+                    invocationHandler);
+            try {
+                valuesField.getKey().set(driver, instance);
+            } catch(IllegalAccessException e) {
+                throw new HousemateCommsException("Failed to assign proxy instance to " + valuesField.getKey().getName());
+            }
+            for(Map.Entry<Method, Value> valueMethod : getAnnotatedMethods(valuesField.getKey().getType(), Value.class).entrySet()) {
+                if(types.get(valueMethod.getValue().typeId()) == null)
+                    throw new HousemateCommsException(valueMethod.getValue().typeId() + " type does not exist");
+                RealValue<?> value = valueFactory.create(valueMethod.getValue().id(), valueMethod.getValue().name(),
+                        valueMethod.getValue().description(), types.get(valueMethod.getValue().typeId()), null);
+                valuesFunctions.put(valueMethod.getKey(), value);
+                values.add(value);
+            }
+        }
+        return values;
+    }
+
+    public Iterable<RealProperty<?>> findProperties(Object driver) {
+        List<RealProperty<?>> properties = Lists.newArrayList();
         for(Map.Entry<Field, Property> propertyField : getAnnotatedFields(driver.getClass(), Property.class).entrySet()) {
             Object value = null;
             try {
@@ -111,6 +127,7 @@ public class AnnotationProcessor {
                     propertyMethod.getKey(),
                     driver));
         }
+        return properties;
     }
 
     private Object getInitialValue(Object object, Property property, RealTypeImpl<?, ?, Object> type, String methodName) {
@@ -139,12 +156,14 @@ public class AnnotationProcessor {
         return null;
     }
 
-    private void parseFeatures(Object driver, RealList<RealFeature> features) {
+    public Iterable<RealFeature> findFeatures(Object driver) {
+        List<RealFeature> features = Lists.newArrayList();
         /*for(Class<?> interfaceClass : driverClass.getInterfaces())
             if(RealFeature.class.isAssignableFrom(interfaceClass))
                 addFeatureId(device, interfaceClass);
         if(RealDevice.class.isAssignableFrom(driverClass.getSuperclass()))
             parseFeatures(device, driverClass.getSuperclass());*/
+        return features;
     }
 
     private void addFeatureId(RealDeviceImpl<?> device, Class<?> featureClass) {
@@ -164,29 +183,6 @@ public class AnnotationProcessor {
                 throw new HousemateCommsException("Could not get id for feature class " + featureClass.getName(), e);
             } catch (IllegalAccessException e) {
                 throw new HousemateCommsException("Could not get id for feature class " + featureClass.getName(), e);
-            }
-        }
-    }
-
-    private void parseValues(Object driver, RealList<RealValue<?>> values) {
-        for(Map.Entry<Field, Values> valuesField : getAnnotatedFields(driver.getClass(), Values.class).entrySet()) {
-            Map<Method, RealValue<?>> valuesFunctions = Maps.newHashMap();
-            InvocationHandler invocationHandler = new ValuesInvocationHandler(valuesFunctions);
-            Object instance = Proxy.newProxyInstance(valuesField.getKey().getType().getClassLoader(),
-                    new Class<?>[] {valuesField.getKey().getType()},
-                    invocationHandler);
-            try {
-                valuesField.getKey().set(driver, instance);
-            } catch(IllegalAccessException e) {
-                throw new HousemateCommsException("Failed to assign proxy instance to " + valuesField.getKey().getName());
-            }
-            for(Map.Entry<Method, Value> valueMethod : getAnnotatedMethods(valuesField.getKey().getType(), Value.class).entrySet()) {
-                if(types.get(valueMethod.getValue().typeId()) == null)
-                    throw new HousemateCommsException(valueMethod.getValue().typeId() + " type does not exist");
-                RealValue<?> value = valueFactory.create(valueMethod.getValue().id(), valueMethod.getValue().name(),
-                        valueMethod.getValue().description(), types.get(valueMethod.getValue().typeId()), null);
-                valuesFunctions.put(valueMethod.getKey(), value);
-                values.add(value);
             }
         }
     }

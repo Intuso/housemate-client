@@ -88,7 +88,8 @@ public final class RealTaskImpl<DRIVER extends TaskDriver>
             PluginResource<TaskDriver.Factory<DRIVER>> driverFactory = driverProperty.getTypedValue();
             if(driverFactory != null) {
                 driver = driverFactory.getResource().create(this);
-                annotationProcessor.process(driver, this);
+                for(RealProperty<?> property : annotationProcessor.findProperties(driver))
+                    properties.add(property);
                 errorValue.setTypedValues((String) null);
                 driverLoadedValue.setTypedValues(false);
             }

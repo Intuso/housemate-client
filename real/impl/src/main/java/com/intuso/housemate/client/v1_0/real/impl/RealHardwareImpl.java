@@ -133,7 +133,8 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
             PluginResource<HardwareDriver.Factory<DRIVER>> driverFactory = driverProperty.getTypedValue();
             if(driverFactory != null) {
                 driver = driverFactory.getResource().create(this);
-                annotationProcessor.process(driver, this);
+                for(RealProperty<?> property : annotationProcessor.findProperties(driver))
+                    properties.add(property);
                 errorValue.setTypedValues((String) null);
                 driverLoadedValue.setTypedValues(false);
                 _start();
