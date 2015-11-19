@@ -3,17 +3,17 @@ package com.intuso.housemate.client.v1_0.real.api.device.feature;
 import com.intuso.housemate.client.v1_0.real.api.annotations.Feature;
 import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
 import com.intuso.housemate.client.v1_0.real.api.annotations.Value;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Values;
 
 /**
  * Interface to mark real devices that provide stateful power control
  */
 @Feature
 @TypeInfo(id = "power-stateful", name = "Power", description = "Power")
-public interface RealStatefulPowerControl extends RealPowerControl {
+public interface StatefulPowerControl extends PowerControl {
 
-    void setOn(boolean on);
-
-    interface Values {
+    @Values
+    interface PowerValues {
 
         /**
          * Callback to set the current power status of the device

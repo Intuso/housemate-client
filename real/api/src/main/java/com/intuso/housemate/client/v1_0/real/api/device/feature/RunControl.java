@@ -8,20 +8,20 @@ import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
  * Interface to mark real devices that provide power control
  */
 @Feature
-@TypeInfo(id = "power", name = "Power", description = "Power")
-public interface RealPowerControl {
+@TypeInfo(id = "run", name = "Run", description = "Run")
+public interface RunControl {
 
     /**
      * Callback to turn the device on
      */
     @Command
-    @TypeInfo(id = "on", name = "Turn On", description = "Turn the device on")
-    void turnOn();
+    @TypeInfo(id = "start", name = "Start", description = "Start")
+    void start();
 
     /**
      * Callback to turn the device off
      */
     @Command
-    @TypeInfo(id = "off", name = "Turn Off", description = "Turn the device off")
-    void turnOff();
+    @TypeInfo(id = "stop", name = "Stop", description = "Stop")
+    void stop();
 }

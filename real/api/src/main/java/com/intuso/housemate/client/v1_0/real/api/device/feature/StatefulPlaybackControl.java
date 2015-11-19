@@ -3,14 +3,17 @@ package com.intuso.housemate.client.v1_0.real.api.device.feature;
 import com.intuso.housemate.client.v1_0.real.api.annotations.Feature;
 import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
 import com.intuso.housemate.client.v1_0.real.api.annotations.Value;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Values;
 
 /**
  * Interface to mark real devices that provide stateful playback control
  */
 @Feature
 @TypeInfo(id = "playback-stateful", name = "Playback", description = "Playback")
-public interface RealStatefulPlaybackControl extends RealPlaybackControl {
-    interface Values {
+public interface StatefulPlaybackControl extends PlaybackControl {
+
+    @Values
+    interface PlaybackValues {
 
         /**
          * Callback to set the current playing value

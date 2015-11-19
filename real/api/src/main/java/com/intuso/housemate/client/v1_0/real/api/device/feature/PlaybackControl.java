@@ -9,7 +9,7 @@ import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
  */
 @Feature
 @TypeInfo(id = "playback", name = "Playback", description = "Playback")
-public interface RealPlaybackControl {
+public interface PlaybackControl {
 
     /**
      * Callback to start playback

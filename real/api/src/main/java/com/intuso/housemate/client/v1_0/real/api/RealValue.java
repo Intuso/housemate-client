@@ -4,6 +4,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.object.v1_0.api.TypeInstances;
 import com.intuso.housemate.object.v1_0.api.Value;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -18,6 +19,6 @@ public interface RealValue<O>
                                     @Assisted("name") String name,
                                     @Assisted("description") String description,
                                     RealType<?> type,
-                                    List<?> values);
+                                    @Nullable List<?> values);
         }
 }

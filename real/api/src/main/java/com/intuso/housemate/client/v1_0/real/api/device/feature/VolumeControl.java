@@ -9,7 +9,7 @@ import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
  */
 @Feature
 @TypeInfo(id = "volume", name = "Volume", description = "Volume")
-public interface RealVolumeControl {
+public interface VolumeControl {
 
     /**
      * Callback for when the volume should be muted
