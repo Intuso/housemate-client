@@ -4,8 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
-import com.intuso.housemate.client.v1_0.real.api.RealType;
+import com.intuso.housemate.client.v1_0.real.api.*;
 import com.intuso.housemate.client.v1_0.real.impl.RealListImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealRootImpl;
 import com.intuso.housemate.client.v1_0.real.impl.annotations.ioc.RealAnnotationsModule;
@@ -24,6 +23,13 @@ public class RealObjectModule extends AbstractModule {
         // install other required modules
         install(new RealFactoryModule());
         install(new RealAnnotationsModule());
+
+        bind(RealAutomation.Container.class).to(RealRootImpl.class);
+        bind(RealApplication.Container.class).to(RealRootImpl.class);
+        bind(RealDevice.Container.class).to(RealRootImpl.class);
+        bind(RealHardware.Container.class).to(RealRootImpl.class);
+        bind(RealType.Container.class).to(RealRootImpl.class);
+        bind(RealUser.Container.class).to(RealRootImpl.class);
 
         // bind everything as singletons that should be
         bind(ApplicationStatusType.class).in(Scopes.SINGLETON);
