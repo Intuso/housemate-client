@@ -91,7 +91,7 @@ public final class RealTaskImpl<DRIVER extends TaskDriver>
                 for(RealProperty<?> property : annotationProcessor.findProperties(driver))
                     properties.add(property);
                 errorValue.setTypedValues((String) null);
-                driverLoadedValue.setTypedValues(false);
+                driverLoadedValue.setTypedValues(true);
             }
         }
     }
