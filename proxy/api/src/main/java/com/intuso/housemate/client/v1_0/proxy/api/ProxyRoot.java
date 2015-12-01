@@ -228,5 +228,10 @@ public abstract class ProxyRoot<
             removeChild(childName);
     }
 
+    @Override
+    public BaseHousemateObject<?> findObject(String[] path) {
+        return (BaseHousemateObject<?>) getObject(path);
+    }
+
     public interface Listener<ROOT extends ProxyRoot<?, ?, ?>> extends Root.Listener<ROOT>, RequiresAccess.Listener<ROOT> {}
 }

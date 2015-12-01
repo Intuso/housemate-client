@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intuso.housemate.comms.v1_0.api.*;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.comms.v1_0.api.payload.NoPayload;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -56,18 +55,6 @@ public abstract class ProxyObject<
     protected List<ListenerRegistration> registerListeners() {
         List<ListenerRegistration> result = Lists.newArrayList();
         result.add(addChildListener(this));
-        result.add(addMessageListener(CHILD_OVERVIEWS_RESPONSE, new Message.Receiver<ChildOverviews>() {
-            @Override
-            public void messageReceived(Message<ChildOverviews> message) {
-                for(ChildOverview childOverview : message.getPayload().getChildOverviews()) {
-                    if(childOverviews.get(childOverview.getId()) == null) {
-                        childOverviews.put(childOverview.getId(), childOverview);
-                        for(AvailableChildrenListener<? super OBJECT> listener : availableChildrenListeners)
-                            listener.childAdded(getThis(), childOverview);
-                    }
-                }
-            }
-        }));
         result.add(addMessageListener(CHILD_ADDED, new Message.Receiver<ChildOverview>() {
             @Override
             public void messageReceived(Message<ChildOverview> message) {
@@ -96,6 +83,12 @@ public abstract class ProxyObject<
                         CHILD object = createChild(message.getPayload());
                         object.init(ProxyObject.this);
                         addChild(object);
+                        if(childOverviews.get(object.getId()) == null) {
+                            ChildOverview childOverview = new ChildOverview(object.getId(), object.getName(), object.getDescription());
+                            childOverviews.put(object.getId(), childOverview);
+                            for(AvailableChildrenListener<? super OBJECT> listener : availableChildrenListeners)
+                                listener.childAdded(getThis(), childOverview);
+                        }
                     }
                 } catch (Throwable e) {
                     getLog().e("Failed to unwrap load response", e);
@@ -188,6 +181,10 @@ public abstract class ProxyObject<
         return getData().getChildData().keySet();
     }
 
+    public Map<String, ChildOverview> getAvailableChildren() {
+        return childOverviews;
+    }
+
     public ListenerRegistration addAvailableChildrenListener(AvailableChildrenListener<? super OBJECT> listener, boolean callForExisting) {
         ListenerRegistration result = availableChildrenListeners.addListener(listener);
         if(callForExisting)
@@ -208,10 +205,6 @@ public abstract class ProxyObject<
             }
             addListenerRegistration(listeners.addListener(listener));
         }
-    }
-
-    public void loadChildOverviews() {
-        sendMessage(CHILD_OVERVIEWS_REQUEST, NoPayload.INSTANCE);
     }
 
     /**
