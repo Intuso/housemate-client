@@ -230,7 +230,7 @@ public abstract class ProxyRoot<
 
     @Override
     public BaseHousemateObject<?> findObject(String[] path) {
-        return (BaseHousemateObject<?>) getObject(path);
+        return (BaseHousemateObject<?>) BaseObject.getChild(this, path, 1);
     }
 
     public interface Listener<ROOT extends ProxyRoot<?, ?, ?>> extends Root.Listener<ROOT>, RequiresAccess.Listener<ROOT> {}
