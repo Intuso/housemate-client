@@ -5,7 +5,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.OptionData;
 import com.intuso.housemate.comms.v1_0.api.payload.SubTypeData;
 import com.intuso.housemate.object.v1_0.api.Option;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <SUB_TYPE> the type of the sub type
@@ -20,11 +20,11 @@ public abstract class ProxyOption<
         implements Option<SUB_TYPES, OPTION> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyOption(Log log, ListenersFactory listenersFactory, OptionData data) {
-        super(log, listenersFactory, data);
+    public ProxyOption(Logger logger, ListenersFactory listenersFactory, OptionData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 import com.intuso.utilities.object.BaseObject;
 import com.intuso.utilities.object.ObjectFactory;
 import com.intuso.utilities.object.ObjectListener;
@@ -42,12 +42,12 @@ public abstract class ProxyObject<
     private int nextLoaderId = 0;
 
     /**
-     * @param log the log
+     * @param logger the log
      * @param listenersFactory
      * @param data the data object
      */
-    protected ProxyObject(Log log, ListenersFactory listenersFactory, DATA data) {
-        super(log, listenersFactory, data);
+    protected ProxyObject(Logger logger, ListenersFactory listenersFactory, DATA data) {
+        super(logger, listenersFactory, data);
         availableChildrenListeners = listenersFactory.create();
     }
 
@@ -91,7 +91,7 @@ public abstract class ProxyObject<
                         }
                     }
                 } catch (Throwable e) {
-                    getLog().e("Failed to unwrap load response", e);
+                    getLogger().error("Failed to unwrap load response", e);
                 }
             }
         }));
@@ -101,7 +101,7 @@ public abstract class ProxyObject<
                 LoadManager manager = pendingLoads.remove(message.getPayload().getLoaderId());
                 if (manager != null) {
                     if (message.getPayload().getErrors() != null) {
-                        getLog().e("Failed to load data for " + message.getPayload().getLoaderId() + " because " + Joiner.on(", ").join(message.getPayload().getErrors()));
+                        getLogger().error("Failed to load data for " + message.getPayload().getLoaderId() + " because " + Joiner.on(", ").join(message.getPayload().getErrors()));
                         manager.failed(message.getPayload().getErrors());
                     } else
                         manager.succeeded();

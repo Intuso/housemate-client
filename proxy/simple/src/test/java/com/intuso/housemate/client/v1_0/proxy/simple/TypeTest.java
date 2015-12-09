@@ -15,9 +15,10 @@ import com.intuso.housemate.object.v1_0.api.RegexMatcher;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import com.intuso.housemate.object.v1_0.api.TypeSerialiser;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -68,10 +69,10 @@ public class TypeTest {
     @Test
     public void testCustomFormat() {
         ProxyRegexType pt = new MyProxyType(
-                TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+                LoggerFactory.getLogger(TypeTest.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 TestEnvironment.TEST_INSTANCE.getInjector(),
-                new MyRealType(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+                new MyRealType(LoggerFactory.getLogger(TypeTest.class),
                         TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class)).getData());
         Assert.assertFalse(pt.isCorrectFormat("some string"));
         Assert.assertFalse(pt.isCorrectFormat(";two"));
@@ -119,8 +120,8 @@ public class TypeTest {
 
     private class MyRealType extends RealRegexType<MyClass> {
 
-        protected MyRealType(Log log, ListenersFactory listenersFactory) {
-            super(log, listenersFactory, ID, NAME, DESCRIPTION, 1, 1, REGEX);
+        protected MyRealType(Logger logger, ListenersFactory listenersFactory) {
+            super(logger, listenersFactory, ID, NAME, DESCRIPTION, 1, 1, REGEX);
         }
 
         @Override
@@ -137,8 +138,8 @@ public class TypeTest {
     private class MyProxyType extends ProxyRegexType<MyProxyType> {
 
         @Inject
-        public MyProxyType(Log log, ListenersFactory listenersFactory, Injector injector, RegexTypeData data) {
-            super(log, listenersFactory, data, injector.getInstance(RegexMatcher.Factory.class).createRegexMatcher(data.getRegexPattern()));
+        public MyProxyType(Logger logger, ListenersFactory listenersFactory, Injector injector, RegexTypeData data) {
+            super(logger, listenersFactory, data, injector.getInstance(RegexMatcher.Factory.class).createRegexMatcher(data.getRegexPattern()));
         }
 
         @Override

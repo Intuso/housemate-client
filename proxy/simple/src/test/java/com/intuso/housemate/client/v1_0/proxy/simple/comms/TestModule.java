@@ -1,7 +1,9 @@
 package com.intuso.housemate.client.v1_0.proxy.simple.comms;
 
 import com.google.common.collect.Lists;
-import com.google.inject.*;
+import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Scopes;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRoot;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestProxyRoot;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestRealRoot;
@@ -11,9 +13,6 @@ import com.intuso.housemate.object.v1_0.api.RegexMatcher;
 import com.intuso.utilities.listener.Listener;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
-import com.intuso.utilities.log.LogLevel;
-import com.intuso.utilities.log.writer.StdOutWriter;
 import com.intuso.utilities.properties.api.PropertyRepository;
 import com.intuso.utilities.properties.api.WriteableMapPropertyRepository;
 
@@ -61,13 +60,5 @@ public class TestModule extends AbstractModule {
                 return new Listeners<>(Lists.<LISTENER>newArrayList());
             }
         });
-    }
-
-    @Provides
-    @Singleton
-    public Log getLog() {
-        Log log = new Log();
-        log.addWriter(new StdOutWriter(LogLevel.DEBUG));
-        return log;
     }
 }

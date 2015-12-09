@@ -6,7 +6,7 @@ import com.intuso.housemate.object.v1_0.api.Device;
 import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -32,11 +32,11 @@ public abstract class ProxyDevice<
         ProxyUsesDriver<PROPERTY, VALUE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyDevice(Log log, ListenersFactory listenersFactory, DeviceData data) {
-        super(log, listenersFactory, data);
+    public ProxyDevice(Logger logger, ListenersFactory listenersFactory, DeviceData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

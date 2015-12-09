@@ -4,7 +4,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.TypeData;
 import com.intuso.housemate.object.v1_0.api.Type;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <DATA> the type of the data
@@ -21,10 +21,10 @@ public abstract class ProxyType<
         implements Type<TYPE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyType(Log log, ListenersFactory listenersFactory, DATA data) {
-        super(log, listenersFactory, data);
+    public ProxyType(Logger logger, ListenersFactory listenersFactory, DATA data) {
+        super(logger, listenersFactory, data);
     }
 }

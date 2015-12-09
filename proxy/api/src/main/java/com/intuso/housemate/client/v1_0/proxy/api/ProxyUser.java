@@ -4,7 +4,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.UserData;
 import com.intuso.housemate.object.v1_0.api.User;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <COMMAND> the type of the command
@@ -19,11 +19,11 @@ public abstract class ProxyUser<
         ProxyRemoveable<COMMAND> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyUser(Log log, ListenersFactory listenersFactory, UserData data) {
-        super(log, listenersFactory, data);
+    public ProxyUser(Logger logger, ListenersFactory listenersFactory, UserData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

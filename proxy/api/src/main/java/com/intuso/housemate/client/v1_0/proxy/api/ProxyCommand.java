@@ -10,7 +10,7 @@ import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
 import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -33,11 +33,11 @@ public abstract class ProxyCommand<
     private Map<String, Command.PerformListener<? super COMMAND>> listenerMap = Maps.newHashMap();
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    protected ProxyCommand(Log log, ListenersFactory listenersFactory, CommandData data) {
-        super(log, listenersFactory, data);
+    protected ProxyCommand(Logger logger, ListenersFactory listenersFactory, CommandData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

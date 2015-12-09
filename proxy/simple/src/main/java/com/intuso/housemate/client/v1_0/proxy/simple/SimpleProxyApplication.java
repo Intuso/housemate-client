@@ -8,7 +8,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.ApplicationData;
 import com.intuso.housemate.comms.v1_0.api.payload.ApplicationInstanceData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
 * Created with IntelliJ IDEA.
@@ -27,11 +27,11 @@ public final class SimpleProxyApplication extends ProxyApplication<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyApplication(Log log,
+    public SimpleProxyApplication(Logger logger,
                                   ListenersFactory listenersFactory,
                                   ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
                                   @Assisted ApplicationData data) {
-        super(log, listenersFactory, data);
+        super(logger, listenersFactory, data);
         this.objectFactory = objectFactory;
     }
 

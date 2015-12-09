@@ -8,7 +8,7 @@ import com.intuso.housemate.client.v1_0.real.api.annotations.*;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class AnnotationProcessor {
 
-    private final Log log;
+    private final Logger logger;
     private final RealList<RealType<?>> types;
     private final MethodCommand.Factory commandFactory;
     private final RealParameter.Factory parameterFactory;
@@ -29,8 +29,8 @@ public class AnnotationProcessor {
     private final RealValue.Factory valueFactory;
 
     @Inject
-    public AnnotationProcessor(Log log, RealList<RealType<?>> types, MethodCommand.Factory commandFactory, RealParameter.Factory parameterFactory, FieldProperty.Factory fieldPropertyFactory, MethodProperty.Factory methodPropertyFactory, RealValue.Factory valueFactory) {
-        this.log = log;
+    public AnnotationProcessor(Logger logger, RealList<RealType<?>> types, MethodCommand.Factory commandFactory, RealParameter.Factory parameterFactory, FieldProperty.Factory fieldPropertyFactory, MethodProperty.Factory methodPropertyFactory, RealValue.Factory valueFactory) {
+        this.logger = logger;
         this.types = types;
         this.commandFactory = commandFactory;
         this.parameterFactory = parameterFactory;
@@ -99,7 +99,7 @@ public class AnnotationProcessor {
             try {
                 value = propertyField.getKey().get(driver);
             } catch(IllegalAccessException e) {
-                log.w("Failed to get initial value of annotated property field " + propertyField.getKey().getName());
+                logger.warn("Failed to get initial value of annotated property field " + propertyField.getKey().getName());
             }
             if(types.get(propertyField.getValue().value()) == null)
                 throw new HousemateCommsException(propertyField.getValue().value() + " type does not exist");
@@ -135,7 +135,7 @@ public class AnnotationProcessor {
                 return getter.invoke(object);
             } catch(NoSuchMethodException e) { // do nothing
             } catch(InvocationTargetException|IllegalAccessException e) {
-                log.e("Problem getting property initial value using getter " + getterName + " of " + object.getClass().getName());
+                logger.error("Problem getting property initial value using getter " + getterName + " of " + object.getClass().getName());
             }
             String isGetterName = "is" + fieldName;
             try {
@@ -143,10 +143,10 @@ public class AnnotationProcessor {
                 return isGetter.invoke(object);
             } catch(NoSuchMethodException e) { // do nothing
             } catch(InvocationTargetException|IllegalAccessException e) {
-                log.e("Problem getting property initial value using isGetter " + isGetterName + " of " + object.getClass().getName());
+                logger.error("Problem getting property initial value using isGetter " + isGetterName + " of " + object.getClass().getName());
             }
         }
-        log.w("No initial value or getter found for " + Property.class.getSimpleName() + " method " + methodName + " of " + object.getClass().getName());
+        logger.warn("No initial value or getter found for " + Property.class.getSimpleName() + " method " + methodName + " of " + object.getClass().getName());
         return null;
     }
 

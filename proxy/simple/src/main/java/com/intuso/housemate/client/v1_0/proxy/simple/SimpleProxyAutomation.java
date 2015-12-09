@@ -9,7 +9,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.ConditionData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.TaskData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
 * Created with IntelliJ IDEA.
@@ -27,11 +27,11 @@ public final class SimpleProxyAutomation extends ProxyAutomation<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyAutomation(Log log,
+    public SimpleProxyAutomation(Logger logger,
                                  ListenersFactory listenersFactory,
                                  ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
                                  @Assisted AutomationData data) {
-        super(log, listenersFactory, data);
+        super(logger, listenersFactory, data);
         this.objectFactory = objectFactory;
     }
 

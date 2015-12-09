@@ -6,7 +6,7 @@ import com.intuso.housemate.object.v1_0.api.Automation;
 import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -35,11 +35,11 @@ public abstract class ProxyAutomation<
             ProxyRunnable<COMMAND, VALUE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyAutomation(Log log, ListenersFactory listenersFactory, AutomationData data) {
-        super(log, listenersFactory, data);
+    public ProxyAutomation(Logger logger, ListenersFactory listenersFactory, AutomationData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

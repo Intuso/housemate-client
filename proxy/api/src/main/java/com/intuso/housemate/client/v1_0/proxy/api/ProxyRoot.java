@@ -12,7 +12,7 @@ import com.intuso.housemate.object.v1_0.api.*;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 import com.intuso.utilities.object.BaseObject;
 import com.intuso.utilities.object.ObjectListener;
 import com.intuso.utilities.properties.api.PropertyRepository;
@@ -49,11 +49,11 @@ public abstract class ProxyRoot<
     });
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param router The router to connect through
      */
-    public ProxyRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, Router<?> router) {
-        super(log, listenersFactory, new RootData());
+    public ProxyRoot(Logger logger, ListenersFactory listenersFactory, PropertyRepository properties, Router<?> router) {
+        super(logger, listenersFactory, new RootData());
         accessManager = new AccessManager(listenersFactory, properties, ApplicationRegistration.ClientType.Proxy, this);
         init(null);
         routerRegistration = router.registerReceiver(new Router.Receiver() {
@@ -102,9 +102,9 @@ public abstract class ProxyRoot<
         // if we're not allowed to send messages, and it's not a registration message, then throw an exception
         if(getApplicationInstanceStatus() != ApplicationInstance.Status.Allowed
                 && !(message.getPath().length == 1 &&
-                (message.getType().equals(ApplicationRegistration.APPLICATION_REGISTRATION_TYPE)
-                        || message.getType().equals(ApplicationRegistration.APPLICATION_UNREGISTRATION_TYPE)
-                        || message.getType().equals(Message.RECEIVED_TYPE))))
+                (message.getType().equals(Message.RECEIVED_TYPE)
+                        || message.getType().equals(ApplicationRegistration.APPLICATION_REGISTRATION_TYPE)
+                        || message.getType().equals(ApplicationRegistration.APPLICATION_UNREGISTRATION_TYPE))))
             throw new HousemateCommsException("Client application instance is not allowed access to the server");
         routerRegistration.sendMessage(message);
     }

@@ -4,7 +4,7 @@ import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
 import com.intuso.housemate.comms.v1_0.api.payload.RegexTypeData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Type for text input restricted to text that matches a regex
@@ -12,7 +12,7 @@ import com.intuso.utilities.log.Log;
 public abstract class RealRegexType<O> extends RealTypeImpl<RegexTypeData, NoChildrenData, O> {
 
     /**
-     * @param log the log
+     * @param logger the log
      * @param listenersFactory
      * @param id the type's id
      * @param name the type's name
@@ -21,8 +21,8 @@ public abstract class RealRegexType<O> extends RealTypeImpl<RegexTypeData, NoChi
      * @param maxValues the maximum number of values the type can have
      * @param regexPattern the regex pattern that values must match
      */
-    protected RealRegexType(Log log, ListenersFactory listenersFactory, String id, String name, String description, int minValues,
+    protected RealRegexType(Logger logger, ListenersFactory listenersFactory, String id, String name, String description, int minValues,
                             int maxValues, String regexPattern) {
-        super(log, listenersFactory, new RegexTypeData(id, name, description, minValues, maxValues, regexPattern));
+        super(logger, listenersFactory, new RegexTypeData(id, name, description, minValues, maxValues, regexPattern));
     }
 }

@@ -7,7 +7,7 @@ import com.intuso.housemate.client.v1_0.proxy.api.ProxyValue;
 import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
 import com.intuso.housemate.comms.v1_0.api.payload.ValueData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
 * Created with IntelliJ IDEA.
@@ -19,10 +19,10 @@ import com.intuso.utilities.log.Log;
 public final class SimpleProxyValue extends ProxyValue<SimpleProxyType, SimpleProxyValue> {
 
     @Inject
-    public SimpleProxyValue(Log log,
+    public SimpleProxyValue(Logger logger,
                             ListenersFactory listenersFactory,
                             @Assisted ValueData data) {
-        super(log, listenersFactory, data);
+        super(logger, listenersFactory, data);
     }
 
     @Override

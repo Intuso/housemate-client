@@ -23,9 +23,9 @@ import com.intuso.housemate.comms.v1_0.api.payload.RootData;
 import com.intuso.housemate.object.v1_0.api.Application;
 import com.intuso.housemate.object.v1_0.api.ApplicationInstance;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
 import com.intuso.utilities.properties.api.PropertyRepository;
 import org.junit.Ignore;
+import org.slf4j.Logger;
 
 /**
  */
@@ -33,7 +33,7 @@ import org.junit.Ignore;
 public class TestRealRoot extends RealRootImpl {
 
     @Inject
-    public TestRealRoot(Log log,
+    public TestRealRoot(Logger logger,
                         ListenersFactory listenersFactory,
                         PropertyRepository properties,
                         Router<?> router,
@@ -50,7 +50,7 @@ public class TestRealRoot extends RealRootImpl {
                         RealDevice.Factory deviceFactory,
                         RealHardware.Factory hardwareFactory,
                         RealUser.Factory userFactory) {
-        super(log, listenersFactory, properties, router, types,
+        super(logger, listenersFactory, properties, router, types,
                 addHardwareCommandFactory, addDeviceCommandFactory, addAutomationCommandFactory, addUserCommandFactory,
                 conditionFactoryType, deviceFactoryType, hardwareFactoryType, taskFactoryType, automationFactory,
                 deviceFactory, hardwareFactory, userFactory);
@@ -67,9 +67,9 @@ public class TestRealRoot extends RealRootImpl {
     }
 
     public void init() {
-        addType(new StringType(getLog(), getListenersFactory()));
-        addType(new IntegerType(getLog(), getListenersFactory()));
-        addType(new BooleanType(getLog(), getListenersFactory()));
+        addType(new StringType(getLogger(), getListenersFactory()));
+        addType(new IntegerType(getLogger(), getListenersFactory()));
+        addType(new BooleanType(getLogger(), getListenersFactory()));
     }
 
     public void addWrapper(RealObject<?, ?, ?, ?> wrapper) {

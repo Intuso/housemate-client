@@ -7,7 +7,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.SubTypeData;
 import com.intuso.housemate.comms.v1_0.api.payload.TypeData;
 import com.intuso.housemate.object.v1_0.api.SubType;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <O> the type of the sub type's value
@@ -19,16 +19,16 @@ public class RealSubTypeImpl<O>
     private final RealListImpl<TypeData<?>, RealTypeImpl<?, ?, ?>> types;
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param listenersFactory
      * @param id the sub type's id
      * @param name the sub type's name
      * @param description the sub type's description
      * @param types the types in the system
      */
-    public RealSubTypeImpl(Log log, ListenersFactory listenersFactory, String id, String name, String description, String typeId,
+    public RealSubTypeImpl(Logger logger, ListenersFactory listenersFactory, String id, String name, String description, String typeId,
                            RealListImpl<TypeData<?>, RealTypeImpl<?, ?, ?>> types) {
-        super(log, listenersFactory, new SubTypeData(id, name, description, typeId));
+        super(logger, listenersFactory, new SubTypeData(id, name, description, typeId));
         this.types = types;
     }
 

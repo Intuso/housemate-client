@@ -12,7 +12,7 @@ import com.intuso.housemate.object.v1_0.api.Server;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 import com.intuso.utilities.object.BaseObject;
 import com.intuso.utilities.object.ObjectListener;
 
@@ -52,8 +52,8 @@ public abstract class ProxyServer<
 
     private final Map<String, Listeners<ObjectLifecycleListener>> objectLifecycleListeners = Maps.newHashMap();
 
-    public ProxyServer(Log log, ListenersFactory listenersFactory, ServerData data) {
-        super(log, listenersFactory, data);
+    public ProxyServer(Logger logger, ListenersFactory listenersFactory, ServerData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

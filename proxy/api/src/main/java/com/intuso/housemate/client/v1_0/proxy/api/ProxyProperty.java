@@ -7,7 +7,7 @@ import com.intuso.housemate.object.v1_0.api.Property;
 import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
 import com.intuso.housemate.object.v1_0.api.TypeInstances;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <TYPE> the type of the type
@@ -22,11 +22,11 @@ public abstract class ProxyProperty<
         implements Property<TypeInstances, SET_COMMAND, PROPERTY> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyProperty(Log log, ListenersFactory listenersFactory, PropertyData data) {
-        super(log, listenersFactory, data);
+    public ProxyProperty(Logger logger, ListenersFactory listenersFactory, PropertyData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.api;
 import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
 import com.intuso.housemate.comms.v1_0.api.payload.SimpleTypeData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <TYPE> the type of the type
@@ -13,11 +13,11 @@ public abstract class ProxySimpleType<
         extends ProxyType<SimpleTypeData, NoChildrenData, NoChildrenProxyObject, TYPE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxySimpleType(Log log, ListenersFactory listenersFactory, SimpleTypeData data) {
-        super(log, listenersFactory, data);
+    public ProxySimpleType(Logger logger, ListenersFactory listenersFactory, SimpleTypeData data) {
+        super(logger, listenersFactory, data);
     }
 
     /**

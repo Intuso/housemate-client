@@ -6,7 +6,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ValueData;
 import com.intuso.housemate.object.v1_0.api.Feature;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Base interface for all proxy features
@@ -20,11 +20,11 @@ public abstract class ProxyFeature<
         implements Feature<COMMANDS, VALUES, FEATURE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyFeature(Log log, ListenersFactory listenersFactory, FeatureData data) {
-        super(log, listenersFactory, data);
+    public ProxyFeature(Logger logger, ListenersFactory listenersFactory, FeatureData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

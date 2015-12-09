@@ -14,10 +14,10 @@ import com.intuso.housemate.object.v1_0.api.Property;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import com.intuso.housemate.object.v1_0.api.TypeInstances;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,12 +31,12 @@ public class PropertyTest {
 
     private SimpleProxyList<PropertyData, SimpleProxyProperty> proxyList
             = new SimpleProxyList<>(
-            TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+            LoggerFactory.getLogger(PropertyTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<PropertyData>(PROPERTIES, PROPERTIES, PROPERTIES));
     private RealListImpl<PropertyData, RealPropertyImpl<?>> realList = new RealListImpl<>(
-            TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+            LoggerFactory.getLogger(PropertyTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             PROPERTIES, PROPERTIES, PROPERTIES, new ArrayList<RealPropertyImpl<?>>());
     private RealPropertyImpl<Integer> realProperty;
@@ -49,7 +49,8 @@ public class PropertyTest {
     public void addLists() {
         TestEnvironment.TEST_INSTANCE.getProxyRoot().addChild(proxyList);
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
-        realProperty = IntegerType.createProperty(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+        realProperty = IntegerType.createProperty(
+                LoggerFactory.getLogger(PropertyTest.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 "my-property", "My Property", "description", Arrays.asList(1234));
         realList.add(realProperty);

@@ -10,9 +10,9 @@ import com.intuso.housemate.comms.v1_0.api.payload.*;
 import com.intuso.housemate.object.v1_0.api.Application;
 import com.intuso.housemate.object.v1_0.api.ApplicationInstance;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
 import com.intuso.utilities.properties.api.PropertyRepository;
 import org.junit.Ignore;
+import org.slf4j.Logger;
 
 /**
  */
@@ -24,8 +24,8 @@ public class TestProxyRoot extends ProxyRoot<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public TestProxyRoot(Log log, ListenersFactory listenersFactory, PropertyRepository properties, ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory, @Proxy Router<?> router) {
-        super(log, listenersFactory, properties, router);
+    public TestProxyRoot(Logger logger, ListenersFactory listenersFactory, PropertyRepository properties, ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory, @Proxy Router<?> router) {
+        super(logger, listenersFactory, properties, router);
         try {
             distributeMessage(new Message<Message.Payload>(new String[] {""}, RootData.APPLICATION_STATUS_TYPE, new ApplicationData.StatusPayload(Application.Status.AllowInstances)));
             distributeMessage(new Message<Message.Payload>(new String[] {""}, RootData.APPLICATION_INSTANCE_STATUS_TYPE, new ApplicationInstanceData.StatusPayload(ApplicationInstance.Status.Allowed)));

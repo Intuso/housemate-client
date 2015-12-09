@@ -7,7 +7,7 @@ import com.intuso.housemate.comms.v1_0.api.Router;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ServerData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 import com.intuso.utilities.properties.api.PropertyRepository;
 
 /**
@@ -24,12 +24,12 @@ public final class SimpleProxyRoot extends ProxyRoot<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyRoot(Log log,
+    public SimpleProxyRoot(Logger logger,
                            ListenersFactory listenersFactory,
                            PropertyRepository properties,
                            ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
                            Router<?> router) {
-        super(log, listenersFactory, properties, router);
+        super(logger, listenersFactory, properties, router);
         this.objectFactory = objectFactory;
     }
 

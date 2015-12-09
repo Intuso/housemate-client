@@ -8,7 +8,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.ConditionData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.PropertyData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
 * Created with IntelliJ IDEA.
@@ -28,11 +28,11 @@ public final class SimpleProxyCondition extends ProxyCondition<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyCondition(Log log,
+    public SimpleProxyCondition(Logger logger,
                                 ListenersFactory listenersFactory,
                                 ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
                                 @Assisted ConditionData data) {
-        super(log, listenersFactory, data);
+        super(logger, listenersFactory, data);
         this.objectFactory = objectFactory;
     }
 

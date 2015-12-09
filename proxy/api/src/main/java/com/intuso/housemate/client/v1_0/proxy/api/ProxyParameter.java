@@ -4,7 +4,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
 import com.intuso.housemate.comms.v1_0.api.payload.ParameterData;
 import com.intuso.housemate.object.v1_0.api.Parameter;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <PARAMETER> the type of the parameter
@@ -15,11 +15,11 @@ public abstract class ProxyParameter<
         implements Parameter<PARAMETER> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyParameter(Log log, ListenersFactory listenersFactory, ParameterData data) {
-        super(log, listenersFactory, data);
+    public ProxyParameter(Logger logger, ListenersFactory listenersFactory, ParameterData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

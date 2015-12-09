@@ -4,7 +4,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
 import com.intuso.housemate.comms.v1_0.api.payload.RegexTypeData;
 import com.intuso.housemate.object.v1_0.api.RegexMatcher;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <TYPE> the type of the type
@@ -16,12 +16,12 @@ public abstract class ProxyRegexType<
     private final RegexMatcher regexMatcher;
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      * @param regexMatcher
      */
-    public ProxyRegexType(Log log, ListenersFactory listenersFactory, RegexTypeData data, RegexMatcher regexMatcher) {
-        super(log, listenersFactory, data);
+    public ProxyRegexType(Logger logger, ListenersFactory listenersFactory, RegexTypeData data, RegexMatcher regexMatcher) {
+        super(logger, listenersFactory, data);
         this.regexMatcher = regexMatcher;
     }
 

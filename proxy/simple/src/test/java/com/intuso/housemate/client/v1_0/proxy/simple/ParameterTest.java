@@ -10,10 +10,10 @@ import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ListData;
 import com.intuso.housemate.comms.v1_0.api.payload.ParameterData;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -25,12 +25,12 @@ public class ParameterTest {
 
     private SimpleProxyList<ParameterData, SimpleProxyParameter> proxyList
             = new SimpleProxyList<>(
-            TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+            LoggerFactory.getLogger(ParameterTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
             new ListData<ParameterData>(PARAMETER, PARAMETER, PARAMETER));
     private RealListImpl<ParameterData, RealParameterImpl<?>> realList = new RealListImpl<>(
-            TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+            LoggerFactory.getLogger(ParameterTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             PARAMETER, PARAMETER, PARAMETER, new ArrayList<RealParameterImpl<?>>());
     private RealParameterImpl realParameter;
@@ -43,7 +43,8 @@ public class ParameterTest {
     public void addLists() {
         TestEnvironment.TEST_INSTANCE.getProxyRoot().addChild(proxyList);
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
-        realParameter = BooleanType.createParameter(TestEnvironment.TEST_INSTANCE.getInjector().getInstance(Log.class),
+        realParameter = BooleanType.createParameter(
+                LoggerFactory.getLogger(ParameterTest.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 "my-parameter", "My Parameter", "description");
         realList.add(realParameter);

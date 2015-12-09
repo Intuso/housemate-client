@@ -5,7 +5,7 @@ import com.intuso.housemate.client.v1_0.real.api.type.Time;
 import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * Type for a time
@@ -18,11 +18,11 @@ public class TimeType extends RealRegexType<Time> {
     public final static String REGEX = "([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
 
     /**
-     * @param log the log
+     * @param logger the log
      */
     @Inject
-    public TimeType(Log log, ListenersFactory listenersFactory) {
-        super(log, listenersFactory, ID, NAME, DESCRIPTION, 1, 1, REGEX);
+    public TimeType(Logger logger, ListenersFactory listenersFactory) {
+        super(logger, listenersFactory, ID, NAME, DESCRIPTION, 1, 1, REGEX);
     }
 
     @Override

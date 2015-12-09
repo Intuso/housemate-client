@@ -26,7 +26,7 @@ import com.intuso.housemate.object.v1_0.api.ObjectLifecycleListener;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 import com.intuso.utilities.object.BaseObject;
 import com.intuso.utilities.properties.api.PropertyRepository;
 
@@ -85,7 +85,7 @@ public class RealRootImpl
     });
 
     @Inject
-    public RealRootImpl(Log log,
+    public RealRootImpl(Logger logger,
                         ListenersFactory listenersFactory,
                         PropertyRepository properties,
                         Router<?> router,
@@ -102,14 +102,14 @@ public class RealRootImpl
                         RealDevice.Factory deviceFactory,
                         RealHardware.Factory hardwareFactory,
                         RealUser.Factory userFactory) {
-        super(log, listenersFactory, new RootData());
+        super(logger, listenersFactory, new RootData());
 
-        this.applications = (RealList)new RealListImpl<>(log, listenersFactory, APPLICATIONS_ID, "Applications", "Applications");
-        this.automations = (RealList)new RealListImpl<>(log, listenersFactory, AUTOMATIONS_ID, "Automations", "Automations");
-        this.devices = (RealList)new RealListImpl<>(log, listenersFactory, DEVICES_ID, "Devices", "Devices");
-        this.hardwares = (RealList)new RealListImpl<>(log, listenersFactory, HARDWARES_ID, "Hardware", "Hardware");
+        this.applications = (RealList)new RealListImpl<>(logger, listenersFactory, APPLICATIONS_ID, "Applications", "Applications");
+        this.automations = (RealList)new RealListImpl<>(logger, listenersFactory, AUTOMATIONS_ID, "Automations", "Automations");
+        this.devices = (RealList)new RealListImpl<>(logger, listenersFactory, DEVICES_ID, "Devices", "Devices");
+        this.hardwares = (RealList)new RealListImpl<>(logger, listenersFactory, HARDWARES_ID, "Hardware", "Hardware");
         this.types = types;
-        this.users = (RealList)new RealListImpl<>(log, listenersFactory, USERS_ID, "Users", "Users");
+        this.users = (RealList)new RealListImpl<>(logger, listenersFactory, USERS_ID, "Users", "Users");
 
         this.automationFactory = automationFactory;
         this.deviceFactory = deviceFactory;
@@ -193,7 +193,8 @@ public class RealRootImpl
     protected boolean checkCanSendMessage(Message<?> message) {
         if(getApplicationInstanceStatus() != ApplicationInstance.Status.Allowed
                 && !(message.getPath().length == 1 &&
-                (message.getType().equals(ApplicationRegistration.APPLICATION_REGISTRATION_TYPE)
+                (message.getType().equals(Message.RECEIVED_TYPE)
+                        || message.getType().equals(ApplicationRegistration.APPLICATION_REGISTRATION_TYPE)
                         || message.getType().equals(ApplicationRegistration.APPLICATION_UNREGISTRATION_TYPE))))
             throw new HousemateCommsException("Client application instance is not allowed access to the server");
         return true;

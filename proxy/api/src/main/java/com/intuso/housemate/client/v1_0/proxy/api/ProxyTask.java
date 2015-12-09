@@ -7,7 +7,7 @@ import com.intuso.housemate.object.v1_0.api.Task;
 import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <VALUE> the type of the value
@@ -27,11 +27,11 @@ public abstract class ProxyTask<
         ProxyUsesDriver<PROPERTY, VALUE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyTask(Log log, ListenersFactory listenersFactory, TaskData data) {
-        super(log, listenersFactory, data);
+    public ProxyTask(Logger logger, ListenersFactory listenersFactory, TaskData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

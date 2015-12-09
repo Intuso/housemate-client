@@ -7,7 +7,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.ListData;
 import com.intuso.housemate.object.v1_0.api.List;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 import com.intuso.utilities.object.ObjectListener;
 
 import java.util.Iterator;
@@ -25,11 +25,11 @@ public abstract class ProxyList<
         implements List<CHILD>, ObjectListener<CHILD> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyList(Log log, ListenersFactory listenersFactory, ListData data) {
-        super(log, listenersFactory, data);
+    public ProxyList(Logger logger, ListenersFactory listenersFactory, ListData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

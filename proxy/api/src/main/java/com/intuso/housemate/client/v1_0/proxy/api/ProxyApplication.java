@@ -5,7 +5,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.ApplicationInstanceData;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.object.v1_0.api.Application;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <COMMAND> the type of the command
@@ -21,12 +21,12 @@ public abstract class ProxyApplication<
         implements Application<VALUE, COMMAND, APPLICATION_INSTANCE, APPLICATION_INSTANCES, APPLICATION> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param listenersFactory
      * @param data {@inheritDoc}
      */
-    public ProxyApplication(Log log, ListenersFactory listenersFactory, ApplicationData data) {
-        super(log, listenersFactory, data);
+    public ProxyApplication(Logger logger, ListenersFactory listenersFactory, ApplicationData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

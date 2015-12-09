@@ -5,7 +5,7 @@ import com.intuso.housemate.comms.v1_0.api.payload.ListData;
 import com.intuso.housemate.comms.v1_0.api.payload.OptionData;
 import com.intuso.housemate.object.v1_0.api.Option;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <OPTION> the type of the options
@@ -22,11 +22,11 @@ public abstract class ProxyChoiceType<
     private static final String OPTIONS_ID = "options";
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyChoiceType(Log log, ListenersFactory listenersFactory, ChoiceTypeData data) {
-        super(log, listenersFactory, data);
+    public ProxyChoiceType(Logger logger, ListenersFactory listenersFactory, ChoiceTypeData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

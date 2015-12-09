@@ -1,10 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
+import com.google.inject.*;
 import com.intuso.housemate.client.v1_0.proxy.api.LoadManager;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRoot;
 import com.intuso.housemate.comms.v1_0.api.RemoteObject;
@@ -15,7 +12,7 @@ import com.intuso.housemate.comms.v1_0.api.access.ConnectionStatus;
 import com.intuso.housemate.object.v1_0.api.Application;
 import com.intuso.housemate.object.v1_0.api.ApplicationInstance;
 import com.intuso.utilities.listener.ListenerRegistration;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ import java.util.List;
  */
 public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
-    private final Log log;
+    private final Logger logger;
     private final ROOT proxyRoot;
     private final Router<?> router;
 
@@ -42,28 +39,11 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     private ListenerRegistration proxyListenerRegistration;
     private ListenerRegistration routerListenerRegistration;
 
-    private ProxyClientHelper(Log log, ROOT proxyRoot, Router<?> router) {
-        this.log = log;
+    @Inject
+    public ProxyClientHelper(Logger logger, ROOT proxyRoot, Router<?> router) {
+        this.logger = logger;
         this.proxyRoot = proxyRoot;
         this.router = router;
-    }
-
-    public static <ROOT extends ProxyRoot<?, ?, ?>> ProxyClientHelper<ROOT>
-                newClientHelper(Log log, ROOT proxyRoot, Router<?> router) {
-        return new ProxyClientHelper<>(log, proxyRoot, router);
-    }
-
-    public static ProxyClientHelper<SimpleProxyRoot>
-                newClientHelper(Injector injector) {
-        return new ProxyClientHelper<>(
-                injector.getInstance(Log.class),
-                injector.getInstance(SimpleProxyRoot.class),
-                injector.getInstance(new Key<Router<?>>() {}));
-    }
-
-    public static ProxyClientHelper<SimpleProxyRoot>
-                newClientHelper(Module... modules) {
-        return ProxyClientHelper.newClientHelper(Guice.createInjector(modules));
     }
 
     public ROOT getRoot() {
@@ -135,7 +115,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
         @Override
         public void serverConnectionStatusChanged(Router root, ConnectionStatus connectionStatus) {
-            log.d("Router serverConnectionStatus = " + connectionStatus);
+            logger.debug("Router serverConnectionStatus = " + connectionStatus);
             if(connectionStatus == ConnectionStatus.DisconnectedPermanently) {
                 router.connect();
                 proxyRoot.register(applicationDetails, component);
@@ -153,12 +133,12 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
         @Override
         public void applicationStatusChanged(ProxyRoot<?, ?, ?> root, Application.Status applicationStatus) {
-            log.d("Root applicationStatus = " + applicationStatus);
+            logger.debug("Root applicationStatus = " + applicationStatus);
         }
 
         @Override
         public void applicationInstanceStatusChanged(ProxyRoot<?, ?, ?> root, ApplicationInstance.Status applicationInstanceStatus) {
-            log.d("Root applicationInstanceStatus = " + applicationInstanceStatus);
+            logger.debug("Root applicationInstanceStatus = " + applicationInstanceStatus);
             if(applicationInstanceStatus == ApplicationInstance.Status.Allowed) {
                 if(shouldClearRoot) {
                     proxyRoot.clearLoadedObjects();

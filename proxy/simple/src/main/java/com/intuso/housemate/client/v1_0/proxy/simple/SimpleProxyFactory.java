@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.comms.v1_0.api.payload.*;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
 * Created with IntelliJ IDEA.
@@ -15,7 +15,7 @@ import com.intuso.utilities.log.Log;
 */
 public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> {
 
-    private final Log log;
+    private final Logger logger;
     private final Provider<ProxyObject.Factory<ApplicationData, SimpleProxyApplication>> applicationFactory;
     private final Provider<ProxyObject.Factory<ApplicationInstanceData, SimpleProxyApplicationInstance>> applicationInstanceFactory;
     private final Provider<ProxyObject.Factory<AutomationData, SimpleProxyAutomation>> automationFactory;
@@ -36,7 +36,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
     private final Provider<ProxyObject.Factory<ValueData, SimpleProxyValue>> valueFactory;
 
     @Inject
-    public SimpleProxyFactory(Log log,
+    public SimpleProxyFactory(Logger logger,
                               Provider<ProxyObject.Factory<ApplicationData, SimpleProxyApplication>> applicationFactory,
                               Provider<ProxyObject.Factory<ApplicationInstanceData, SimpleProxyApplicationInstance>> applicationInstanceFactory,
                               Provider<ProxyObject.Factory<AutomationData, SimpleProxyAutomation>> automationFactory,
@@ -55,7 +55,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
                               Provider<ProxyObject.Factory<TypeData<HousemateData<?>>, SimpleProxyType>> typeFactory,
                               Provider<ProxyObject.Factory<UserData, SimpleProxyUser>> userFactory,
                               Provider<ProxyObject.Factory<ValueData, SimpleProxyValue>> valueFactory) {
-        this.log = log;
+        this.logger = logger;
         this.applicationFactory = applicationFactory;
         this.applicationInstanceFactory = applicationInstanceFactory;
         this.automationFactory = automationFactory;
@@ -114,7 +114,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
             return typeFactory.get().create((TypeData) data);
         else if(data instanceof ValueData)
             return valueFactory.get().create((ValueData) data);
-        log.e("Don't know how to create an object from " + data.getClass().getName());
+        logger.error("Don't know how to create an object from " + data.getClass().getName());
         return null;
     }
 }

@@ -7,7 +7,7 @@ import com.intuso.housemate.object.v1_0.api.Condition;
 import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  * @param <VALUE> the type of the value
@@ -30,11 +30,11 @@ public abstract class ProxyCondition<
             ProxyUsesDriver<PROPERTY, VALUE> {
 
     /**
-     * @param log {@inheritDoc}
+     * @param logger {@inheritDoc}
      * @param data {@inheritDoc}
      */
-    public ProxyCondition(Log log, ListenersFactory listenersFactory, ConditionData data) {
-        super(log, listenersFactory, data);
+    public ProxyCondition(Logger logger, ListenersFactory listenersFactory, ConditionData data) {
+        super(logger, listenersFactory, data);
     }
 
     @Override

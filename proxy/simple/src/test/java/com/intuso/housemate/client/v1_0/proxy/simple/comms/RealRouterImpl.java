@@ -5,7 +5,7 @@ import com.intuso.housemate.client.v1_0.proxy.simple.TestProxyRoot;
 import com.intuso.housemate.comms.v1_0.api.BaseRouter;
 import com.intuso.housemate.comms.v1_0.api.Message;
 import com.intuso.utilities.listener.ListenersFactory;
-import com.intuso.utilities.log.Log;
+import org.slf4j.Logger;
 
 /**
  */
@@ -14,8 +14,8 @@ public class RealRouterImpl extends BaseRouter<RealRouterImpl> {
     private TestProxyRoot proxyRoot;
 
     @Inject
-    public RealRouterImpl(Log log, ListenersFactory listenersFactory) {
-        super(log, listenersFactory);
+    public RealRouterImpl(Logger logger, ListenersFactory listenersFactory) {
+        super(logger, listenersFactory);
         connectionEstablished();
     }
 
@@ -46,7 +46,7 @@ public class RealRouterImpl extends BaseRouter<RealRouterImpl> {
         try {
             sendMessageNow(message);
         } catch(Throwable t) {
-            getLog().e("Could not send message to proxy root", t);
+            getLogger().error("Could not send message to proxy root", t);
         }
     }
 }
