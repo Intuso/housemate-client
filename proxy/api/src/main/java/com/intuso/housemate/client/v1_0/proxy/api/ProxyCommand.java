@@ -37,7 +37,7 @@ public abstract class ProxyCommand<
      * @param data {@inheritDoc}
      */
     protected ProxyCommand(Logger logger, ListenersFactory listenersFactory, CommandData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

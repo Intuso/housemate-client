@@ -18,7 +18,7 @@ public abstract class ProxySubType<SUB_TYPE extends ProxySubType<SUB_TYPE>>
      * @param data {@inheritDoc}
      */
     public ProxySubType(Logger logger, ListenersFactory listenersFactory, SubTypeData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

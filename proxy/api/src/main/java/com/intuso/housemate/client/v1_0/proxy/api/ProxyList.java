@@ -7,8 +7,8 @@ import com.intuso.housemate.comms.v1_0.api.payload.ListData;
 import com.intuso.housemate.object.v1_0.api.List;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.slf4j.Logger;
 import com.intuso.utilities.object.ObjectListener;
+import org.slf4j.Logger;
 
 import java.util.Iterator;
 
@@ -29,7 +29,7 @@ public abstract class ProxyList<
      * @param data {@inheritDoc}
      */
     public ProxyList(Logger logger, ListenersFactory listenersFactory, ListData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class ProxyList<
         result.add(addMessageListener(ADD_TYPE, new Message.Receiver<CHILD_DATA>() {
             @Override
             public void messageReceived(Message<CHILD_DATA> message) {
-                CHILD child = createChildInstance(message.getPayload());
+                CHILD child = createChild(message.getPayload());
                 if(child != null) {
                     child.init(ProxyList.this);
                     addChild(child);

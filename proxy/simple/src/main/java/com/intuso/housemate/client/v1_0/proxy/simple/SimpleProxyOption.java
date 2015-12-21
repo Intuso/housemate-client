@@ -2,6 +2,7 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyOption;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
@@ -26,16 +27,16 @@ public final class SimpleProxyOption extends ProxyOption<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyOption(Logger logger,
-                             ListenersFactory listenersFactory,
+    public SimpleProxyOption(ListenersFactory listenersFactory,
                              ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
+                             @Assisted Logger logger,
                              @Assisted OptionData data) {
         super(logger, listenersFactory, data);
         this.objectFactory = objectFactory;
     }
 
     @Override
-    protected SimpleProxyList<SubTypeData, SimpleProxySubType> createChildInstance(ListData<SubTypeData> data) {
-        return (SimpleProxyList<SubTypeData, SimpleProxySubType>) objectFactory.create(data);
+    protected SimpleProxyList<SubTypeData, SimpleProxySubType> createChild(ListData<SubTypeData> data) {
+        return (SimpleProxyList<SubTypeData, SimpleProxySubType>) objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
     }
 }

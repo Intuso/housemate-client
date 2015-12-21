@@ -33,14 +33,14 @@ public class TestProxyRoot extends ProxyRoot<
             t.printStackTrace();
         }
         this.objectFactory = objectFactory;
-        super.addChild(objectFactory.create(new ListData(ServerData.TYPES_ID, ServerData.TYPES_ID, ServerData.TYPES_ID)));
-        super.addChild(objectFactory.create(new ListData(ServerData.DEVICES_ID, ServerData.DEVICES_ID, ServerData.DEVICES_ID)));
+        super.addChild(objectFactory.create(logger, new ListData(ServerData.TYPES_ID, ServerData.TYPES_ID, ServerData.TYPES_ID)));
+        super.addChild(objectFactory.create(logger, new ListData(ServerData.DEVICES_ID, ServerData.DEVICES_ID, ServerData.DEVICES_ID)));
         init(null);
     }
 
     @Override
-    protected ProxyObject<?, ?, ?, ?, ?> createChildInstance(HousemateData<?> data) {
-        return objectFactory.create(data);
+    protected ProxyObject<?, ?, ?, ?, ?> createChild(HousemateData<?> data) {
+        return objectFactory.create(getLogger(), data);
     }
 
     public void addChild(ProxyObject<?, ?, ?, ?, ?> child) {

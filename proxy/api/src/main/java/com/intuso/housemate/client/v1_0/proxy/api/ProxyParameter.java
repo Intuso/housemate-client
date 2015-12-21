@@ -19,7 +19,7 @@ public abstract class ProxyParameter<
      * @param data {@inheritDoc}
      */
     public ProxyParameter(Logger logger, ListenersFactory listenersFactory, ParameterData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

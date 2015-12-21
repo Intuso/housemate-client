@@ -12,10 +12,10 @@ import com.intuso.housemate.object.v1_0.api.*;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.slf4j.Logger;
 import com.intuso.utilities.object.BaseObject;
 import com.intuso.utilities.object.ObjectListener;
 import com.intuso.utilities.properties.api.PropertyRepository;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,7 @@ public abstract class ProxyRoot<
      * @param router The router to connect through
      */
     public ProxyRoot(Logger logger, ListenersFactory listenersFactory, PropertyRepository properties, Router<?> router) {
-        super(logger, listenersFactory, new RootData());
+        super(listenersFactory, logger, new RootData());
         accessManager = new AccessManager(listenersFactory, properties, ApplicationRegistration.ClientType.Proxy, this);
         init(null);
         routerRegistration = router.registerReceiver(new Router.Receiver() {

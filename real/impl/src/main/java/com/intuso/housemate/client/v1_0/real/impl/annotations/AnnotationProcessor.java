@@ -4,9 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.real.api.*;
-import com.intuso.housemate.client.v1_0.real.api.annotations.*;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Property;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Values;
+import com.intuso.housemate.client.v1_0.real.impl.LoggerUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
+import com.intuso.housemate.comms.v1_0.api.payload.FeatureData;
 import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import org.slf4j.Logger;
 
@@ -20,84 +23,79 @@ import java.util.Map;
  */
 public class AnnotationProcessor {
 
-    private final Logger logger;
     private final RealList<RealType<?>> types;
     private final MethodCommand.Factory commandFactory;
     private final RealParameter.Factory parameterFactory;
     private final FieldProperty.Factory fieldPropertyFactory;
     private final MethodProperty.Factory methodPropertyFactory;
     private final RealValue.Factory valueFactory;
+    private final RealFeature.Factory featureFactory;
 
     @Inject
-    public AnnotationProcessor(Logger logger, RealList<RealType<?>> types, MethodCommand.Factory commandFactory, RealParameter.Factory parameterFactory, FieldProperty.Factory fieldPropertyFactory, MethodProperty.Factory methodPropertyFactory, RealValue.Factory valueFactory) {
-        this.logger = logger;
-        this.types = types;
+    public AnnotationProcessor(RealRoot root, MethodCommand.Factory commandFactory, RealParameter.Factory parameterFactory, FieldProperty.Factory fieldPropertyFactory, MethodProperty.Factory methodPropertyFactory, RealValue.Factory valueFactory, RealFeature.Factory featureFactory) {
+        this.types = root.getTypes();
         this.commandFactory = commandFactory;
         this.parameterFactory = parameterFactory;
         this.fieldPropertyFactory = fieldPropertyFactory;
         this.methodPropertyFactory = methodPropertyFactory;
         this.valueFactory = valueFactory;
+        this.featureFactory = featureFactory;
     }
 
-    public Iterable<RealCommand> findCommands(Object driver) {
+    public Iterable<RealCommand> findCommands(Logger logger, Object object) {
+        return findCommands(logger, object, object.getClass());
+    }
+
+    public Iterable<RealCommand> findCommands(Logger logger, Object object, Class<?> clazz) {
+        return findV1_0Commands(logger, object, clazz);
+    }
+
+    private Iterable<RealCommand> findV1_0Commands(Logger logger, Object object, Class<?> clazz) {
         List<RealCommand> commands = Lists.newArrayList();
-        for(Map.Entry<Method, Command> commandMethod : getAnnotatedMethods(driver.getClass(), Command.class).entrySet()) {
-            TypeInfo typeInfo = commandMethod.getKey().getAnnotation(TypeInfo.class);
-            commands.add(commandFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
-                    parseParameters(commandMethod.getKey()), commandMethod.getKey(), driver));
+        for(Map.Entry<Method, com.intuso.housemate.client.v1_0.real.api.annotations.Command> commandMethod : getAnnotatedMethods(clazz, com.intuso.housemate.client.v1_0.real.api.annotations.Command.class).entrySet()) {
+            com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo typeInfo = commandMethod.getKey().getAnnotation(com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class);
+            if(typeInfo == null)
+                throw new HousemateCommsException("No " + com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class.getName() + " on command method " + commandMethod.getKey().getName() + " of class " + clazz);
+            commands.add(commandFactory.create(LoggerUtil.child(logger, typeInfo.id()),
+                    typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    parseV1_0Parameters(logger, clazz, commandMethod.getKey()), commandMethod.getKey(), object));
         }
         return commands;
     }
 
-    private List<RealParameter<?>> parseParameters(Method method) {
+    private List<RealParameter<?>> parseV1_0Parameters(Logger logger, Class<?> clazz, Method method) {
         List<RealParameter<?>> result = Lists.newArrayList();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
         for(int a = 0; a < parameterAnnotations.length; a++) {
-            Parameter parameterAnnotation = getAnnotation(parameterAnnotations[a], Parameter.class);
-            TypeInfo typeInfo = getAnnotation(parameterAnnotations[a], TypeInfo.class);
+            com.intuso.housemate.client.v1_0.real.api.annotations.Parameter parameterAnnotation = getAnnotation(parameterAnnotations[a], com.intuso.housemate.client.v1_0.real.api.annotations.Parameter.class);
             if(parameterAnnotation == null)
                 throw new HousemateCommsException("Parameter " + a + " of command method " + method.getName()
-                        + " is not annotated with " + Parameter.class.getName());
+                        + " is not annotated with " + com.intuso.housemate.client.v1_0.real.api.annotations.Parameter.class.getName());
             if(types.get(parameterAnnotation.value()) == null)
                 throw new HousemateCommsException(parameterAnnotation.value() + " type does not exist");
-            result.add(parameterFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
+            com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo typeInfo = getAnnotation(parameterAnnotations[a], com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class);
+            if(typeInfo == null)
+                throw new HousemateCommsException("No " + com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class.getName() + " on parameter " + a + " of command method " + method.getName() + " of class " + clazz);
+            result.add(parameterFactory.create(LoggerUtil.child(logger, typeInfo.id()), typeInfo.id(), typeInfo.name(), typeInfo.description(),
                     types.get(parameterAnnotation.value())));
         }
         return result;
     }
 
-    public Iterable<RealValue<?>> findValues(Object driver) {
-        List<RealValue<?>> values = Lists.newArrayList();
-        for(Map.Entry<Field, Values> valuesField : getAnnotatedFields(driver.getClass(), Values.class).entrySet()) {
-            Map<Method, RealValue<?>> valuesFunctions = Maps.newHashMap();
-            InvocationHandler invocationHandler = new ValuesInvocationHandler(valuesFunctions);
-            Object instance = Proxy.newProxyInstance(valuesField.getKey().getType().getClassLoader(),
-                    new Class<?>[] {valuesField.getKey().getType()},
-                    invocationHandler);
-            try {
-                valuesField.getKey().set(driver, instance);
-            } catch(IllegalAccessException e) {
-                throw new HousemateCommsException("Failed to assign proxy instance to " + valuesField.getKey().getName());
-            }
-            for(Map.Entry<Method, Value> valueMethod : getAnnotatedMethods(valuesField.getKey().getType(), Value.class).entrySet()) {
-                if(types.get(valueMethod.getValue().value()) == null)
-                    throw new HousemateCommsException(valueMethod.getValue().value() + " type does not exist");
-                TypeInfo typeInfo = valueMethod.getKey().getAnnotation(TypeInfo.class);
-                RealValue<?> value = valueFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
-                        types.get(valueMethod.getValue().value()), null);
-                valuesFunctions.put(valueMethod.getKey(), value);
-                values.add(value);
-            }
-        }
-        return values;
+    public Iterable<RealProperty<?>> findProperties(Logger logger, Object object) {
+        return findProperties(logger, object, object.getClass());
     }
 
-    public Iterable<RealProperty<?>> findProperties(Object driver) {
+    public Iterable<RealProperty<?>> findProperties(Logger logger, Object object, Class<?> clazz) {
+        return findV1_0Properties(logger, object, clazz);
+    }
+
+    private Iterable<RealProperty<?>> findV1_0Properties(Logger logger, Object object, Class<?> clazz) {
         List<RealProperty<?>> properties = Lists.newArrayList();
-        for(Map.Entry<Field, Property> propertyField : getAnnotatedFields(driver.getClass(), Property.class).entrySet()) {
+        for(Map.Entry<Field, com.intuso.housemate.client.v1_0.real.api.annotations.Property> propertyField : getAnnotatedFields(clazz, com.intuso.housemate.client.v1_0.real.api.annotations.Property.class).entrySet()) {
             Object value = null;
             try {
-                value = propertyField.getKey().get(driver);
+                value = propertyField.getKey().get(object);
             } catch(IllegalAccessException e) {
                 logger.warn("Failed to get initial value of annotated property field " + propertyField.getKey().getName());
             }
@@ -106,58 +104,137 @@ public class AnnotationProcessor {
             RealTypeImpl<?, ?, Object> type = (RealTypeImpl<?, ?, Object>) types.get(propertyField.getValue().value());
             if(value == null && propertyField.getValue().initialValue().length() > 0)
                 value = type.deserialise(new TypeInstance(propertyField.getValue().initialValue()));
-            TypeInfo typeInfo = propertyField.getKey().getAnnotation(TypeInfo.class);
-            properties.add(fieldPropertyFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
-                    type, value, propertyField.getKey(), driver));
+            com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo typeInfo = propertyField.getKey().getAnnotation(com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class);
+            if(typeInfo == null)
+                throw new HousemateCommsException("No " + com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class.getName() + " on property field" + propertyField.getKey().getName() + " of class " + clazz);
+            properties.add(fieldPropertyFactory.create(LoggerUtil.child(logger, typeInfo.id()),
+                    typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    type, value, propertyField.getKey(), object));
         }
-        for(Map.Entry<Method, Property> propertyMethod : getAnnotatedMethods(driver.getClass(), Property.class).entrySet()) {
+        for(Map.Entry<Method, com.intuso.housemate.client.v1_0.real.api.annotations.Property> propertyMethod : getAnnotatedMethods(clazz, com.intuso.housemate.client.v1_0.real.api.annotations.Property.class).entrySet()) {
             if(propertyMethod.getKey().getParameterTypes().length != 1)
                 throw new HousemateCommsException(propertyMethod.getKey().getName() + " must take a single argument");
             if(types.get(propertyMethod.getValue().value()) == null)
                 throw new HousemateCommsException(propertyMethod.getValue().value() + " type does not exist");
             RealTypeImpl<?, ?, Object> type = (RealTypeImpl<?, ?, Object>) types.get(propertyMethod.getValue().value());
-            Object value = getInitialValue(driver, propertyMethod.getValue(), type, propertyMethod.getKey().getName());
-            TypeInfo typeInfo = propertyMethod.getKey().getAnnotation(TypeInfo.class);
-            properties.add(methodPropertyFactory.create(typeInfo.id(), typeInfo.name(), typeInfo.description(),
-                    type, value, propertyMethod.getKey(), driver));
+            Object value = getV1_0InitialValue(logger, object, clazz, propertyMethod.getValue(), type, propertyMethod.getKey().getName());
+            com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo typeInfo = propertyMethod.getKey().getAnnotation(com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class);
+            if(typeInfo == null)
+                throw new HousemateCommsException("No " + com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class.getName() + " on property field" + propertyMethod.getKey().getName() + " of class " + clazz);
+            properties.add(methodPropertyFactory.create(LoggerUtil.child(logger, typeInfo.id()),
+                    typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    type, value, propertyMethod.getKey(), object));
         }
         return properties;
     }
 
-    private Object getInitialValue(Object object, Property property, RealTypeImpl<?, ?, Object> type, String methodName) {
+    private Object getV1_0InitialValue(Logger logger, Object object, Class<?> clazz, com.intuso.housemate.client.v1_0.real.api.annotations.Property property, RealTypeImpl<?, ?, Object> type, String methodName) {
         if(property.initialValue().length() > 0)
             return type.deserialise(new TypeInstance(property.initialValue()));
         else if(methodName.startsWith("set")) {
             String fieldName = methodName.substring(3);
             String getterName = "get" + fieldName;
             try {
-                Method getter = object.getClass().getMethod(getterName);
+                Method getter = clazz.getMethod(getterName);
                 return getter.invoke(object);
             } catch(NoSuchMethodException e) { // do nothing
             } catch(InvocationTargetException|IllegalAccessException e) {
-                logger.error("Problem getting property initial value using getter " + getterName + " of " + object.getClass().getName());
+                logger.error("Problem getting property initial value using getter " + getterName + " of " + clazz.getName());
             }
             String isGetterName = "is" + fieldName;
             try {
-                Method isGetter = object.getClass().getMethod(isGetterName);
+                Method isGetter = clazz.getMethod(isGetterName);
                 return isGetter.invoke(object);
             } catch(NoSuchMethodException e) { // do nothing
             } catch(InvocationTargetException|IllegalAccessException e) {
-                logger.error("Problem getting property initial value using isGetter " + isGetterName + " of " + object.getClass().getName());
+                logger.error("Problem getting property initial value using isGetter " + isGetterName + " of " + clazz.getName());
             }
         }
-        logger.warn("No initial value or getter found for " + Property.class.getSimpleName() + " method " + methodName + " of " + object.getClass().getName());
+        logger.warn("No initial value or getter found for " + Property.class.getSimpleName() + " method " + methodName + " of " + clazz.getName());
         return null;
     }
 
-    public Iterable<RealFeature> findFeatures(Object driver) {
+    public Iterable<RealFeature> findFeatures(Logger logger, Object object) {
+        return findFeatures(logger, object, object.getClass());
+    }
+
+    private Iterable<RealFeature> findFeatures(Logger logger, Object object, Class<?> clazz) {
         List<RealFeature> features = Lists.newArrayList();
-        /*for(Class<?> interfaceClass : driverClass.getInterfaces())
-            if(RealFeature.class.isAssignableFrom(interfaceClass))
-                addFeatureId(device, interfaceClass);
-        if(RealDevice.class.isAssignableFrom(driverClass.getSuperclass()))
-            parseFeatures(device, driverClass.getSuperclass());*/
+        findFeatures(logger, object, clazz, features);
         return features;
+    }
+
+    private void findFeatures(Logger logger, Object object, Class<?> clazz, List<RealFeature> features) {
+        for(Annotation annotation : clazz.getDeclaredAnnotations()) {
+            if(com.intuso.housemate.client.v1_0.real.api.annotations.Feature.class.equals(annotation.annotationType())) {
+                features.add(processV1_0FeatureClass(logger, object, clazz));
+                return;
+            }
+        }
+        for(Class<?> interfaceClass : clazz.getInterfaces())
+            findFeatures(logger, object, interfaceClass, features);
+        if(clazz.getSuperclass() != null)
+            findFeatures(logger, object, clazz.getSuperclass(), features);
+    }
+
+    private RealFeature processV1_0FeatureClass(Logger logger, Object object, Class<?> clazz) {
+        com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo typeInfo = clazz.getAnnotation(com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class);
+        if(typeInfo == null)
+            throw new HousemateCommsException("No " + com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class.getName() + " on feature class " + clazz.getName());
+        RealFeature feature = featureFactory.create(LoggerUtil.child(logger, typeInfo.id()), new FeatureData(typeInfo.id(), typeInfo.name(), typeInfo.description()));
+        for(RealCommand command : findCommands(logger, object, clazz))
+            feature.getCommands().add(command);
+        for(RealValue<?> value : findValues(logger, object, clazz))
+            feature.getValues().add(value);
+        return feature;
+    }
+
+    private List<RealValue<?>> findValues(Logger logger, Object object, Class<?> clazz) {
+        for(Class<?> interfaceClass : clazz.getClasses()) {
+            if (interfaceClass.getAnnotation(Values.class) != null)
+                return findObjectValues(logger, object, object.getClass(), interfaceClass);
+            else if(interfaceClass.getAnnotation(com.intuso.housemate.client.v1_0.real.api.annotations.Values.class) != null)
+                return findObjectValues(logger, object, object.getClass(), interfaceClass);
+        }
+        return Lists.newArrayList();
+    }
+
+    private List<RealValue<?>> findObjectValues(Logger logger, Object object, Class<?> lookInClass, Class<?> valuesClass) {
+        for(Field field : lookInClass.getDeclaredFields()) {
+            if(valuesClass.isAssignableFrom(field.getType())) {
+                return getValuesImpl(logger, object, field, valuesClass);
+            }
+        }
+        if(lookInClass.getSuperclass() != null)
+            return findObjectValues(logger, object, lookInClass.getSuperclass(), valuesClass);
+        return Lists.newArrayList();
+    }
+
+    private List<RealValue<?>> getValuesImpl(Logger logger, Object object, Field field, Class<?> clazz) {
+        List<RealValue<?>> values = Lists.newArrayList();
+        Map<Method, RealValue<?>> valuesFunctions = Maps.newHashMap();
+        InvocationHandler invocationHandler = new ValuesInvocationHandler(valuesFunctions);
+        Object instance = Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, invocationHandler);
+        try {
+            field.setAccessible(true);
+            field.set(object, instance);
+        } catch(IllegalAccessException e) {
+            throw new HousemateCommsException("Failed to assign proxy instance to field " + field.getName() + " of class " + object.getClass().getName(), e);
+        }
+        findV1_0Values(logger, values, valuesFunctions, clazz);
+        return values;
+    }
+
+    private void findV1_0Values(Logger logger, List<RealValue<?>> values, Map<Method, RealValue<?>> valuesFunctions, Class<?> clazz) {
+        for(Map.Entry<Method, com.intuso.housemate.client.v1_0.real.api.annotations.Value> valueMethod : getAnnotatedMethods(clazz, com.intuso.housemate.client.v1_0.real.api.annotations.Value.class).entrySet()) {
+            if(types.get(valueMethod.getValue().value()) == null)
+                throw new HousemateCommsException(valueMethod.getValue().value() + " type does not exist");
+            com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo typeInfo = valueMethod.getKey().getAnnotation(com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo.class);
+            RealValue<?> value = valueFactory.create(LoggerUtil.child(logger, typeInfo.id()), typeInfo.id(), typeInfo.name(), typeInfo.description(),
+                    types.get(valueMethod.getValue().value()), null);
+            valuesFunctions.put(valueMethod.getKey(), value);
+            values.add(value);
+        }
     }
 
     private <A extends Annotation> Map<Method, A> getAnnotatedMethods(Class<?> objectClass, Class<A> annotationClass) {

@@ -25,9 +25,9 @@ public class ParameterTest {
 
     private SimpleProxyList<ParameterData, SimpleProxyParameter> proxyList
             = new SimpleProxyList<>(
-            LoggerFactory.getLogger(ParameterTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
+            LoggerFactory.getLogger(ParameterTest.class),
             new ListData<ParameterData>(PARAMETER, PARAMETER, PARAMETER));
     private RealListImpl<ParameterData, RealParameterImpl<?>> realList = new RealListImpl<>(
             LoggerFactory.getLogger(ParameterTest.class),

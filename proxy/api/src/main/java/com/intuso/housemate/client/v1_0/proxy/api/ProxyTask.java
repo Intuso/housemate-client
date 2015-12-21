@@ -31,7 +31,7 @@ public abstract class ProxyTask<
      * @param data {@inheritDoc}
      */
     public ProxyTask(Logger logger, ListenersFactory listenersFactory, TaskData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

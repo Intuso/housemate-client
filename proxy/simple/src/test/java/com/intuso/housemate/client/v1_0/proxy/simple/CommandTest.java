@@ -43,9 +43,9 @@ public class CommandTest {
 
     private SimpleProxyList<CommandData, SimpleProxyCommand> proxyList
             = new SimpleProxyList<>(
-            LoggerFactory.getLogger(CommandTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
+            LoggerFactory.getLogger(CommandTest.class),
             new ListData<CommandData>(COMMANDS, COMMANDS, COMMANDS));
     private RealListImpl<CommandData, RealCommandImpl> realList = new RealListImpl<>(
             LoggerFactory.getLogger(CommandTest.class),

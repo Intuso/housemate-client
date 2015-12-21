@@ -34,7 +34,7 @@ public abstract class ProxyValueBase<
      * @param data {@inheritDoc}
      */
     public ProxyValueBase(Logger logger, ListenersFactory listenersFactory, DATA data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

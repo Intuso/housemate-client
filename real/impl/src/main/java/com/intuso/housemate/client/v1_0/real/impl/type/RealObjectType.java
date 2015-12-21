@@ -14,6 +14,7 @@ import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import com.intuso.housemate.object.v1_0.api.TypeSerialiser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -26,18 +27,19 @@ public class RealObjectType<O extends BaseHousemateObject<?>>
     public final static String ID = "object";
     public final static String NAME = "Object";
 
+    private final static Logger logger = LoggerFactory.getLogger(RealObjectType.class);
+
     private final static Joiner JOINER = Joiner.on("/");
     private final static Splitter SPLITTER = Splitter.on("/");
 
     private final Serialiser<O> serialiser;
 
     /**
-     * @param logger the log
      * @param listenersFactory
      * @param root the root to get the object from
      */
     @Inject
-    public RealObjectType(Logger logger, ListenersFactory listenersFactory, Root<?, ?> root) {
+    public RealObjectType(ListenersFactory listenersFactory, Root<?, ?> root) {
         super(logger, listenersFactory, new ObjectTypeData(ID, NAME, "Path to an object", 1, 1));
         serialiser = new Serialiser<>(root);
     }

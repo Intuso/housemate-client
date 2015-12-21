@@ -2,6 +2,7 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyList;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
@@ -27,16 +28,16 @@ public final class SimpleProxyList<
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyList(Logger logger,
-                           ListenersFactory listenersFactory,
+    public SimpleProxyList(ListenersFactory listenersFactory,
                            ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
+                           @Assisted Logger logger,
                            @Assisted ListData<WBL> data) {
         super(logger, listenersFactory, data);
         this.objectFactory = objectFactory;
     }
 
     @Override
-    protected WR createChildInstance(WBL data) {
-        return (WR) objectFactory.create(data);
+    protected WR createChild(WBL data) {
+        return (WR) objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
     }
 }

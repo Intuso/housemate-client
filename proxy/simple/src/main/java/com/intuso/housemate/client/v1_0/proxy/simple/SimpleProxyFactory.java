@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 */
 public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> {
 
-    private final Logger logger;
     private final Provider<ProxyObject.Factory<ApplicationData, SimpleProxyApplication>> applicationFactory;
     private final Provider<ProxyObject.Factory<ApplicationInstanceData, SimpleProxyApplicationInstance>> applicationInstanceFactory;
     private final Provider<ProxyObject.Factory<AutomationData, SimpleProxyAutomation>> automationFactory;
@@ -36,8 +35,7 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
     private final Provider<ProxyObject.Factory<ValueData, SimpleProxyValue>> valueFactory;
 
     @Inject
-    public SimpleProxyFactory(Logger logger,
-                              Provider<ProxyObject.Factory<ApplicationData, SimpleProxyApplication>> applicationFactory,
+    public SimpleProxyFactory(Provider<ProxyObject.Factory<ApplicationData, SimpleProxyApplication>> applicationFactory,
                               Provider<ProxyObject.Factory<ApplicationInstanceData, SimpleProxyApplicationInstance>> applicationInstanceFactory,
                               Provider<ProxyObject.Factory<AutomationData, SimpleProxyAutomation>> automationFactory,
                               Provider<ProxyObject.Factory<CommandData, SimpleProxyCommand>> commandFactory,
@@ -55,7 +53,6 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
                               Provider<ProxyObject.Factory<TypeData<HousemateData<?>>, SimpleProxyType>> typeFactory,
                               Provider<ProxyObject.Factory<UserData, SimpleProxyUser>> userFactory,
                               Provider<ProxyObject.Factory<ValueData, SimpleProxyValue>> valueFactory) {
-        this.logger = logger;
         this.applicationFactory = applicationFactory;
         this.applicationInstanceFactory = applicationInstanceFactory;
         this.automationFactory = automationFactory;
@@ -77,43 +74,43 @@ public class SimpleProxyFactory implements ProxyObject.Factory<HousemateData<?>,
     }
 
     @Override
-    public ProxyObject<?, ?, ?, ?, ?> create(HousemateData<?> data) {
+    public ProxyObject<?, ?, ?, ?, ?> create(Logger logger, HousemateData<?> data) {
         if(data instanceof ParameterData)
-            return parameterFactory.get().create((ParameterData) data);
+            return parameterFactory.get().create(logger, (ParameterData) data);
         else if(data instanceof CommandData)
-            return commandFactory.get().create((CommandData) data);
+            return commandFactory.get().create(logger, (CommandData) data);
         else if(data instanceof ConditionData)
-            return conditionFactory.get().create((ConditionData) data);
+            return conditionFactory.get().create(logger, (ConditionData) data);
         else if(data instanceof ApplicationData)
-            return applicationFactory.get().create((ApplicationData) data);
+            return applicationFactory.get().create(logger, (ApplicationData) data);
         else if(data instanceof ApplicationInstanceData)
-            return applicationInstanceFactory.get().create((ApplicationInstanceData) data);
+            return applicationInstanceFactory.get().create(logger, (ApplicationInstanceData) data);
         else if(data instanceof UserData)
-            return userFactory.get().create((UserData) data);
+            return userFactory.get().create(logger, (UserData) data);
         else if(data instanceof TaskData)
-            return taskFactory.get().create((TaskData) data);
+            return taskFactory.get().create(logger, (TaskData) data);
         else if(data instanceof DeviceData)
-            return deviceFactory.get().create((DeviceData) data);
+            return deviceFactory.get().create(logger, (DeviceData) data);
         else if(data instanceof FeatureData)
-            return featureFactory.get().create((FeatureData) data);
+            return featureFactory.get().create(logger, (FeatureData) data);
         else if(data instanceof HardwareData)
-            return hardwareFactory.get().create((HardwareData) data);
+            return hardwareFactory.get().create(logger, (HardwareData) data);
         else if(data instanceof ListData)
-            return listFactory.get().create((ListData<HousemateData<?>>) data);
+            return listFactory.get().create(logger, (ListData<HousemateData<?>>) data);
         else if(data instanceof OptionData)
-            return optionFactory.get().create((OptionData) data);
+            return optionFactory.get().create(logger, (OptionData) data);
         else if(data instanceof PropertyData)
-            return propertyFactory.get().create((PropertyData) data);
+            return propertyFactory.get().create(logger, (PropertyData) data);
         else if(data instanceof AutomationData)
-            return automationFactory.get().create((AutomationData) data);
+            return automationFactory.get().create(logger, (AutomationData) data);
         else if(data instanceof ServerData)
-            return serverFactory.get().create((ServerData) data);
+            return serverFactory.get().create(logger, (ServerData) data);
         else if(data instanceof SubTypeData)
-            return subTypeFactory.get().create((SubTypeData) data);
+            return subTypeFactory.get().create(logger, (SubTypeData) data);
         else if(data instanceof TypeData)
-            return typeFactory.get().create((TypeData) data);
+            return typeFactory.get().create(logger, (TypeData) data);
         else if(data instanceof ValueData)
-            return valueFactory.get().create((ValueData) data);
+            return valueFactory.get().create(logger, (ValueData) data);
         logger.error("Don't know how to create an object from " + data.getClass().getName());
         return null;
     }

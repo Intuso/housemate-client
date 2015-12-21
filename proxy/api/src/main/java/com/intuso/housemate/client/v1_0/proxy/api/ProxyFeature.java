@@ -24,7 +24,7 @@ public abstract class ProxyFeature<
      * @param data {@inheritDoc}
      */
     public ProxyFeature(Logger logger, ListenersFactory listenersFactory, FeatureData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

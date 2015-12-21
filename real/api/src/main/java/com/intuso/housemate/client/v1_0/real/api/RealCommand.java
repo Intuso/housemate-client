@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.api;
 import com.intuso.housemate.comms.v1_0.api.payload.CommandData;
 import com.intuso.housemate.object.v1_0.api.Command;
 import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
+import org.slf4j.Logger;
 
 /**
  */
@@ -16,6 +17,6 @@ public interface RealCommand
     void perform(TypeInstanceMap values);
 
     interface Factory {
-        RealCommand create(CommandData data);
+        RealCommand create(Logger logger, CommandData data);
     }
 }

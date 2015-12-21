@@ -39,7 +39,7 @@ public abstract class ProxyAutomation<
      * @param data {@inheritDoc}
      */
     public ProxyAutomation(Logger logger, ListenersFactory listenersFactory, AutomationData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

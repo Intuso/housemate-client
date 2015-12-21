@@ -34,7 +34,7 @@ public abstract class ProxyCondition<
      * @param data {@inheritDoc}
      */
     public ProxyCondition(Logger logger, ListenersFactory listenersFactory, ConditionData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

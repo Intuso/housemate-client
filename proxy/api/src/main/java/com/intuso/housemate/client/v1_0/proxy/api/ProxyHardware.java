@@ -36,7 +36,7 @@ public abstract class ProxyHardware<
      * @param data {@inheritDoc}
      */
     public ProxyHardware(Logger logger, ListenersFactory listenersFactory, HardwareData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

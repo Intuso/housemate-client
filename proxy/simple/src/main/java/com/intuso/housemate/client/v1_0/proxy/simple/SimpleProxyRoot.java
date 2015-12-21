@@ -1,14 +1,16 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRoot;
 import com.intuso.housemate.comms.v1_0.api.Router;
 import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.housemate.comms.v1_0.api.payload.ServerData;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.slf4j.Logger;
 import com.intuso.utilities.properties.api.PropertyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
 * Created with IntelliJ IDEA.
@@ -21,11 +23,12 @@ public final class SimpleProxyRoot extends ProxyRoot<
         SimpleProxyServer, SimpleProxyList<ServerData, SimpleProxyServer>,
         SimpleProxyRoot> {
 
+    private final static Logger logger = LoggerFactory.getLogger(SimpleProxyRoot.class);
+
     private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
 
     @Inject
-    public SimpleProxyRoot(Logger logger,
-                           ListenersFactory listenersFactory,
+    public SimpleProxyRoot(ListenersFactory listenersFactory,
                            PropertyRepository properties,
                            ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
                            Router<?> router) {
@@ -34,7 +37,7 @@ public final class SimpleProxyRoot extends ProxyRoot<
     }
 
     @Override
-    protected ProxyObject<?, ?, ?, ?, ?> createChildInstance(HousemateData<?> data) {
-        return objectFactory.create(data);
+    protected ProxyObject<?, ?, ?, ?, ?> createChild(HousemateData<?> data) {
+        return objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
     }
 }

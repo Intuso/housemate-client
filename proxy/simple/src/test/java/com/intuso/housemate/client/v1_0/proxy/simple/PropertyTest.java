@@ -31,9 +31,9 @@ public class PropertyTest {
 
     private SimpleProxyList<PropertyData, SimpleProxyProperty> proxyList
             = new SimpleProxyList<>(
-            LoggerFactory.getLogger(PropertyTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
+            LoggerFactory.getLogger(PropertyTest.class),
             new ListData<PropertyData>(PROPERTIES, PROPERTIES, PROPERTIES));
     private RealListImpl<PropertyData, RealPropertyImpl<?>> realList = new RealListImpl<>(
             LoggerFactory.getLogger(PropertyTest.class),

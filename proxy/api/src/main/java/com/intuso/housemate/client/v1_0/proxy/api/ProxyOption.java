@@ -24,7 +24,7 @@ public abstract class ProxyOption<
      * @param data {@inheritDoc}
      */
     public ProxyOption(Logger logger, ListenersFactory listenersFactory, OptionData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

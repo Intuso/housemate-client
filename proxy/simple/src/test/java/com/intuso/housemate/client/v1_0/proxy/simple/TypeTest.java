@@ -143,7 +143,7 @@ public class TypeTest {
         }
 
         @Override
-        protected NoChildrenProxyObject createChildInstance(NoChildrenData noChildrenData) {
+        protected NoChildrenProxyObject createChild(NoChildrenData noChildrenData) {
             return null;
         }
     }

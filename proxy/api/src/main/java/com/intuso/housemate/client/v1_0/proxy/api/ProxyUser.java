@@ -23,7 +23,7 @@ public abstract class ProxyUser<
      * @param data {@inheritDoc}
      */
     public ProxyUser(Logger logger, ListenersFactory listenersFactory, UserData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

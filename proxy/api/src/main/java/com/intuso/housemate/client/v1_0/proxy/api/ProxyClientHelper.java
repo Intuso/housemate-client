@@ -1,9 +1,6 @@
-package com.intuso.housemate.client.v1_0.proxy.simple;
+package com.intuso.housemate.client.v1_0.proxy.api;
 
 import com.google.common.collect.Lists;
-import com.google.inject.*;
-import com.intuso.housemate.client.v1_0.proxy.api.LoadManager;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyRoot;
 import com.intuso.housemate.comms.v1_0.api.RemoteObject;
 import com.intuso.housemate.comms.v1_0.api.Router;
 import com.intuso.housemate.comms.v1_0.api.TreeLoadInfo;
@@ -13,6 +10,7 @@ import com.intuso.housemate.object.v1_0.api.Application;
 import com.intuso.housemate.object.v1_0.api.ApplicationInstance;
 import com.intuso.utilities.listener.ListenerRegistration;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -25,7 +23,8 @@ import java.util.List;
  */
 public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
-    private final Logger logger;
+    private final static Logger logger = LoggerFactory.getLogger(ProxyClientHelper.class);
+
     private final ROOT proxyRoot;
     private final Router<?> router;
 
@@ -39,9 +38,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     private ListenerRegistration proxyListenerRegistration;
     private ListenerRegistration routerListenerRegistration;
 
-    @Inject
-    public ProxyClientHelper(Logger logger, ROOT proxyRoot, Router<?> router) {
-        this.logger = logger;
+    public ProxyClientHelper(ROOT proxyRoot, Router<?> router) {
         this.proxyRoot = proxyRoot;
         this.router = router;
     }

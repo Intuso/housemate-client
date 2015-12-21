@@ -27,10 +27,10 @@ public class ValueTest {
 
     private SimpleProxyList<ValueData, SimpleProxyValue> proxyList
             = new SimpleProxyList<>(
-            LoggerFactory.getLogger(ValueTest.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
-            new ListData<ValueData>(VALUES, VALUES, VALUES));
+                LoggerFactory.getLogger(ValueTest.class),
+                new ListData<ValueData>(VALUES, VALUES, VALUES));
     private RealListImpl<ValueBaseData<NoChildrenData>, RealValueImpl<?>> realList = new RealListImpl<>(
             LoggerFactory.getLogger(ValueTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),

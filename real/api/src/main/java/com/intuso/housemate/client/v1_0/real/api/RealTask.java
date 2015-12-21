@@ -4,6 +4,7 @@ import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
 import com.intuso.housemate.client.v1_0.real.api.driver.TaskDriver;
 import com.intuso.housemate.comms.v1_0.api.payload.TaskData;
 import com.intuso.housemate.object.v1_0.api.Task;
+import org.slf4j.Logger;
 
 public interface RealTask<DRIVER extends TaskDriver>
         extends Task<
@@ -35,6 +36,6 @@ public interface RealTask<DRIVER extends TaskDriver>
     }
 
     interface Factory {
-        RealTask<?> create(TaskData data, RemoveCallback removeCallback);
+        RealTask<?> create(Logger logger, TaskData data, RemoveCallback removeCallback);
     }
 }

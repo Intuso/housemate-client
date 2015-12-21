@@ -40,9 +40,9 @@ public class DeviceTest {
 
     private SimpleProxyList<DeviceData, SimpleProxyDevice> proxyList
             = new SimpleProxyList<>(
-            LoggerFactory.getLogger(DeviceTest.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
             TestEnvironment.TEST_INSTANCE.getInjector().getInstance(new Key<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}),
+            LoggerFactory.getLogger(DeviceTest.class),
             new ListData<DeviceData>(DEVICES, DEVICES, DEVICES));
     private RealListImpl<DeviceData, RealDeviceImpl<?>> realList = new RealListImpl<>(
             LoggerFactory.getLogger(DeviceTest.class),
@@ -59,10 +59,10 @@ public class DeviceTest {
         TestEnvironment.TEST_INSTANCE.getProxyRoot().addChild(proxyList);
         TestEnvironment.TEST_INSTANCE.getRealRoot().addWrapper(realList);
         realPrimary = new RealDeviceImpl(
-                LoggerFactory.getLogger(DeviceTest.class),
                 TestEnvironment.TEST_INSTANCE.getInjector().getInstance(ListenersFactory.class),
                 null,
                 null,
+                LoggerFactory.getLogger(DeviceTest.class),
                 new DeviceData("my-primary", "My Primary", "description"),
                 new RealDevice.RemoveCallback() {
                     @Override

@@ -19,14 +19,14 @@ import org.slf4j.Logger;
 public final class SimpleProxyParameter extends ProxyParameter<SimpleProxyParameter> {
 
     @Inject
-    public SimpleProxyParameter(Logger logger,
-                                ListenersFactory listenersFactory,
+    public SimpleProxyParameter(ListenersFactory listenersFactory,
+                                @Assisted Logger logger,
                                 @Assisted ParameterData data) {
         super(logger, listenersFactory, data);
     }
 
     @Override
-    protected NoChildrenProxyObject createChildInstance(NoChildrenData noChildrenData) {
+    protected NoChildrenProxyObject createChild(NoChildrenData noChildrenData) {
         return null;
     }
 }

@@ -24,7 +24,7 @@ public abstract class ProxyApplicationInstance<
      * @param data {@inheritDoc}
      */
     public ProxyApplicationInstance(Logger logger, ListenersFactory listenersFactory, ApplicationInstanceData data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 
     @Override

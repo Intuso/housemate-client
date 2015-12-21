@@ -6,6 +6,7 @@ import com.intuso.housemate.object.v1_0.api.ObjectLifecycleListener;
 import com.intuso.housemate.object.v1_0.api.ObjectRoot;
 import com.intuso.housemate.object.v1_0.api.Root;
 import com.intuso.utilities.listener.ListenerRegistration;
+import org.slf4j.Logger;
 
 public interface RealRoot
         extends Root<RealRoot.Listener, RealRoot>,
@@ -18,16 +19,11 @@ public interface RealRoot
         RealHardware.Container,
         RealType.Container,
         RealUser.Container {
-
+    Logger getLogger();
     RealCommand getAddHardwareCommand();
-
     RealCommand getAddDeviceCommand();
-
     RealCommand getAddAutomationCommand();
-
     RealCommand getAddUserCommand();
-
     ListenerRegistration addObjectLifecycleListener(String[] ancestorPath, ObjectLifecycleListener listener);
-
     interface Listener extends Root.Listener<RealRoot>, RequiresAccess.Listener<RealRoot> {}
 }

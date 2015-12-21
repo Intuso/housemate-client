@@ -8,10 +8,9 @@ import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.slf4j.Logger;
 import com.intuso.utilities.object.BaseObject;
-import com.intuso.utilities.object.ObjectFactory;
 import com.intuso.utilities.object.ObjectListener;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -42,12 +41,12 @@ public abstract class ProxyObject<
     private int nextLoaderId = 0;
 
     /**
-     * @param logger the log
      * @param listenersFactory
+     * @param logger the log
      * @param data the data object
      */
-    protected ProxyObject(Logger logger, ListenersFactory listenersFactory, DATA data) {
-        super(logger, listenersFactory, data);
+    protected ProxyObject(ListenersFactory listenersFactory, Logger logger, DATA data) {
+        super(listenersFactory, logger, data);
         availableChildrenListeners = listenersFactory.create();
     }
 
@@ -112,12 +111,10 @@ public abstract class ProxyObject<
     }
 
     protected final CHILD createChild(TreeData treeData) {
-        CHILD child = createChildInstance((CHILD_DATA)treeData.getData());
+        CHILD child = createChild((CHILD_DATA) treeData.getData());
         child.initObject(treeData);
         return child;
     }
-
-    protected abstract CHILD createChildInstance(CHILD_DATA child_data);
 
     protected void initObject(TreeData treeData) {
         if(treeData.getChildOverviews() != null)
@@ -137,16 +134,19 @@ public abstract class ProxyObject<
 
         // unwrap children
         try {
-            createChildren(new ObjectFactory<CHILD_DATA, CHILD>() {
-                @Override
-                public CHILD create(CHILD_DATA data) {
-                    return createChildInstance(data);
-                }
-            });
+            createChildren();
         } catch(Throwable e) {
             throw new HousemateCommsException("Failed to unwrap child object", e);
         }
     }
+
+    protected void createChildren() {
+        for(CHILD_DATA childData : getData().getChildData().values())
+            if(getChild(childData.getId()) == null)
+                addChild(createChild(childData));
+    }
+
+    protected abstract CHILD createChild(CHILD_DATA childData);
 
     @Override
     protected void initPostRecurseHook(RemoteObject<?, ?, ?, ?> parent) {

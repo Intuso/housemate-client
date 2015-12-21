@@ -1,7 +1,10 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.real.api.*;
+import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
+import com.intuso.housemate.client.v1_0.real.api.RealDevice;
+import com.intuso.housemate.client.v1_0.real.api.RealHardware;
+import com.intuso.housemate.client.v1_0.real.api.RealUser;
 import com.intuso.housemate.client.v1_0.real.impl.RealObject;
 import com.intuso.housemate.client.v1_0.real.impl.RealRootImpl;
 import com.intuso.housemate.client.v1_0.real.impl.factory.automation.AddAutomationCommand;
@@ -37,7 +40,6 @@ public class TestRealRoot extends RealRootImpl {
                         ListenersFactory listenersFactory,
                         PropertyRepository properties,
                         Router<?> router,
-                        RealList<RealType<?>> types,
                         AddHardwareCommand.Factory addHardwareCommandFactory,
                         AddDeviceCommand.Factory addDeviceCommandFactory,
                         AddAutomationCommand.Factory addAutomationCommandFactory,
@@ -50,7 +52,7 @@ public class TestRealRoot extends RealRootImpl {
                         RealDevice.Factory deviceFactory,
                         RealHardware.Factory hardwareFactory,
                         RealUser.Factory userFactory) {
-        super(logger, listenersFactory, properties, router, types,
+        super(logger, listenersFactory, properties, router,
                 addHardwareCommandFactory, addDeviceCommandFactory, addAutomationCommandFactory, addUserCommandFactory,
                 conditionFactoryType, deviceFactoryType, hardwareFactoryType, taskFactoryType, automationFactory,
                 deviceFactory, hardwareFactory, userFactory);
@@ -67,9 +69,9 @@ public class TestRealRoot extends RealRootImpl {
     }
 
     public void init() {
-        addType(new StringType(getLogger(), getListenersFactory()));
-        addType(new IntegerType(getLogger(), getListenersFactory()));
-        addType(new BooleanType(getLogger(), getListenersFactory()));
+        addType(new StringType(getListenersFactory()));
+        addType(new IntegerType(getListenersFactory()));
+        addType(new BooleanType(getListenersFactory()));
     }
 
     public void addWrapper(RealObject<?, ?, ?, ?> wrapper) {

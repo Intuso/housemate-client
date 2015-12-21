@@ -19,14 +19,14 @@ import org.slf4j.Logger;
 public final class SimpleProxySubType extends ProxySubType<SimpleProxySubType> {
 
     @Inject
-    public SimpleProxySubType(Logger logger,
-                              ListenersFactory listenersFactory,
+    public SimpleProxySubType(ListenersFactory listenersFactory,
+                              @Assisted Logger logger,
                               @Assisted SubTypeData data) {
         super(logger, listenersFactory, data);
     }
 
     @Override
-    protected NoChildrenProxyObject createChildInstance(NoChildrenData noChildrenData) {
+    protected NoChildrenProxyObject createChild(NoChildrenData noChildrenData) {
         return null;
     }
 }

@@ -25,6 +25,6 @@ public abstract class ProxyType<
      * @param data {@inheritDoc}
      */
     public ProxyType(Logger logger, ListenersFactory listenersFactory, DATA data) {
-        super(logger, listenersFactory, data);
+        super(listenersFactory, logger, data);
     }
 }

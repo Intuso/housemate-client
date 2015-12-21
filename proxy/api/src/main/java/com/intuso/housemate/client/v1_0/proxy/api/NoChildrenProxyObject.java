@@ -18,7 +18,7 @@ public final class NoChildrenProxyObject extends ProxyObject<NoChildrenData, NoC
     }
 
     @Override
-    protected NoChildrenProxyObject createChildInstance(NoChildrenData noChildrenData) {
+    protected NoChildrenProxyObject createChild(NoChildrenData noChildrenData) {
         return null;
     }
 }
