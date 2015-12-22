@@ -43,6 +43,6 @@ public class SimpleProxyModule extends AbstractModule {
         bind(new TypeLiteral<ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>>>() {}).to(SimpleProxyFactory.class);
         bind(new TypeLiteral<ProxyFeatureFactory<SimpleProxyFeature, ProxyFeature>>() {}).to(SimpleProxyFeatureFactory.class);
         bind(SimpleProxyRoot.class).in(Scopes.SINGLETON);
-        bind(new Key<ProxyClientHelper<SimpleProxyRoot>>() {}).toProvider(HelperProvider.class);
+        bind(new Key<ProxyClientHelper<SimpleProxyRoot>>() {}).toProvider(HelperProvider.class).in(Scopes.SINGLETON);
     }
 }
