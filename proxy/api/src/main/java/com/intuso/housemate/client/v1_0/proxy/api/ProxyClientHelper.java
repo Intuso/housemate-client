@@ -112,7 +112,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
         @Override
         public void serverConnectionStatusChanged(Router root, ConnectionStatus connectionStatus) {
-            logger.debug("Router serverConnectionStatus = " + connectionStatus);
+            logger.info("Server connection status: {}", connectionStatus);
             if(connectionStatus == ConnectionStatus.DisconnectedPermanently) {
                 router.connect();
                 proxyRoot.register(applicationDetails, component);
@@ -130,12 +130,12 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
         @Override
         public void applicationStatusChanged(ProxyRoot<?, ?, ?> root, Application.Status applicationStatus) {
-            logger.debug("Root applicationStatus = " + applicationStatus);
+            logger.info("Application status: {}", applicationStatus);
         }
 
         @Override
         public void applicationInstanceStatusChanged(ProxyRoot<?, ?, ?> root, ApplicationInstance.Status applicationInstanceStatus) {
-            logger.debug("Root applicationInstanceStatus = " + applicationInstanceStatus);
+            logger.info("Application instance status: {}", applicationInstanceStatus);
             if(applicationInstanceStatus == ApplicationInstance.Status.Allowed) {
                 if(shouldClearRoot) {
                     proxyRoot.clearLoadedObjects();
