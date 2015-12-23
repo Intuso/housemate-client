@@ -1,20 +1,14 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
 import com.intuso.housemate.client.v1_0.real.api.RealDevice;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
-import com.intuso.housemate.client.v1_0.real.api.RealUser;
+import com.intuso.housemate.client.v1_0.real.impl.BasicRealRoot;
 import com.intuso.housemate.client.v1_0.real.impl.RealObject;
-import com.intuso.housemate.client.v1_0.real.impl.RealRootImpl;
-import com.intuso.housemate.client.v1_0.real.impl.factory.automation.AddAutomationCommand;
-import com.intuso.housemate.client.v1_0.real.impl.factory.condition.ConditionFactoryType;
 import com.intuso.housemate.client.v1_0.real.impl.factory.device.AddDeviceCommand;
 import com.intuso.housemate.client.v1_0.real.impl.factory.device.DeviceFactoryType;
 import com.intuso.housemate.client.v1_0.real.impl.factory.hardware.AddHardwareCommand;
 import com.intuso.housemate.client.v1_0.real.impl.factory.hardware.HardwareFactoryType;
-import com.intuso.housemate.client.v1_0.real.impl.factory.task.TaskFactoryType;
-import com.intuso.housemate.client.v1_0.real.impl.factory.user.AddUserCommand;
 import com.intuso.housemate.client.v1_0.real.impl.type.BooleanType;
 import com.intuso.housemate.client.v1_0.real.impl.type.IntegerType;
 import com.intuso.housemate.client.v1_0.real.impl.type.StringType;
@@ -32,7 +26,7 @@ import org.junit.Ignore;
 /**
  */
 @Ignore
-public class TestRealRoot extends RealRootImpl {
+public class TestRealRoot extends BasicRealRoot {
 
     @Inject
     public TestRealRoot(ListenersFactory listenersFactory,
@@ -40,20 +34,12 @@ public class TestRealRoot extends RealRootImpl {
                         Router<?> router,
                         AddHardwareCommand.Factory addHardwareCommandFactory,
                         AddDeviceCommand.Factory addDeviceCommandFactory,
-                        AddAutomationCommand.Factory addAutomationCommandFactory,
-                        AddUserCommand.Factory addUserCommandFactory,
-                        ConditionFactoryType conditionFactoryType,
                         DeviceFactoryType deviceFactoryType,
                         HardwareFactoryType hardwareFactoryType,
-                        TaskFactoryType taskFactoryType,
-                        RealAutomation.Factory automationFactory,
                         RealDevice.Factory deviceFactory,
-                        RealHardware.Factory hardwareFactory,
-                        RealUser.Factory userFactory) {
-        super(listenersFactory, properties, router,
-                addHardwareCommandFactory, addDeviceCommandFactory, addAutomationCommandFactory, addUserCommandFactory,
-                conditionFactoryType, deviceFactoryType, hardwareFactoryType, taskFactoryType, automationFactory,
-                deviceFactory, hardwareFactory, userFactory);
+                        RealHardware.Factory hardwareFactory) {
+        super(listenersFactory, properties, router, addHardwareCommandFactory, addDeviceCommandFactory,
+                deviceFactoryType, hardwareFactoryType, deviceFactory, hardwareFactory);
         try {
             distributeMessage(new Message<Message.Payload>(new String[] {""}, RootData.APPLICATION_STATUS_TYPE, new ApplicationData.StatusPayload(Application.Status.AllowInstances)));
             distributeMessage(new Message<Message.Payload>(new String[] {""}, RootData.APPLICATION_INSTANCE_STATUS_TYPE, new ApplicationInstanceData.StatusPayload(ApplicationInstance.Status.Allowed)));

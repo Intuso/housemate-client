@@ -2,15 +2,18 @@ package com.intuso.housemate.client.v1_0.real.impl.ioc;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.intuso.housemate.client.v1_0.real.api.*;
-import com.intuso.housemate.client.v1_0.real.impl.RealRootImpl;
+import com.intuso.housemate.client.v1_0.real.api.RealDevice;
+import com.intuso.housemate.client.v1_0.real.api.RealHardware;
+import com.intuso.housemate.client.v1_0.real.api.RealRoot;
+import com.intuso.housemate.client.v1_0.real.api.RealType;
+import com.intuso.housemate.client.v1_0.real.impl.BasicRealRoot;
 import com.intuso.housemate.client.v1_0.real.impl.annotations.ioc.RealAnnotationsModule;
 import com.intuso.housemate.client.v1_0.real.impl.factory.ioc.RealFactoryModule;
 import com.intuso.housemate.client.v1_0.real.impl.type.*;
 
 /**
  */
-public class RealObjectModule extends AbstractModule {
+public class BasicRealObjectModule extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -19,15 +22,12 @@ public class RealObjectModule extends AbstractModule {
         install(new RealFactoryModule());
         install(new RealAnnotationsModule());
 
-        bind(RealRoot.class).to(RealRootImpl.class);
-        bind(RealRootImpl.class).in(Scopes.SINGLETON);
+        bind(RealRoot.class).to(BasicRealRoot.class);
+        bind(BasicRealRoot.class).in(Scopes.SINGLETON);
 
-        bind(RealAutomation.Container.class).to(RealRootImpl.class);
-        bind(RealApplication.Container.class).to(RealRootImpl.class);
-        bind(RealDevice.Container.class).to(RealRootImpl.class);
-        bind(RealHardware.Container.class).to(RealRootImpl.class);
-        bind(RealType.Container.class).to(RealRootImpl.class);
-        bind(RealUser.Container.class).to(RealRootImpl.class);
+        bind(RealDevice.Container.class).to(BasicRealRoot.class);
+        bind(RealHardware.Container.class).to(BasicRealRoot.class);
+        bind(RealType.Container.class).to(BasicRealRoot.class);
 
         // bind everything as singletons that should be
         bind(ApplicationStatusType.class).in(Scopes.SINGLETON);

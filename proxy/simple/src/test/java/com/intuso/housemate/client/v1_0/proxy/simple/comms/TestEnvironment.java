@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestProxyRoot;
 import com.intuso.housemate.client.v1_0.proxy.simple.TestRealRoot;
 import com.intuso.housemate.client.v1_0.proxy.simple.ioc.SimpleProxyModule;
-import com.intuso.housemate.client.v1_0.real.impl.ioc.RealObjectModule;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.BasicRealObjectModule;
 import com.intuso.housemate.comms.v1_0.api.access.ApplicationDetails;
 import com.intuso.housemate.object.v1_0.api.RegexMatcher;
 import com.intuso.utilities.listener.Listener;
@@ -37,7 +37,7 @@ public class TestEnvironment {
             }
         };
 
-        injector = Guice.createInjector(new TestModule(listenersFactory), new SimpleProxyModule(), new RealObjectModule());
+        injector = Guice.createInjector(new TestModule(listenersFactory), new SimpleProxyModule(), new BasicRealObjectModule());
 
         realRoot = injector.getInstance(TestRealRoot.class);
         proxyRoot = injector.getInstance(TestProxyRoot.class);
