@@ -87,8 +87,8 @@ public abstract class ProxyRoot<
     }
 
     @Override
-    public void register(ApplicationDetails applicationDetails, String component) {
-        accessManager.register(applicationDetails, component);
+    public void register(ApplicationDetails applicationDetails) {
+        accessManager.register(applicationDetails);
     }
 
     @Override

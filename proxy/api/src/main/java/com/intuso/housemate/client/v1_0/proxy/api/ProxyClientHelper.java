@@ -29,7 +29,6 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     private final Router<?> router;
 
     private ApplicationDetails applicationDetails;
-    private String component;
     private List<TreeLoadInfo> toLoad = Lists.newArrayList();
     private LoadManager.Callback callback;
 
@@ -49,11 +48,6 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
 
     public ProxyClientHelper<ROOT> applicationDetails(ApplicationDetails applicationDetails) {
         this.applicationDetails = applicationDetails;
-        return this;
-    }
-
-    public ProxyClientHelper<ROOT> component(String component) {
-        this.component = component;
         return this;
     }
 
@@ -115,7 +109,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
             logger.info("Server connection status: {}", connectionStatus);
             if(connectionStatus == ConnectionStatus.DisconnectedPermanently) {
                 router.connect();
-                proxyRoot.register(applicationDetails, component);
+                proxyRoot.register(applicationDetails);
             }
         }
 
