@@ -32,6 +32,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     private List<TreeLoadInfo> toLoad = Lists.newArrayList();
     private LoadManager.Callback callback;
 
+    private boolean shouldBeConnected = false;
     private boolean shouldClearRoot = true;
     private boolean shouldLoad = true;
     private ListenerRegistration proxyListenerRegistration;
@@ -78,10 +79,12 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     }
 
     public ProxyClientHelper<ROOT> start() {
+        shouldBeConnected = true;
         proxyListenerRegistration = proxyRoot.addObjectListener(new ProxyRootListener());
         RouterListener routerListener = new RouterListener();
         routerListenerRegistration = router.addListener(routerListener);
-        routerListener.serverConnectionStatusChanged(null, ConnectionStatus.DisconnectedPermanently);
+        router.connect();
+        proxyRoot.register(applicationDetails);
         return this;
     }
 
@@ -91,6 +94,7 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
     }
 
     public void stop() {
+        shouldBeConnected = true;
         router.disconnect();
         if(proxyListenerRegistration != null)
             proxyListenerRegistration.removeListener();
@@ -107,10 +111,10 @@ public class ProxyClientHelper<ROOT extends ProxyRoot<?, ?, ?>> {
         @Override
         public void serverConnectionStatusChanged(Router root, ConnectionStatus connectionStatus) {
             logger.info("Server connection status: {}", connectionStatus);
-            if(connectionStatus == ConnectionStatus.DisconnectedPermanently) {
+            if(connectionStatus == ConnectionStatus.DisconnectedPermanently && shouldBeConnected)
                 router.connect();
+            else if(connectionStatus == ConnectionStatus.ConnectedToServer && proxyRoot.getApplicationInstanceStatus() == ApplicationInstance.Status.Unregistered)
                 proxyRoot.register(applicationDetails);
-            }
         }
 
         @Override
