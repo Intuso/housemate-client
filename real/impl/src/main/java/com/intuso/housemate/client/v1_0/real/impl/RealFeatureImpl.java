@@ -1,56 +1,58 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.real.api.RealCommand;
+import com.intuso.housemate.client.v1_0.api.object.Feature;
 import com.intuso.housemate.client.v1_0.real.api.RealFeature;
-import com.intuso.housemate.client.v1_0.real.api.RealList;
-import com.intuso.housemate.client.v1_0.real.api.RealValue;
-import com.intuso.housemate.comms.v1_0.api.payload.FeatureData;
-import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.object.v1_0.api.Feature;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-/**
- * Base class for all devices
- */
+import javax.jms.JMSException;
+import javax.jms.Session;
+
 public final class RealFeatureImpl
-        extends RealObject<
-        FeatureData,
-        HousemateData<?>,
-        RealObject<?, ?, ?, ?>,
-        Feature.Listener<? super RealFeature>>
-        implements RealFeature {
+        extends RealObject<Feature.Data, Feature.Listener<? super RealFeatureImpl>>
+        implements RealFeature<RealListImpl<RealCommandImpl>, RealListImpl<RealValueImpl<?>>, RealFeatureImpl> {
 
-    private final static String COMMANDS_DESCRIPTION = "The feature's commands";
-    private final static String VALUES_DESCRIPTION = "The feature's values";
-
-    private final RealList<RealCommand> commands;
-    private final RealList<RealValue<?>> values;
+    private final RealListImpl<RealCommandImpl> commands;
+    private final RealListImpl<RealValueImpl<?>> values;
 
     /**
      * @param logger {@inheritDoc}
      * @param listenersFactory
+     * @param id the feature's id
+     * @param name the feature's name
+     * @param description the feature's description
      */
-    @Inject
-    public RealFeatureImpl(ListenersFactory listenersFactory,
-                           @Assisted final Logger logger,
-                           @Assisted FeatureData data) {
-        super(listenersFactory, logger, new FeatureData(data.getId(), data.getName(), data.getDescription()));
-        this.commands = (RealList)new RealListImpl<>(logger, listenersFactory, FeatureData.COMMANDS_ID, FeatureData.COMMANDS_ID, COMMANDS_DESCRIPTION);
-        this.values = (RealList)new RealListImpl<>(logger, listenersFactory, FeatureData.VALUES_ID, FeatureData.VALUES_ID, VALUES_DESCRIPTION);
-        addChild((RealListImpl)commands);
-        addChild((RealListImpl)values);
+    public RealFeatureImpl(Logger logger, ListenersFactory listenersFactory, String id, String name, String description) {
+        super(logger, new Feature.Data(id, name,  description), listenersFactory);
+        this.commands = new RealListImpl<>(ChildUtil.logger(logger, Feature.COMMANDS_ID),
+                new com.intuso.housemate.client.v1_0.api.object.List.Data(Feature.COMMANDS_ID, "Commands", "The commands of this feature"),
+                listenersFactory);
+        this.values = new RealListImpl<>(ChildUtil.logger(logger, Feature.VALUES_ID),
+                new com.intuso.housemate.client.v1_0.api.object.List.Data(Feature.VALUES_ID, "Values", "The values of this feature"),
+                listenersFactory);
     }
 
     @Override
-    public final RealList<RealCommand> getCommands() {
+    protected void initChildren(String name, Session session) throws JMSException {
+        super.initChildren(name, session);
+        commands.init(ChildUtil.name(name, Feature.COMMANDS_ID), session);
+        values.init(ChildUtil.name(name, Feature.VALUES_ID), session);
+    }
+
+    @Override
+    protected void uninitChildren() {
+        super.uninitChildren();
+        commands.uninit();
+        values.uninit();
+    }
+
+    @Override
+    public final RealListImpl<RealCommandImpl> getCommands() {
         return commands;
     }
 
     @Override
-    public final RealList<RealValue<?>> getValues() {
+    public RealListImpl<RealValueImpl<?>> getValues() {
         return values;
     }
 }

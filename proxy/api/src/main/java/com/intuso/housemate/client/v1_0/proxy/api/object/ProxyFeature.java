@@ -1,0 +1,60 @@
+package com.intuso.housemate.client.v1_0.proxy.api.object;
+
+import com.intuso.housemate.client.v1_0.api.object.Feature;
+import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
+import com.intuso.utilities.listener.ListenersFactory;
+import org.slf4j.Logger;
+
+import javax.jms.JMSException;
+import javax.jms.Session;
+
+/**
+ * Base interface for all proxy features
+ * @param <FEATURE> the feature type
+ */
+public abstract class ProxyFeature<
+        COMMANDS extends ProxyList<? extends ProxyCommand<?, ?, ?>>,
+        VALUES extends ProxyList<? extends ProxyValue<?, ?>>,
+        FEATURE extends ProxyFeature<COMMANDS, VALUES, FEATURE>>
+        extends ProxyObject<Feature.Data, Feature.Listener<? super FEATURE>>
+        implements Feature<COMMANDS, VALUES, FEATURE> {
+
+    private final COMMANDS commands;
+    private final VALUES values;
+
+    /**
+     * @param logger {@inheritDoc}
+     */
+    public ProxyFeature(Logger logger,
+                        ListenersFactory listenersFactory,
+                        ProxyObject.Factory<COMMANDS> commandsFactory,
+                        ProxyObject.Factory<VALUES> valuesFactory) {
+        super(logger, Feature.Data.class, listenersFactory);
+        commands = commandsFactory.create(ChildUtil.logger(logger, Feature.COMMANDS_ID));
+        values = valuesFactory.create(ChildUtil.logger(logger, Feature.VALUES_ID));
+    }
+
+    @Override
+    protected void initChildren(String name, Session session) throws JMSException {
+        super.initChildren(name, session);
+        commands.init(ChildUtil.name(name, Feature.COMMANDS_ID), session);
+        values.init(ChildUtil.name(name, Feature.VALUES_ID), session);
+    }
+
+    @Override
+    protected void uninitChildren() {
+        super.uninitChildren();
+        commands.uninit();
+        values.uninit();
+    }
+
+    @Override
+    public final COMMANDS getCommands() {
+        return commands;
+    }
+
+    @Override
+    public final VALUES getValues() {
+        return values;
+    }
+}

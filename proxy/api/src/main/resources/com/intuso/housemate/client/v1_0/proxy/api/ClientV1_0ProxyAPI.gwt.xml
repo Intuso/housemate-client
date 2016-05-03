@@ -3,7 +3,7 @@
 <module rename-to='Housemate'>
 
     <!-- Housemate client api -->
-    <inherits name='com.intuso.housemate.comms.v1_0.api.CommsV1_0API' />
+    <inherits name='com.intuso.housemate.comms.v1_0.data.api.CommsV1_0API' />
 
     <!-- Main source module -->
     <source path=""/>

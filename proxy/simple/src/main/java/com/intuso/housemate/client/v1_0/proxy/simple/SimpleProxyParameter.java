@@ -2,10 +2,8 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.NoChildrenProxyObject;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyParameter;
-import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
-import com.intuso.housemate.comms.v1_0.api.payload.ParameterData;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyParameter;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -16,17 +14,12 @@ import org.slf4j.Logger;
 * Time: 13:17
 * To change this template use File | Settings | File Templates.
 */
-public final class SimpleProxyParameter extends ProxyParameter<SimpleProxyParameter> {
+public final class SimpleProxyParameter extends ProxyParameter<SimpleProxyType, SimpleProxyParameter> {
 
     @Inject
-    public SimpleProxyParameter(ListenersFactory listenersFactory,
-                                @Assisted Logger logger,
-                                @Assisted ParameterData data) {
-        super(logger, listenersFactory, data);
-    }
-
-    @Override
-    protected NoChildrenProxyObject createChild(NoChildrenData noChildrenData) {
-        return null;
+    public SimpleProxyParameter(@Assisted Logger logger,
+                                ListenersFactory listenersFactory,
+                                ProxyObject.Factory<SimpleProxyType> typeFactory) {
+        super(logger, listenersFactory, typeFactory);
     }
 }

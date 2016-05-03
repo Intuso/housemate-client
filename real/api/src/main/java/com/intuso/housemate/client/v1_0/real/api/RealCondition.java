@@ -1,23 +1,30 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
+import com.intuso.housemate.client.v1_0.api.object.Condition;
 import com.intuso.housemate.client.v1_0.real.api.driver.ConditionDriver;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
-import com.intuso.housemate.comms.v1_0.api.payload.ConditionData;
-import com.intuso.housemate.object.v1_0.api.Condition;
 import org.slf4j.Logger;
 
-public interface RealCondition<DRIVER extends ConditionDriver>
-        extends Condition<RealCommand,
-        RealValue<String>,
-        RealProperty<PluginResource<ConditionDriver.Factory<DRIVER>>>,
-        RealValue<Boolean>,
-        RealValue<Boolean>,
-        RealList<RealProperty<?>>,
-        RealCommand,
-        RealCondition<?>,
-        RealList<RealCondition<?>>,
-        RealCondition<DRIVER>>,
-        Condition.Listener<RealCondition<?>>,
+public interface RealCondition<DRIVER extends ConditionDriver,
+        COMMAND extends RealCommand<?, ?, ?>,
+        BOOLEAN_VALUE extends RealValue<Boolean, ?, ?>,
+        STRING_VALUE extends RealValue<String, ?, ?>,
+        DRIVER_PROPERTY extends RealProperty<PluginResource<ConditionDriver.Factory<DRIVER>>, ?, ?, ?>,
+        PROPERTIES extends RealList<? extends RealProperty<?, ?, ?, ?>>,
+        CHILD_CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>,
+        CHILD_CONDITIONS extends RealList<? extends CHILD_CONDITION>,
+        CONDITION extends RealCondition<DRIVER, COMMAND, BOOLEAN_VALUE, STRING_VALUE, DRIVER_PROPERTY, PROPERTIES, CHILD_CONDITION, CHILD_CONDITIONS, CONDITION>>
+        extends Condition<COMMAND,
+        COMMAND,
+        STRING_VALUE,
+        DRIVER_PROPERTY,
+        BOOLEAN_VALUE,
+        BOOLEAN_VALUE,
+        PROPERTIES,
+        COMMAND,
+        CHILD_CONDITIONS,
+        CONDITION>,
+        Condition.Listener<CHILD_CONDITION>,
         ConditionDriver.Callback {
 
     DRIVER getDriver();
@@ -44,16 +51,15 @@ public interface RealCondition<DRIVER extends ConditionDriver>
 
     void stop();
 
-    interface Container extends Condition.Container<RealList<RealCondition<?>>>, RemoveCallback {
-        <DRIVER extends ConditionDriver> RealCondition<DRIVER> createAndAddCondition(ConditionData data);
-        void addCondition(RealCondition<?> condition);
+    interface Container<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>, CONDITIONS extends RealList<? extends CONDITION>> extends Condition.Container<CONDITIONS>, RemoveCallback {
+        void addCondition(CONDITION condition);
     }
 
-    interface RemoveCallback {
-        void removeCondition(RealCondition<?> condition);
+    interface RemoveCallback<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>> {
+        void removeCondition(CONDITION condition);
     }
 
-    interface Factory {
-        RealCondition<?> create(Logger logger, ConditionData data, RemoveCallback removeCallback);
+    interface Factory<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>> {
+        CONDITION create(Logger logger, Data data, RemoveCallback<CONDITION> removeCallback);
     }
 }

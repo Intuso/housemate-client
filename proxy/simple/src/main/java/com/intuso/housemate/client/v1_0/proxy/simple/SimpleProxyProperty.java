@@ -2,12 +2,8 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyProperty;
-import com.intuso.housemate.comms.v1_0.api.payload.CommandData;
-import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.comms.v1_0.api.payload.PropertyData;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyProperty;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -23,19 +19,11 @@ public final class SimpleProxyProperty extends ProxyProperty<
         SimpleProxyCommand,
         SimpleProxyProperty> {
 
-    private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
-
     @Inject
-    public SimpleProxyProperty(ListenersFactory listenersFactory,
-                               ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
-                               @Assisted Logger logger,
-                               @Assisted PropertyData data) {
-        super(logger, listenersFactory, data);
-        this.objectFactory = objectFactory;
-    }
-
-    @Override
-    protected SimpleProxyCommand createChild(CommandData data) {
-        return (SimpleProxyCommand) objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
+    public SimpleProxyProperty(@Assisted Logger logger,
+                               ListenersFactory listenersFactory,
+                               ProxyObject.Factory<SimpleProxyType> typeFactory,
+                               ProxyObject.Factory<SimpleProxyCommand> commandFactory) {
+        super(logger, listenersFactory, typeFactory, commandFactory);
     }
 }

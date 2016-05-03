@@ -2,11 +2,10 @@ package com.intuso.housemate.client.v1_0.real.impl.annotations;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.real.api.RealParameter;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
-import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
-import com.intuso.housemate.object.v1_0.api.TypeInstances;
+import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -29,10 +28,10 @@ public class MethodCommand extends RealCommandImpl {
                             @Assisted("id") String id,
                             @Assisted("name") String name,
                             @Assisted("description") String description,
-                            @Assisted List<RealParameter<?>> parameters,
+                            @Assisted List<RealParameterImpl<?>> parameters,
                             @Assisted Method method,
                             @Assisted Object instance) {
-        super(logger, listenersFactory, id, name, description, parameters);
+        super(logger, id, name, description, listenersFactory, parameters);
         this.method = method;
         this.instance = instance;
         parameterConverter = new ParameterConverter(parameters);
@@ -40,26 +39,26 @@ public class MethodCommand extends RealCommandImpl {
     }
 
     @Override
-    public void perform(TypeInstanceMap values) {
+    public void perform(Type.InstanceMap values) {
         try {
             method.invoke(instance, parameterConverter.convert(values));
         } catch(InvocationTargetException|IllegalAccessException e) {
-            throw new HousemateCommsException("Failed to perform command", e);
+            throw new HousemateException("Failed to perform command", e);
         }
     }
 
     private final class ParameterConverter {
 
-        private final List<RealParameter<?>> parameters;
+        private final List<RealParameterImpl<?>> parameters;
 
-        private ParameterConverter(List<RealParameter<?>> parameters) {
+        private ParameterConverter(List<RealParameterImpl<?>> parameters) {
             this.parameters = parameters;
         }
 
-        public Object[] convert(TypeInstanceMap values) {
+        public Object[] convert(Type.InstanceMap values) {
             Object[] result = new Object[parameters.size()];
             for(int i = 0; i < result.length; i++) {
-                TypeInstances typeInstances = values.getChildren().get(parameters.get(i).getId());
+                Type.Instances typeInstances = values.getChildren().get(parameters.get(i).getId());
                 if(typeInstances == null || typeInstances.getElements().size() == 0)
                     result[i] = null;
                 else
@@ -74,7 +73,7 @@ public class MethodCommand extends RealCommandImpl {
                              @Assisted("id") String id,
                              @Assisted("name") String name,
                              @Assisted("description") String description,
-                             List<RealParameter<?>> parameters,
+                             List<RealParameterImpl<?>> parameters,
                              Method method,
                              Object instance);
     }

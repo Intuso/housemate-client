@@ -1,6 +1,6 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
-import com.intuso.housemate.object.v1_0.api.List;
+import com.intuso.housemate.client.v1_0.api.object.List;
 
 /**
  */
@@ -19,10 +19,4 @@ public interface RealList<CHILD>
      * @return the removed element, or null if there was none for the id
      */
     CHILD remove(String id);
-
-    /**
-     * Resends all elements of the list to the server. Used when the server instance has changed and the server needs
-     * to be retold of all objects
-     */
-    void resendElements();
 }

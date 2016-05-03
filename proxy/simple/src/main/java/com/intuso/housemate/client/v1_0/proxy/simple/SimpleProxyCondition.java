@@ -2,12 +2,8 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyCondition;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
-import com.intuso.housemate.comms.v1_0.api.payload.ConditionData;
-import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.comms.v1_0.api.payload.PropertyData;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyCondition;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -22,23 +18,18 @@ public final class SimpleProxyCondition extends ProxyCondition<
         SimpleProxyCommand,
         SimpleProxyValue,
         SimpleProxyProperty,
-        SimpleProxyList<PropertyData, SimpleProxyProperty>,
+        SimpleProxyList<SimpleProxyProperty>,
         SimpleProxyCondition,
-        SimpleProxyList<ConditionData, SimpleProxyCondition>> {
-
-    private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
+        SimpleProxyList<SimpleProxyCondition>> {
 
     @Inject
-    public SimpleProxyCondition(ListenersFactory listenersFactory,
-                                ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
-                                @Assisted Logger logger,
-                                @Assisted ConditionData data) {
-        super(logger, listenersFactory, data);
-        this.objectFactory = objectFactory;
-    }
-
-    @Override
-    protected ProxyObject<?, ?, ?, ?, ?> createChild(HousemateData<?> data) {
-        return objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
+    public SimpleProxyCondition(@Assisted Logger logger,
+                                ListenersFactory listenersFactory,
+                                ProxyObject.Factory<SimpleProxyCommand> commandFactory,
+                                ProxyObject.Factory<SimpleProxyValue> valueFactory,
+                                ProxyObject.Factory<SimpleProxyProperty> propertyFactory,
+                                ProxyObject.Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory,
+                                ProxyObject.Factory<SimpleProxyList<SimpleProxyCondition>> conditionsFactory) {
+        super(logger, listenersFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory, conditionsFactory);
     }
 }

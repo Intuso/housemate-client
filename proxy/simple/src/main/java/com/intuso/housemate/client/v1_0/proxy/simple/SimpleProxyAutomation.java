@@ -2,13 +2,8 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyAutomation;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
-import com.intuso.housemate.comms.v1_0.api.payload.AutomationData;
-import com.intuso.housemate.comms.v1_0.api.payload.ConditionData;
-import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.comms.v1_0.api.payload.TaskData;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyAutomation;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -22,22 +17,17 @@ import org.slf4j.Logger;
 public final class SimpleProxyAutomation extends ProxyAutomation<
         SimpleProxyCommand,
         SimpleProxyValue,
-        SimpleProxyCondition,
-        SimpleProxyList<ConditionData, SimpleProxyCondition>, SimpleProxyTask, SimpleProxyList<TaskData, SimpleProxyTask>, SimpleProxyAutomation> {
-
-    private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
+        SimpleProxyList<SimpleProxyCondition>,
+        SimpleProxyList<SimpleProxyTask>,
+        SimpleProxyAutomation> {
 
     @Inject
-    public SimpleProxyAutomation(ListenersFactory listenersFactory,
-                                 ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
-                                 @Assisted Logger logger,
-                                 @Assisted AutomationData data) {
-        super(logger, listenersFactory, data);
-        this.objectFactory = objectFactory;
-    }
-
-    @Override
-    protected ProxyObject<?, ?, ?, ?, ?> createChild(HousemateData<?> data) {
-        return objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
+    public SimpleProxyAutomation(@Assisted Logger logger,
+                                 ListenersFactory listenersFactory,
+                                 ProxyObject.Factory<SimpleProxyCommand> commandFactory,
+                                 ProxyObject.Factory<SimpleProxyValue> valueFactory,
+                                 ProxyObject.Factory<SimpleProxyList<SimpleProxyCondition>> conditionsFactory,
+                                 ProxyObject.Factory<SimpleProxyList<SimpleProxyTask>> tasksFactory) {
+        super(logger, listenersFactory, commandFactory, valueFactory, conditionsFactory, tasksFactory);
     }
 }

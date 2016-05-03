@@ -2,11 +2,8 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.real.api.RealType;
+import com.intuso.housemate.client.v1_0.api.object.Value;
 import com.intuso.housemate.client.v1_0.real.api.RealValue;
-import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
-import com.intuso.housemate.comms.v1_0.api.payload.ValueData;
-import com.intuso.housemate.object.v1_0.api.Value;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -17,9 +14,9 @@ import java.util.List;
 /**
  * @param <O> the type of this value's value
  */
-public class RealValueImpl<O> extends RealValueBaseImpl<ValueData, NoChildrenData, RealObject<NoChildrenData, ?, ?, ?>, O,
-        Value.Listener<? super RealValue<O>>, RealValue<O>>
-        implements RealValue<O> {
+public final class RealValueImpl<O>
+        extends RealValueBaseImpl<O, Value.Data, Value.Listener<? super RealValueImpl<O>>, RealValueImpl<O>>
+        implements RealValue<O, RealTypeImpl<O>, RealValueImpl<O>> {
 
     /**
      * @param listenersFactory
@@ -30,28 +27,28 @@ public class RealValueImpl<O> extends RealValueBaseImpl<ValueData, NoChildrenDat
      * @param type the type of the value's value
      * @param values the value's initial values
      */
-    public RealValueImpl(ListenersFactory listenersFactory, Logger logger, String id, String name, String description,
-                         RealType<O> type, O... values) {
-        this(listenersFactory, logger, id, name, description, type, Arrays.asList(values));
+    public RealValueImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory,
+                         RealTypeImpl<O> type, O... values) {
+        this(logger, id, name, description, listenersFactory, type, Arrays.asList(values));
     }
 
     /**
      * @param logger {@inheritDoc}
-     * @param listenersFactory
      * @param id the value's id
      * @param name the value's name
      * @param description the value's description
+     * @param listenersFactory
      * @param type the type of the value's value
      * @param values the value's initial values
      */
     @Inject
-    public RealValueImpl(ListenersFactory listenersFactory,
-                         @Assisted final Logger logger,
+    public RealValueImpl(@Assisted final Logger logger,
                          @Assisted("id") String id,
                          @Assisted("name") String name,
                          @Assisted("description") String description,
-                         @Assisted RealType<O> type,
+                         ListenersFactory listenersFactory,
+                         @Assisted RealTypeImpl<O> type,
                          @Nullable @Assisted List<O> values) {
-        super(logger, listenersFactory, new ValueData(id, name, description, type.getId(), RealTypeImpl.serialiseAll(type, values)), type);
+        super(logger, new Value.Data(id, name, description), listenersFactory, type, values);
     }
 }

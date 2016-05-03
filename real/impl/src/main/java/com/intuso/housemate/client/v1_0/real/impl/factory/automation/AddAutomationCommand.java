@@ -2,15 +2,15 @@ package com.intuso.housemate.client.v1_0.real.impl.factory.automation;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Automation;
+import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
-import com.intuso.housemate.client.v1_0.real.impl.LoggerUtil;
+import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
+import com.intuso.housemate.client.v1_0.real.impl.RealAutomationImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.type.StringType;
-import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.comms.v1_0.api.payload.AutomationData;
-import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
-import com.intuso.housemate.object.v1_0.api.TypeInstances;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -27,40 +27,40 @@ public class AddAutomationCommand extends RealCommandImpl {
     public final static String DESCRIPTION_PARAMETER_DESCRIPTION = "A description of the new automation";
     
     private final Callback callback;
-    private final RealAutomation.Factory automationFactory;
-    private final RealAutomation.RemoveCallback removeCallback;
+    private final RealAutomation.Factory<RealAutomationImpl> automationFactory;
+    private final RealAutomation.RemoveCallback<RealAutomationImpl> removeCallback;
 
     @Inject
     protected AddAutomationCommand(ListenersFactory listenersFactory,
                                    StringType stringType,
-                                   RealAutomation.Factory automationFactory,
+                                   RealAutomation.Factory<RealAutomationImpl> automationFactory,
                                    @Assisted Logger logger,
                                    @Assisted("id") String id,
                                    @Assisted("name") String name,
                                    @Assisted("description") String description,
                                    @Assisted Callback callback,
-                                   @Assisted RealAutomation.RemoveCallback removeCallback) {
-        super(logger, listenersFactory, id, name, description,
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, stringType),
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, stringType));
+                                   @Assisted RealAutomation.RemoveCallback<RealAutomationImpl> removeCallback) {
+        super(logger, id, name, description, listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, listenersFactory, stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, listenersFactory, stringType));
         this.callback = callback;
         this.automationFactory = automationFactory;
         this.removeCallback = removeCallback;
     }
 
     @Override
-    public void perform(TypeInstanceMap values) {
-        TypeInstances description = values.getChildren().get(DESCRIPTION_PARAMETER_ID);
+    public void perform(Type.InstanceMap values) {
+        Type.Instances description = values.getChildren().get(DESCRIPTION_PARAMETER_ID);
         if(description == null || description.getFirstValue() == null)
-            throw new HousemateCommsException("No description specified");
-        TypeInstances name = values.getChildren().get(NAME_PARAMETER_ID);
+            throw new HousemateException("No description specified");
+        Type.Instances name = values.getChildren().get(NAME_PARAMETER_ID);
         if(name == null || name.getFirstValue() == null)
-            throw new HousemateCommsException("No name specified");
-        callback.addAutomation(automationFactory.create(LoggerUtil.child(getLogger(), name.getFirstValue()), new AutomationData(name.getFirstValue(), name.getFirstValue(), description.getFirstValue()), removeCallback));
+            throw new HousemateException("No name specified");
+        callback.addAutomation(automationFactory.create(ChildUtil.logger(logger, name.getFirstValue()), new Automation.Data(name.getFirstValue(), name.getFirstValue(), description.getFirstValue()), removeCallback));
     }
 
     public interface Callback {
-        void addAutomation(RealAutomation automation);
+        void addAutomation(RealAutomationImpl automation);
     }
 
     public interface Factory {
@@ -69,6 +69,6 @@ public class AddAutomationCommand extends RealCommandImpl {
                                     @Assisted("name") String name,
                                     @Assisted("description") String description,
                                     Callback callback,
-                                    RealAutomation.RemoveCallback removeCallback);
+                                    RealAutomation.RemoveCallback<RealAutomationImpl> removeCallback);
     }
 }

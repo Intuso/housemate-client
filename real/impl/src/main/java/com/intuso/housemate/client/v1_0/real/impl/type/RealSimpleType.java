@@ -1,38 +1,36 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
+import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
-import com.intuso.housemate.comms.v1_0.api.payload.SimpleTypeData;
-import com.intuso.housemate.object.v1_0.api.TypeInstance;
-import com.intuso.housemate.object.v1_0.api.TypeSerialiser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
 /**
  * Base class for types that have a simple type, such as string, integer etc
  */
-public abstract class RealSimpleType<O> extends RealTypeImpl<SimpleTypeData, NoChildrenData, O> {
+public abstract class RealSimpleType<O> extends RealTypeImpl<O> {
 
     private final TypeSerialiser<O> serialiser;
 
     /**
      * @param logger the log
-     * @param listenersFactory
-     * @param type the type of the simple type
+     * @param simpleType the type of the simple type
      * @param serialiser the serialiser for the type
+     * @param listenersFactory
      */
-    protected RealSimpleType(Logger logger, ListenersFactory listenersFactory, SimpleTypeData.Type type, TypeSerialiser<O> serialiser) {
-        super(logger, listenersFactory, new SimpleTypeData(type));
+    protected RealSimpleType(Logger logger, Type.Simple simpleType, TypeSerialiser<O> serialiser, ListenersFactory listenersFactory) {
+        super(logger, new SimpleData(simpleType), listenersFactory);
         this.serialiser = serialiser;
     }
 
     @Override
-    public TypeInstance serialise(O o) {
+    public Instance serialise(O o) {
         return serialiser.serialise(o);
     }
 
     @Override
-    public O deserialise(TypeInstance value) {
+    public O deserialise(Instance value) {
         return serialiser.deserialise(value);
     }
 }

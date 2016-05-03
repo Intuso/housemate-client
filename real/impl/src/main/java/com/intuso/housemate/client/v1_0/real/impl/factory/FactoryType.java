@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.type.RealChoiceType;
-import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -24,7 +23,7 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
 
     @Inject
     protected FactoryType(Logger logger, ListenersFactory listenersFactory, String id, String name, String description) {
-        super(logger, listenersFactory, id, name, description, 1, 1, Arrays.<RealOptionImpl>asList());
+        super(logger, id, name, description, listenersFactory, 1, 1, Arrays.<RealOptionImpl>asList());
         this.listenersFactory = listenersFactory;
     }
 
@@ -36,7 +35,7 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
 
     public void factoryAvailable(String id, String name, String description, FACTORY factory) {
         getFactoryEntry(id, true).factoryAvailable(factory);
-        options.add(new RealOptionImpl(getLogger(), getListenersFactory(), id, name, description));
+        options.add(new RealOptionImpl(logger, listenersFactory, id, name, description));
     }
 
     public void factoryUnavailable(String id) {
@@ -45,12 +44,12 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
     }
 
     @Override
-    public TypeInstance serialise(Entry<FACTORY> factory) {
-        return factory == null ? null : new TypeInstance(factories.inverse().get(factory));
+    public Instance serialise(Entry<FACTORY> factory) {
+        return factory == null ? null : new Instance(factories.inverse().get(factory));
     }
 
     @Override
-    public Entry<FACTORY> deserialise(TypeInstance value) {
+    public Entry<FACTORY> deserialise(Instance value) {
         return value != null && value.getValue() != null ? factories.get(value.getValue()) : null;
     }
 

@@ -2,16 +2,16 @@ package com.intuso.housemate.client.v1_0.real.impl.factory.hardware;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Hardware;
+import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
-import com.intuso.housemate.client.v1_0.real.impl.LoggerUtil;
+import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealHardwareImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.type.StringType;
-import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.comms.v1_0.api.payload.HardwareData;
-import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
-import com.intuso.housemate.object.v1_0.api.TypeInstances;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -32,24 +32,24 @@ public class AddHardwareCommand extends RealCommandImpl {
 
     private final HardwareFactoryType hardwareFactoryType;
     private final Callback callback;
-    private final RealHardware.Factory hardwareFactory;
-    private final RealHardware.RemoveCallback removeCallback;
+    private final RealHardware.Factory<RealHardwareImpl<?>> hardwareFactory;
+    private final RealHardware.RemoveCallback<RealHardwareImpl<?>> removeCallback;
 
     @Inject
     protected AddHardwareCommand(ListenersFactory listenersFactory,
                                  StringType stringType,
                                  HardwareFactoryType hardwareFactoryType,
-                                 RealHardware.Factory hardwareFactory,
+                                 RealHardware.Factory<RealHardwareImpl<?>> hardwareFactory,
                                  @Assisted Logger logger,
                                  @Assisted("id") String id,
                                  @Assisted("name") String name,
                                  @Assisted("description") String description,
                                  @Assisted Callback callback,
-                                 @Assisted RealHardware.RemoveCallback removeCallback) {
-        super(logger, listenersFactory, id, name, description,
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, stringType),
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, stringType),
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, TYPE_PARAMETER_ID), TYPE_PARAMETER_ID, TYPE_PARAMETER_NAME, TYPE_PARAMETER_DESCRIPTION, hardwareFactoryType));
+                                 @Assisted RealHardware.RemoveCallback<RealHardwareImpl<?>> removeCallback) {
+        super(logger, id, name, description, listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, listenersFactory, stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, listenersFactory, stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, TYPE_PARAMETER_ID), TYPE_PARAMETER_ID, TYPE_PARAMETER_NAME, TYPE_PARAMETER_DESCRIPTION, listenersFactory, hardwareFactoryType));
         this.hardwareFactoryType = hardwareFactoryType;
         this.callback = callback;
         this.hardwareFactory = hardwareFactory;
@@ -57,22 +57,22 @@ public class AddHardwareCommand extends RealCommandImpl {
     }
 
     @Override
-    public void perform(TypeInstanceMap values) {
-        TypeInstances name = values.getChildren().get(NAME_PARAMETER_ID);
+    public void perform(Type.InstanceMap values) {
+        Type.Instances name = values.getChildren().get(NAME_PARAMETER_ID);
         if(name == null || name.getFirstValue() == null)
-            throw new HousemateCommsException("No name specified");
-        TypeInstances description = values.getChildren().get(DESCRIPTION_PARAMETER_ID);
+            throw new HousemateException("No name specified");
+        Type.Instances description = values.getChildren().get(DESCRIPTION_PARAMETER_ID);
         if(description == null || description.getFirstValue() == null)
-            throw new HousemateCommsException("No description specified");
-        RealHardware<?> hardware = hardwareFactory.create(LoggerUtil.child(getLogger(), name.getFirstValue()), new HardwareData(name.getFirstValue(), name.getFirstValue(), description.getFirstValue()), removeCallback);
+            throw new HousemateException("No description specified");
+        RealHardwareImpl<?> hardware = hardwareFactory.create(ChildUtil.logger(logger, name.getFirstValue()), new Hardware.Data(name.getFirstValue(), name.getFirstValue(), description.getFirstValue()), removeCallback);
         callback.addHardware(hardware);
-        TypeInstances hardwareType = values.getChildren().get(TYPE_PARAMETER_ID);
+        Type.Instances hardwareType = values.getChildren().get(TYPE_PARAMETER_ID);
         if(hardwareType != null && hardwareType.getFirstValue() != null)
-            ((RealProperty)hardware.getDriverProperty()).setTypedValues(hardwareFactoryType.deserialise(hardwareType.getElements().get(0)));
+            ((RealProperty)hardware.getDriverProperty()).setValue(hardwareFactoryType.deserialise(hardwareType.getElements().get(0)));
     }
 
     public interface Callback {
-        void addHardware(RealHardware hardware);
+        void addHardware(RealHardwareImpl<?> hardware);
     }
 
     public interface Factory {
@@ -81,6 +81,6 @@ public class AddHardwareCommand extends RealCommandImpl {
                                   @Assisted("name") String name,
                                   @Assisted("description") String description,
                                   Callback callback,
-                                  RealHardware.RemoveCallback removeCallback);
+                                  RealHardware.RemoveCallback<RealHardwareImpl<?>> removeCallback);
     }
 }

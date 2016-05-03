@@ -2,16 +2,16 @@ package com.intuso.housemate.client.v1_0.real.impl.factory.condition;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Condition;
+import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealCondition;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
-import com.intuso.housemate.client.v1_0.real.impl.LoggerUtil;
+import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealConditionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.type.StringType;
-import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.comms.v1_0.api.payload.ConditionData;
-import com.intuso.housemate.object.v1_0.api.TypeInstanceMap;
-import com.intuso.housemate.object.v1_0.api.TypeInstances;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 * Created by tomc on 19/03/15.
 */
 public class AddConditionCommand extends RealCommandImpl {
-
+    
     public final static String NAME_PARAMETER_ID = "name";
     public final static String NAME_PARAMETER_NAME = "Name";
     public final static String NAME_PARAMETER_DESCRIPTION = "The name of the new condition";
@@ -30,57 +30,57 @@ public class AddConditionCommand extends RealCommandImpl {
     public final static String TYPE_PARAMETER_NAME = "Type";
     public final static String TYPE_PARAMETER_DESCRIPTION = "The type of the new condition";
 
-    private final Callback callback;
     private final ConditionFactoryType conditionFactoryType;
-    private final RealCondition.Factory conditionFactory;
-    private final RealCondition.RemoveCallback removeCallback;
+    private final Callback callback;
+    private final RealCondition.Factory<RealConditionImpl<?>> conditionFactory;
+    private final RealCondition.RemoveCallback<RealConditionImpl<?>> removeCallback;
 
     @Inject
     protected AddConditionCommand(ListenersFactory listenersFactory,
                                   StringType stringType,
                                   ConditionFactoryType conditionFactoryType,
-                                  RealCondition.Factory conditionFactory,
+                                  RealCondition.Factory<RealConditionImpl<?>> conditionFactory,
                                   @Assisted Logger logger,
                                   @Assisted("id") String id,
                                   @Assisted("name") String name,
                                   @Assisted("description") String description,
                                   @Assisted Callback callback,
-                                  @Assisted RealCondition.RemoveCallback removeCallback) {
-        super(logger, listenersFactory, id, name, description,
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, stringType),
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, stringType),
-                new RealParameterImpl<>(listenersFactory, LoggerUtil.child(logger, TYPE_PARAMETER_ID), TYPE_PARAMETER_ID, TYPE_PARAMETER_NAME, TYPE_PARAMETER_DESCRIPTION, conditionFactoryType));
-        this.callback = callback;
+                                  @Assisted RealCondition.RemoveCallback<RealConditionImpl<?>> removeCallback) {
+        super(logger, id, name, description, listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, listenersFactory, stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, listenersFactory, stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, TYPE_PARAMETER_ID), TYPE_PARAMETER_ID, TYPE_PARAMETER_NAME, TYPE_PARAMETER_DESCRIPTION, listenersFactory, conditionFactoryType));
         this.conditionFactoryType = conditionFactoryType;
+        this.callback = callback;
         this.conditionFactory = conditionFactory;
         this.removeCallback = removeCallback;
     }
 
     @Override
-    public void perform(TypeInstanceMap values) {
-        TypeInstances name = values.getChildren().get(NAME_PARAMETER_ID);
+    public void perform(Type.InstanceMap values) {
+        Type.Instances name = values.getChildren().get(NAME_PARAMETER_ID);
         if(name == null || name.getFirstValue() == null)
-            throw new HousemateCommsException("No name specified");
-        TypeInstances description = values.getChildren().get(DESCRIPTION_PARAMETER_ID);
+            throw new HousemateException("No name specified");
+        Type.Instances description = values.getChildren().get(DESCRIPTION_PARAMETER_ID);
         if(description == null || description.getFirstValue() == null)
-            throw new HousemateCommsException("No description specified");
-        RealCondition<?> condition = conditionFactory.create(LoggerUtil.child(getLogger(), name.getFirstValue()), new ConditionData(name.getFirstValue(), name.getFirstValue(), description.getFirstValue()), removeCallback);
+            throw new HousemateException("No description specified");
+        RealConditionImpl<?> condition = conditionFactory.create(ChildUtil.logger(logger, name.getFirstValue()), new Condition.Data(name.getFirstValue(), name.getFirstValue(), description.getFirstValue()), removeCallback);
         callback.addCondition(condition);
-        TypeInstances conditionType = values.getChildren().get(TYPE_PARAMETER_ID);
+        Type.Instances conditionType = values.getChildren().get(TYPE_PARAMETER_ID);
         if(conditionType != null && conditionType.getFirstValue() != null)
-            ((RealProperty)condition.getDriverProperty()).setTypedValues(conditionFactoryType.deserialise(conditionType.getElements().get(0)));
+            ((RealProperty)condition.getDriverProperty()).setValue(conditionFactoryType.deserialise(conditionType.getElements().get(0)));
     }
 
     public interface Callback {
-        void addCondition(RealCondition condition);
+        void addCondition(RealConditionImpl<?> condition);
     }
 
     public interface Factory {
         AddConditionCommand create(Logger logger,
-                                   @Assisted("id") String id,
-                                   @Assisted("name") String name,
-                                   @Assisted("description") String description,
-                                   Callback callback,
-                                   RealCondition.RemoveCallback removeCallback);
+                                @Assisted("id") String id,
+                                @Assisted("name") String name,
+                                @Assisted("description") String description,
+                                Callback callback,
+                                RealCondition.RemoveCallback<RealConditionImpl<?>> removeCallback);
     }
 }

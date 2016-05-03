@@ -1,23 +1,26 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
+import com.intuso.housemate.client.v1_0.api.object.User;
 import com.intuso.housemate.client.v1_0.real.api.type.Email;
-import com.intuso.housemate.comms.v1_0.api.payload.UserData;
-import com.intuso.housemate.object.v1_0.api.User;
 import org.slf4j.Logger;
 
-public interface RealUser
-        extends User<RealCommand, RealProperty<Email>, RealUser> {
+public interface RealUser<COMMAND extends RealCommand<?, ?, ?>,
+        EMAIL_PROPERTY extends RealProperty<Email, ?, ?, ?>,
+        USER extends RealUser<COMMAND, EMAIL_PROPERTY, USER>>
+        extends User<COMMAND,
+        COMMAND,
+        EMAIL_PROPERTY,
+        USER> {
 
-    interface Container extends User.Container<RealList<RealUser>>, RemoveCallback {
-        RealUser createAndAddUser(UserData data);
-        void addUser(RealUser user);
+    interface Container<USER extends RealUser<?, ?, ?>, USERS extends RealList<? extends USER>> extends User.Container<USERS>, RemoveCallback<USER> {
+        void addUser(USER user);
     }
 
-    interface RemoveCallback {
-        void removeUser(RealUser user);
+    interface RemoveCallback<USER extends RealUser<?, ?, ?>> {
+        void removeUser(USER user);
     }
 
-    interface Factory {
-        RealUser create(Logger logger, UserData data, RemoveCallback removeCallback);
+    interface Factory<USER extends RealUser<?, ?, ?>> {
+        USER create(Logger logger, Data data, RemoveCallback<USER> removeCallback);
     }
 }

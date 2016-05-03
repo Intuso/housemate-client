@@ -1,9 +1,8 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.real.api.type.Time;
-import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.object.v1_0.api.TypeInstance;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,16 +21,16 @@ public class TimeType extends RealRegexType<Time> {
 
     @Inject
     public TimeType(ListenersFactory listenersFactory) {
-        super(logger, listenersFactory, ID, NAME, DESCRIPTION, 1, 1, REGEX);
+        super(logger, ID, NAME, DESCRIPTION, listenersFactory, 1, 1, REGEX);
     }
 
     @Override
-    public TypeInstance serialise(Time s) {
-        return s != null ? new TypeInstance(s.toString()) : null;
+    public Instance serialise(Time s) {
+        return s != null ? new Instance(s.toString()) : null;
     }
 
     @Override
-    public Time deserialise(TypeInstance value) throws HousemateCommsException {
+    public Time deserialise(Instance value) throws HousemateException {
         if(value == null || value.getValue() == null)
             return null;
         String parts[] = value.getValue().split(":");
@@ -43,7 +42,7 @@ public class TimeType extends RealRegexType<Time> {
             if(parts.length > 2)
                 seconds = Integer.parseInt(parts[2]);
         } catch(NumberFormatException e) {
-            throw new HousemateCommsException("Failed to parse time from " + value, e);
+            throw new HousemateException("Failed to parse time from " + value, e);
         }
         return new Time(hours, minutes, seconds);
     }

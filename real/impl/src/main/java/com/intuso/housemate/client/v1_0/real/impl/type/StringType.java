@@ -1,12 +1,11 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealPropertyImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealValueImpl;
-import com.intuso.housemate.comms.v1_0.api.payload.SimpleTypeData;
-import com.intuso.housemate.object.v1_0.api.TypeInstance;
-import com.intuso.housemate.object.v1_0.api.TypeSerialiser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +19,12 @@ public class StringType extends RealSimpleType<String> {
 
     public final static TypeSerialiser<String> SERIALISER = new TypeSerialiser<String>() {
         @Override
-        public TypeInstance serialise(String s) {
-            return s != null ? new TypeInstance(s) : null;
+        public Instance serialise(String s) {
+            return s != null ? new Instance(s) : null;
         }
 
         @Override
-        public String deserialise(TypeInstance value) {
+        public String deserialise(Instance value) {
             return value != null ? value.getValue() : null;
         }
     };
@@ -34,7 +33,7 @@ public class StringType extends RealSimpleType<String> {
 
     @Inject
     public StringType(ListenersFactory listenersFactory) {
-        super(logger, listenersFactory, SimpleTypeData.Type.String, SERIALISER);
+        super(logger, Type.Simple.String, SERIALISER, listenersFactory);
     }
 
     /**
@@ -46,9 +45,9 @@ public class StringType extends RealSimpleType<String> {
      * @param value the initial value
      * @return a string value object
      */
-    public static RealValueImpl<String> createValue(Logger logger, ListenersFactory listenersFactory,
-                                                String id, String name, String description, String value) {
-        return new RealValueImpl<>(listenersFactory, logger, id, name, description, new StringType(listenersFactory), value);
+    public static RealValueImpl<String> createValue(Logger logger, String id, String name, String description, ListenersFactory listenersFactory,
+                                                    String value) {
+        return new RealValueImpl<>(logger, id, name, description, listenersFactory, new StringType(listenersFactory), value);
     }
 
     /**
@@ -60,9 +59,9 @@ public class StringType extends RealSimpleType<String> {
      * @param values the initial values
      * @return a string property object
      */
-    public static RealPropertyImpl<String> createProperty(Logger logger, ListenersFactory listenersFactory,
-                                                      String id, String name, String description, List<String> values) {
-        return new RealPropertyImpl<>(logger, listenersFactory, id, name, description, new StringType(listenersFactory), values);
+    public static RealPropertyImpl<String> createProperty(Logger logger, String id, String name, String description, ListenersFactory listenersFactory,
+                                                          List<String> values) {
+        return new RealPropertyImpl<>(logger, id, name, description, listenersFactory, new StringType(listenersFactory), values);
     }
 
     /**
@@ -73,8 +72,7 @@ public class StringType extends RealSimpleType<String> {
      * @param description the parameter's description
      * @return a string parameter object
      */
-    public static RealParameterImpl<String> createParameter(Logger logger, ListenersFactory listenersFactory,
-                                                        String id, String name, String description) {
-        return new RealParameterImpl<>(listenersFactory, logger, id, name, description, new StringType(listenersFactory));
+    public static RealParameterImpl<String> createParameter(Logger logger, String id, String name, String description, ListenersFactory listenersFactory) {
+        return new RealParameterImpl<>(logger, id, name, description, listenersFactory, new StringType(listenersFactory));
     }
 }

@@ -2,13 +2,7 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyDevice;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
-import com.intuso.housemate.comms.v1_0.api.payload.DeviceData;
-import com.intuso.housemate.comms.v1_0.api.payload.FeatureData;
-import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.comms.v1_0.api.payload.PropertyData;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyDevice;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -21,25 +15,20 @@ import org.slf4j.Logger;
 */
 public final class SimpleProxyDevice extends ProxyDevice<
         SimpleProxyCommand,
-        SimpleProxyProperty,
         SimpleProxyValue,
-        SimpleProxyList<PropertyData, SimpleProxyProperty>,
-        SimpleProxyList<FeatureData, SimpleProxyFeature>,
+        SimpleProxyProperty,
+        SimpleProxyList<SimpleProxyProperty>,
+        SimpleProxyList<SimpleProxyFeature>,
         SimpleProxyDevice> {
 
-    private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
-
     @Inject
-    public SimpleProxyDevice(ListenersFactory listenersFactory,
-                             Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
-                             @Assisted Logger logger,
-                             @Assisted DeviceData data) {
-        super(logger, listenersFactory, data);
-        this.objectFactory = objectFactory;
-    }
-
-    @Override
-    protected ProxyObject<?, ?, ?, ?, ?> createChild(HousemateData<?> data) {
-        return objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
+    public SimpleProxyDevice(@Assisted Logger logger,
+                             ListenersFactory listenersFactory,
+                             Factory<SimpleProxyCommand> commandFactory,
+                             Factory<SimpleProxyValue> valueFactory,
+                             Factory<SimpleProxyProperty> propertyFactory,
+                             Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory,
+                             Factory<SimpleProxyList<SimpleProxyFeature>> featuresFactory) {
+        super(logger, listenersFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory, featuresFactory);
     }
 }

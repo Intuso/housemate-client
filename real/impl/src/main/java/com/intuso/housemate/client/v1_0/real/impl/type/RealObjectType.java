@@ -4,14 +4,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.housemate.comms.v1_0.api.RemoteObject;
-import com.intuso.housemate.comms.v1_0.api.payload.NoChildrenData;
-import com.intuso.housemate.comms.v1_0.api.payload.ObjectTypeData;
-import com.intuso.housemate.object.v1_0.api.BaseHousemateObject;
-import com.intuso.housemate.object.v1_0.api.Root;
-import com.intuso.housemate.object.v1_0.api.TypeInstance;
-import com.intuso.housemate.object.v1_0.api.TypeSerialiser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +17,8 @@ import java.util.List;
 /**
  * Type for an object from the object tree
  */
-public class RealObjectType<O extends BaseHousemateObject<?>>
-        extends RealTypeImpl<ObjectTypeData, NoChildrenData, RealObjectType.Reference<O>> {
+public class RealObjectType<O extends Object<?>>
+        extends RealTypeImpl<RealObjectType.Reference<O>> {
 
     public final static String ID = "object";
     public final static String NAME = "Object";
@@ -39,18 +35,18 @@ public class RealObjectType<O extends BaseHousemateObject<?>>
      * @param root the root to get the object from
      */
     @Inject
-    public RealObjectType(ListenersFactory listenersFactory, Root<?, ?> root) {
-        super(logger, listenersFactory, new ObjectTypeData(ID, NAME, "Path to an object", 1, 1));
+    public RealObjectType(ListenersFactory listenersFactory, RealNodeImpl root) {
+        super(logger, new ObjectData(ID, NAME, "Path to an object", 1, 1), listenersFactory);
         serialiser = new Serialiser<>(root);
     }
 
     @Override
-    public TypeInstance serialise(Reference<O> o) {
+    public Instance serialise(Reference<O> o) {
         return serialiser.serialise(o);
     }
 
     @Override
-    public Reference<O> deserialise(TypeInstance instance) {
+    public Reference<O> deserialise(Instance instance) {
         return serialiser.deserialise(instance);
     }
 
@@ -58,7 +54,7 @@ public class RealObjectType<O extends BaseHousemateObject<?>>
      * Reference for an object containing the object's path, and the object if it exists
      * @param <O>
      */
-    public static class Reference<O extends BaseHousemateObject<?>> {
+    public static class Reference<O extends Object<?>> {
 
         private final String[] path;
         private O object;
@@ -74,7 +70,7 @@ public class RealObjectType<O extends BaseHousemateObject<?>>
          * @param object the object
          */
         public Reference(O object) {
-            this(object == null ? null : object.getPath(), object);
+            this(object == null ? null : /* todo object.getPath()*/null, object);
         }
 
         /**
@@ -116,32 +112,32 @@ public class RealObjectType<O extends BaseHousemateObject<?>>
      * Serialiser for an object reference
      * @param <O> the type of the object to serialise
      */
-    public static class Serialiser<O extends BaseHousemateObject<?>> implements TypeSerialiser<Reference<O>> {
+    public static class Serialiser<O extends Object<?>> implements TypeSerialiser<Reference<O>> {
 
-        private final Root<?, ?> root;
+        private final RealNodeImpl root;
 
         /**
          * @param root the root to get the object from
          */
         @Inject
-        public Serialiser(Root<?, ?> root) {
+        public Serialiser(RealNodeImpl root) {
             this.root = root;
         }
 
         @Override
-        public TypeInstance serialise(Reference<O> o) {
+        public Instance serialise(Reference<O> o) {
             if(o == null)
                 return null;
-            return new TypeInstance(JOINER.join(o.getPath()));
+            return new Instance(JOINER.join(o.getPath()));
         }
 
         @Override
-        public Reference<O> deserialise(TypeInstance value) {
+        public Reference<O> deserialise(Instance value) {
             if(value == null || value.getValue() == null)
                 return null;
             List<String> pathList = Lists.newArrayList(SPLITTER.split(value.getValue()));
             String[] path = pathList.toArray(new String[pathList.size()]);
-            return new Reference(path, (O) RemoteObject.getChild((RemoteObject) root, path, 1));
+            return new Reference(path, /* todo (O) RemoteObject.getChild((RemoteObject) root, path, 1)*/null);
         }
     }
 }

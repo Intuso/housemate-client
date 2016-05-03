@@ -2,12 +2,8 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.LoggerUtil;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyHardware;
-import com.intuso.housemate.client.v1_0.proxy.api.ProxyObject;
-import com.intuso.housemate.comms.v1_0.api.payload.HardwareData;
-import com.intuso.housemate.comms.v1_0.api.payload.HousemateData;
-import com.intuso.housemate.comms.v1_0.api.payload.PropertyData;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyHardware;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -22,22 +18,16 @@ public final class SimpleProxyHardware extends ProxyHardware<
         SimpleProxyCommand,
         SimpleProxyValue,
         SimpleProxyProperty,
-        SimpleProxyList<PropertyData, SimpleProxyProperty>,
+        SimpleProxyList<SimpleProxyProperty>,
         SimpleProxyHardware> {
 
-    private final ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory;
-
     @Inject
-    public SimpleProxyHardware(ListenersFactory listenersFactory,
-                               ProxyObject.Factory<HousemateData<?>, ProxyObject<?, ?, ?, ?, ?>> objectFactory,
-                               @Assisted Logger logger,
-                               @Assisted HardwareData data) {
-        super(logger, listenersFactory, data);
-        this.objectFactory = objectFactory;
-    }
-
-    @Override
-    protected ProxyObject<?, ?, ?, ?, ?> createChild(HousemateData<?> data) {
-        return objectFactory.create(LoggerUtil.child(getLogger(), data.getId()), data);
+    public SimpleProxyHardware(@Assisted Logger logger,
+                               ListenersFactory listenersFactory,
+                               ProxyObject.Factory<SimpleProxyCommand> commandFactory,
+                               ProxyObject.Factory<SimpleProxyValue> valueFactory,
+                               ProxyObject.Factory<SimpleProxyProperty> propertyFactory,
+                               ProxyObject.Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory) {
+        super(logger, listenersFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory);
     }
 }

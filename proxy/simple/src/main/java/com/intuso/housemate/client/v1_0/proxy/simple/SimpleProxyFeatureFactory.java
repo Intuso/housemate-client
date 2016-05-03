@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
-import com.intuso.housemate.client.v1_0.proxy.api.feature.ProxyFeature;
-import com.intuso.housemate.client.v1_0.proxy.api.feature.ProxyFeatureFactory;
+import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeature;
+import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeatureFactory;
 
 /**
  * Feature factory for simple proxy features

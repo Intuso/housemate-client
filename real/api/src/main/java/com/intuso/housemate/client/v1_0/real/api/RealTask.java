@@ -1,19 +1,26 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
+import com.intuso.housemate.client.v1_0.api.object.Task;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
 import com.intuso.housemate.client.v1_0.real.api.driver.TaskDriver;
-import com.intuso.housemate.comms.v1_0.api.payload.TaskData;
-import com.intuso.housemate.object.v1_0.api.Task;
 import org.slf4j.Logger;
 
-public interface RealTask<DRIVER extends TaskDriver>
-        extends Task<
-        RealCommand,
-        RealValue<Boolean>,
-        RealValue<String>,
-        RealProperty<PluginResource<TaskDriver.Factory<DRIVER>>>,
-        RealValue<Boolean>,
-        RealList<RealProperty<?>>, RealTask<DRIVER>>,TaskDriver.Callback {
+public interface RealTask<DRIVER extends TaskDriver,
+        COMMAND extends RealCommand<?, ?, ?>,
+        BOOLEAN_VALUE extends RealValue<Boolean, ?, ?>,
+        STRING_VALUE extends RealValue<String, ?, ?>,
+        DRIVER_PROPERTY extends RealProperty<PluginResource<TaskDriver.Factory<DRIVER>>, ?, ?, ?>,
+        PROPERTIES extends RealList<? extends RealProperty<?, ?, ?, ?>>,
+        TASK extends RealTask<DRIVER, COMMAND, BOOLEAN_VALUE, STRING_VALUE, DRIVER_PROPERTY, PROPERTIES, TASK>>
+        extends Task<COMMAND,
+        COMMAND,
+        BOOLEAN_VALUE,
+        STRING_VALUE,
+        DRIVER_PROPERTY,
+        BOOLEAN_VALUE,
+        PROPERTIES,
+        TASK>,
+        TaskDriver.Callback {
 
     DRIVER getDriver();
 
@@ -26,16 +33,15 @@ public interface RealTask<DRIVER extends TaskDriver>
      */
     void executeTask();
 
-    interface Container extends Task.Container<RealList<RealTask<?>>>, RemoveCallback {
-        <DRIVER extends TaskDriver> RealTask<DRIVER> createAndAddTask(TaskData data);
-        void addTask(RealTask<?> task);
+    interface Container<TASK extends RealTask<?, ?, ?, ?, ?, ?, ?>, TASKS extends RealList<? extends TASK>> extends Task.Container<TASKS>, RemoveCallback<TASK> {
+        void addTask(TASK task);
     }
 
-    interface RemoveCallback {
-        void removeTask(RealTask<?> task);
+    interface RemoveCallback<TASK extends RealTask<?, ?, ?, ?, ?, ?, ?>> {
+        void removeTask(TASK task);
     }
 
-    interface Factory {
-        RealTask<?> create(Logger logger, TaskData data, RemoveCallback removeCallback);
+    interface Factory<TASK extends RealTask<?, ?, ?, ?, ?, ?, ?>> {
+        TASK create(Logger logger, Data data, RemoveCallback removeCallback);
     }
 }

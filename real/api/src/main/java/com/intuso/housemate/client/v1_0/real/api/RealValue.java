@@ -1,26 +1,22 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.object.v1_0.api.TypeInstances;
-import com.intuso.housemate.object.v1_0.api.Value;
+import com.intuso.housemate.client.v1_0.api.object.Value;
 import org.slf4j.Logger;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * @param <O> the type of this value's value
  */
-public interface RealValue<O>
-        extends RealValueBase<O, Value.Listener<? super RealValue<O>>, RealValue<O>>,
-        Value<TypeInstances, RealValue<O>> {
+public interface RealValue<O,
+        TYPE extends RealType<O, ?>,
+        VALUE extends RealValue<O, TYPE, VALUE>>
+        extends RealValueBase<O, TYPE, Value.Listener<? super VALUE>, VALUE>,
+        Value<O,
+        TYPE,
+        VALUE> {
 
-        interface Factory {
-                RealValue<?> create(Logger logger,
-                                    @Assisted("id") String id,
-                                    @Assisted("name") String name,
-                                    @Assisted("description") String description,
-                                    RealType<?> type,
-                                    @Nullable List<?> values);
-        }
+    interface Factory<VALUE extends RealValue<?, ?, ?>> {
+        VALUE create(Logger logger, @Assisted("id") String id, @Assisted("name") String name,
+                                @Assisted("description") String description, RealType<?, ?> type);
+    }
 }

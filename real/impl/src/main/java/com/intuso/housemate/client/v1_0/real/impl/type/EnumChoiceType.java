@@ -2,11 +2,10 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealSubTypeImpl;
-import com.intuso.housemate.comms.v1_0.api.HousemateCommsException;
-import com.intuso.housemate.object.v1_0.api.TypeInstance;
-import com.intuso.housemate.object.v1_0.api.TypeSerialiser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -89,18 +88,18 @@ public abstract class EnumChoiceType<E extends Enum<E>> extends RealChoiceType<E
     protected EnumChoiceType(Logger logger, ListenersFactory listenersFactory, String id, String name, String description, int minValues,
                              int maxValues, EnumMap<E, List<RealSubTypeImpl<?>>> optionSubTypes,
                              TypeSerialiser<E> elementSerialiser, E... values) {
-        super(logger, listenersFactory, id, name, description, minValues,
+        super(logger, id, name, description, listenersFactory, minValues,
                 maxValues, convertValuesToOptions(logger, listenersFactory, values, optionSubTypes));
         this.serialiser = elementSerialiser;
     }
 
     @Override
-    public TypeInstance serialise(E o) {
+    public Instance serialise(E o) {
         return serialiser.serialise(o);
     }
 
     @Override
-    public E deserialise(TypeInstance value) {
+    public E deserialise(Instance value) {
         return serialiser.deserialise(value);
     }
 
@@ -141,16 +140,16 @@ public abstract class EnumChoiceType<E extends Enum<E>> extends RealChoiceType<E
         }
 
         @Override
-        public TypeInstance serialise(E value) {
-            return value != null ? new TypeInstance(value.name()) : null;
+        public Instance serialise(E value) {
+            return value != null ? new Instance(value.name()) : null;
         }
 
         @Override
-        public E deserialise(TypeInstance value) {
+        public E deserialise(Instance value) {
             try {
                 return value != null && value.getValue() != null ? Enum.valueOf(enumClass, value.getValue()) : null;
             } catch(Throwable t) {
-                throw new HousemateCommsException("Could not convert \"" + value + "\" to instance of enum " + enumClass.getName());
+                throw new HousemateException("Could not convert \"" + value + "\" to instance of enum " + enumClass.getName());
             }
         }
     }

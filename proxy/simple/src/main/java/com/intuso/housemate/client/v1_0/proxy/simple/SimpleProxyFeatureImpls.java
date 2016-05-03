@@ -17,7 +17,7 @@ public abstract class SimpleProxyFeatureImpls {
 
     public final static class PowerControl
             extends SimpleProxyFeatureImpls
-            implements com.intuso.housemate.client.v1_0.proxy.api.feature.PowerControl<SimpleProxyCommand> {
+            implements com.intuso.housemate.client.v1_0.proxy.api.object.feature.PowerControl<SimpleProxyCommand> {
 
         public PowerControl(SimpleProxyFeature feature) {
             super(feature);
@@ -36,7 +36,7 @@ public abstract class SimpleProxyFeatureImpls {
 
     public final static class StatefulPowerControl
             extends SimpleProxyFeatureImpls
-            implements com.intuso.housemate.client.v1_0.proxy.api.feature.StatefulPowerControl<SimpleProxyCommand, SimpleProxyValue> {
+            implements com.intuso.housemate.client.v1_0.proxy.api.object.feature.StatefulPowerControl<SimpleProxyCommand, SimpleProxyValue> {
 
         public StatefulPowerControl(SimpleProxyFeature feature) {
             super(feature);
@@ -69,7 +69,7 @@ public abstract class SimpleProxyFeatureImpls {
 
     public final static class PlaybackControl
             extends SimpleProxyFeatureImpls
-            implements com.intuso.housemate.client.v1_0.proxy.api.feature.PlaybackControl<SimpleProxyCommand> {
+            implements com.intuso.housemate.client.v1_0.proxy.api.object.feature.PlaybackControl<SimpleProxyCommand> {
 
         public PlaybackControl(SimpleProxyFeature feature) {
             super(feature);
@@ -103,7 +103,7 @@ public abstract class SimpleProxyFeatureImpls {
 
     public final static class StatefulPlaybackControl
             extends SimpleProxyFeatureImpls
-            implements com.intuso.housemate.client.v1_0.proxy.api.feature.StatefulPlaybackControl<SimpleProxyCommand, SimpleProxyValue> {
+            implements com.intuso.housemate.client.v1_0.proxy.api.object.feature.StatefulPlaybackControl<SimpleProxyCommand, SimpleProxyValue> {
 
         public StatefulPlaybackControl(SimpleProxyFeature feature) {
             super(feature);
@@ -151,7 +151,7 @@ public abstract class SimpleProxyFeatureImpls {
 
     public final static class VolumeControl
             extends SimpleProxyFeatureImpls
-            implements com.intuso.housemate.client.v1_0.proxy.api.feature.VolumeControl<SimpleProxyCommand> {
+            implements com.intuso.housemate.client.v1_0.proxy.api.object.feature.VolumeControl<SimpleProxyCommand> {
 
         public VolumeControl(SimpleProxyFeature feature) {
             super(feature);
@@ -175,7 +175,7 @@ public abstract class SimpleProxyFeatureImpls {
 
     public final static class StatefulVolumeControl
             extends SimpleProxyFeatureImpls
-            implements com.intuso.housemate.client.v1_0.proxy.api.feature.StatefulVolumeControl<SimpleProxyCommand, SimpleProxyValue> {
+            implements com.intuso.housemate.client.v1_0.proxy.api.object.feature.StatefulVolumeControl<SimpleProxyCommand, SimpleProxyValue> {
 
         public StatefulVolumeControl(SimpleProxyFeature feature) {
             super(feature);
