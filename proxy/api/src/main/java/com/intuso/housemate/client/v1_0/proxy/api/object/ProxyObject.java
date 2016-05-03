@@ -4,7 +4,6 @@ import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.apache.activemq.command.ActiveMQStreamMessage;
 import org.slf4j.Logger;
 
 import javax.jms.*;
@@ -58,8 +57,8 @@ public abstract class ProxyObject<
         consumer.setMessageListener(new MessageListener() {
             @Override
             public void onMessage(Message message) {
-                if(message instanceof ActiveMQStreamMessage) {
-                    ActiveMQStreamMessage streamMessage = (ActiveMQStreamMessage) message;
+                if(message instanceof StreamMessage) {
+                    StreamMessage streamMessage = (StreamMessage) message;
                     try {
                         java.lang.Object messageObject = streamMessage.readObject();
                         if (dataClass.isAssignableFrom(message.getClass())) {
@@ -70,7 +69,7 @@ public abstract class ProxyObject<
                         logger.error("Could not read object from received message", e);
                     }
                 } else
-                    logger.error("Received message that wasn't a {}", ActiveMQStreamMessage.class.getName());
+                    logger.error("Received message that wasn't a {}", StreamMessage.class.getName());
             }
         });
         initChildren(name, session);

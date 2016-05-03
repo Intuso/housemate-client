@@ -5,7 +5,6 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealCommand;
 import com.intuso.housemate.client.v1_0.real.impl.type.BooleanType;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.apache.activemq.command.ActiveMQStreamMessage;
 import org.slf4j.Logger;
 
 import javax.jms.*;
@@ -154,7 +153,7 @@ public abstract class RealCommandImpl
                 logger.error("Failed to read object from message", e);
             }
         } else
-            logger.warn("Received message that wasn't a {}", ActiveMQStreamMessage.class.getName());
+            logger.warn("Received message that wasn't a {}", StreamMessage.class.getName());
     }
 
     private void performStatus(String opId, boolean finished, String error) {

@@ -4,12 +4,12 @@ import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
-import org.apache.activemq.command.ActiveMQStreamMessage;
 import org.slf4j.Logger;
 
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.StreamMessage;
 
 public abstract class RealObject<DATA extends Object.Data,
         LISTENER extends com.intuso.housemate.client.v1_0.api.object.Object.Listener>
@@ -18,6 +18,7 @@ public abstract class RealObject<DATA extends Object.Data,
     protected final Logger logger;
     protected final DATA data;
     protected final Listeners<LISTENER> listeners;
+    private Session session;
     private MessageProducer producer;
 
     protected RealObject(Logger logger, DATA data, ListenersFactory listenersFactory) {
@@ -27,6 +28,7 @@ public abstract class RealObject<DATA extends Object.Data,
     }
 
     public final void init(String name, Session session) throws JMSException {
+        this.session = session;
         producer = session.createProducer(session.createTopic(name));
         sendData();
         initChildren(name, session);
@@ -74,8 +76,8 @@ public abstract class RealObject<DATA extends Object.Data,
 
     protected final void sendData() {
         if(producer != null) {
-            ActiveMQStreamMessage streamMessage = new ActiveMQStreamMessage();
             try {
+                StreamMessage streamMessage = session.createStreamMessage();
                 streamMessage.writeObject(data);
                 producer.send(streamMessage);
             } catch (JMSException e) {
