@@ -26,9 +26,9 @@ public abstract class ProxyCondition<
             COMMAND extends ProxyCommand<?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
             PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
-            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>>,
+            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
             CONDITION extends ProxyCondition<COMMAND, VALUE, PROPERTY, PROPERTIES, CONDITION, CONDITIONS>,
-            CONDITIONS extends ProxyList<CONDITION>>
+            CONDITIONS extends ProxyList<CONDITION, ?>>
         extends ProxyObject<Condition.Data, Condition.Listener<? super CONDITION>>
         implements Condition<COMMAND, COMMAND, VALUE, PROPERTY, VALUE, VALUE, PROPERTIES, COMMAND, CONDITIONS, CONDITION>,
         ProxyRemoveable<COMMAND>,

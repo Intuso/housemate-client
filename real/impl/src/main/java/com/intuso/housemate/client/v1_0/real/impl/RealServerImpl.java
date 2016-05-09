@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.List;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealServer;
@@ -43,18 +44,21 @@ public final class RealServerImpl
                            AddUserCommand.Factory addUserCommandFactory) {
         super(logger, data, listenersFactory);
         this.automations = new RealListImpl<>(ChildUtil.logger(logger, AUTOMATIONS_ID), new List.Data(AUTOMATIONS_ID, "Automations", "Automations"), listenersFactory);
-        this.addAutomationCommand = addAutomationCommandFactory.create(ChildUtil.logger(ChildUtil.logger(logger, ADD_AUTOMATION_ID), ADD_AUTOMATION_ID), ADD_AUTOMATION_ID, ADD_AUTOMATION_ID, "Add automation", this, this);
+        this.addAutomationCommand = addAutomationCommandFactory.create(ChildUtil.logger(logger, ADD_AUTOMATION_ID),
+                new Command.Data(ADD_AUTOMATION_ID, ADD_AUTOMATION_ID, "Add automation"),
+                this,
+                this);
         this.devices = new RealListImpl<>(ChildUtil.logger(logger, DEVICES_ID), new List.Data(DEVICES_ID, "Devices", "Devices"), listenersFactory);
-        this.addDeviceCommand = addDeviceCommandFactory.create(ChildUtil.logger(ChildUtil.logger(logger, ADD_DEVICE_ID), ADD_DEVICE_ID), ADD_DEVICE_ID, ADD_DEVICE_ID, "Add device", this, this);
+        this.addDeviceCommand = addDeviceCommandFactory.create(ChildUtil.logger(logger, ADD_DEVICE_ID),
+                new Command.Data(ADD_DEVICE_ID, ADD_DEVICE_ID, "Add device"),
+                this,
+                this);
         this.users = new RealListImpl<>(ChildUtil.logger(logger, USERS_ID), new List.Data(USERS_ID, "Users", "Users"), listenersFactory);
-        this.addUserCommand = addUserCommandFactory.create(ChildUtil.logger(ChildUtil.logger(logger, ADD_USER_ID), ADD_USER_ID), ADD_USER_ID, ADD_USER_ID, "Add user", this, this);
+        this.addUserCommand = addUserCommandFactory.create(ChildUtil.logger(logger, ADD_USER_ID),
+                new Command.Data(ADD_USER_ID, ADD_USER_ID, "Add user"),
+                this,
+                this);
         this.nodes = new RealListImpl<>(ChildUtil.logger(logger, NODES_ID), new List.Data(NODES_ID, "Nodes", "Nodes"), listenersFactory);
-    }
-
-    public RealServerImpl(Logger logger, String id, String name, String description,
-                          ListenersFactory listenersFactory, AddAutomationCommand.Factory addAutomationCommandFactory,
-                          AddDeviceCommand.Factory addDeviceCommandFactory, AddUserCommand.Factory addUserCommandFactory) {
-        this(logger, new Server.Data(id, name, description), listenersFactory, addAutomationCommandFactory, addDeviceCommandFactory, addUserCommandFactory);
     }
 
     @Inject

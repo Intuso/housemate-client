@@ -1,5 +1,6 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Value;
@@ -7,7 +8,6 @@ import com.intuso.housemate.client.v1_0.real.api.RealValue;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,36 +19,47 @@ public final class RealValueImpl<O>
         implements RealValue<O, RealTypeImpl<O>, RealValueImpl<O>> {
 
     /**
+     * @param logger {@inheritDoc}
+     * @param listenersFactory
+     * @param type the type of the value's value
+     */
+    @Inject
+    public RealValueImpl(@Assisted Logger logger,
+                         @Assisted Value.Data data,
+                         ListenersFactory listenersFactory,
+                         @Assisted RealTypeImpl<?> type) {
+        this(logger, data, listenersFactory, (RealTypeImpl<O>) type, Lists.<O>newArrayList());
+    }
+
+    /**
      * @param listenersFactory
      * @param logger {@inheritDoc}
-     * @param id the value's id
-     * @param name the value's name
-     * @param description the value's description
      * @param type the type of the value's value
      * @param values the value's initial values
      */
-    public RealValueImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory,
-                         RealTypeImpl<O> type, O... values) {
-        this(logger, id, name, description, listenersFactory, type, Arrays.asList(values));
+    public RealValueImpl(Logger logger,
+                         Value.Data data,
+                         ListenersFactory listenersFactory,
+                         RealTypeImpl<O> type,
+                         O... values) {
+        this(logger, data, listenersFactory, type, Arrays.asList(values));
     }
 
     /**
      * @param logger {@inheritDoc}
-     * @param id the value's id
-     * @param name the value's name
-     * @param description the value's description
      * @param listenersFactory
      * @param type the type of the value's value
      * @param values the value's initial values
      */
-    @Inject
-    public RealValueImpl(@Assisted final Logger logger,
-                         @Assisted("id") String id,
-                         @Assisted("name") String name,
-                         @Assisted("description") String description,
+    public RealValueImpl(final Logger logger,
+                         Value.Data data,
                          ListenersFactory listenersFactory,
-                         @Assisted RealTypeImpl<O> type,
-                         @Nullable @Assisted List<O> values) {
-        super(logger, new Value.Data(id, name, description), listenersFactory, type, values);
+                         RealTypeImpl<O> type,
+                         List<O> values) {
+        super(logger, data, listenersFactory, type, values);
+    }
+
+    public interface Factory {
+        RealValueImpl<?> create(Logger logger, Value.Data data, RealTypeImpl<?> type);
     }
 }

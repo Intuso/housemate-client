@@ -19,14 +19,12 @@ public class FieldProperty extends RealPropertyImpl<Object> {
     @Inject
     public FieldProperty(ListenersFactory listenersFactory,
                          final @Assisted Logger logger,
-                         @Assisted("id") String id,
-                         @Assisted("name") String name,
-                         @Assisted("description") String description,
+                         @Assisted Property.Data data,
                          @Assisted RealTypeImpl<Object> type,
                          @Nullable @Assisted("value") Object value,
                          @Assisted final Field field,
                          @Assisted("instance") final Object instance) {
-        super(logger, id, name, description, listenersFactory, type, value);
+        super(logger, data, listenersFactory, type, value);
         field.setAccessible(true);
         addObjectListener(new Property.Listener<RealPropertyImpl<Object>>() {
 
@@ -48,9 +46,7 @@ public class FieldProperty extends RealPropertyImpl<Object> {
 
     public interface Factory {
         FieldProperty create(Logger logger,
-                             @Assisted("id") String id,
-                             @Assisted("name") String name,
-                             @Assisted("description") String description,
+                             Property.Data data,
                              RealTypeImpl<Object> type,
                              @Nullable @Assisted("value") Object value,
                              Field field,

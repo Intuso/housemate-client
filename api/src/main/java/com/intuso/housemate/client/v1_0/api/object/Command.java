@@ -10,7 +10,7 @@ import java.io.Serializable;
 public interface Command<
             DATA_TYPE,
             ENABLED_VALUE extends Value<?, ?, ?>,
-            PARAMETERS extends List<? extends Parameter<?, ?>>,
+            PARAMETERS extends List<? extends Parameter<?, ?>, ?>,
             COMMAND extends Command<?, ?, ?, ?>>
         extends
         Object<Command.Listener<? super COMMAND>>,
@@ -92,7 +92,7 @@ public interface Command<
      *
      * Interface to show that the implementing object has a list of commands
      */
-    interface Container<COMMANDS extends List<? extends Command<?, ?, ?, ?>>> {
+    interface Container<COMMANDS extends List<? extends Command<?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the commands list

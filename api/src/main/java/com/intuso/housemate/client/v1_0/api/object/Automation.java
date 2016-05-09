@@ -22,8 +22,8 @@ public interface Automation<RENAME_COMMAND extends Command<?, ?, ?, ?>,
         ADD_COMMMAND extends Command<?, ?, ?, ?>,
         RUNNING_VALUE extends Value<?, ?, ?>,
         ERROR_VALUE extends Value<?, ?, ?>,
-        CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>>,
-        TASKS extends List<? extends Task<?, ?, ?, ?, ?, ?, ?, ?>>,
+        CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
+        TASKS extends List<? extends Task<?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         AUTOMATION extends Automation<RENAME_COMMAND, REMOVE_COMMAND, START_STOP_COMMAND, ADD_COMMMAND, RUNNING_VALUE, ERROR_VALUE, CONDITIONS, TASKS, AUTOMATION>>
         extends
         Object<Automation.Listener<? super AUTOMATION>>,
@@ -90,7 +90,7 @@ public interface Automation<RENAME_COMMAND extends Command<?, ?, ?, ?>,
     /**
      * Interface to show that the implementing object has a list of automations
      */
-    interface Container<AUTOMATIONS extends List<? extends Automation<?, ?, ?, ?, ?, ?, ?, ?, ?>>> {
+    interface Container<AUTOMATIONS extends List<? extends Automation<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the automation list

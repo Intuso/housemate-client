@@ -2,6 +2,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.Value;
 import com.intuso.housemate.client.v1_0.real.api.RealCommand;
 import com.intuso.housemate.client.v1_0.real.impl.type.BooleanType;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -28,27 +29,30 @@ public abstract class RealCommandImpl
 
     /**
      * @param logger {@inheritDoc}
-     * @param id the command's id
-     * @param name the command's name
-     * @param description the command's description
      * @param listenersFactory
      * @param parameters the command's parameters
      */
-    protected RealCommandImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, RealParameterImpl<?>... parameters) {
-        this(logger, id, name, description, listenersFactory, Arrays.asList(parameters));
+    protected RealCommandImpl(Logger logger,
+                              Command.Data data,
+                              ListenersFactory listenersFactory,
+                              RealParameterImpl<?>... parameters) {
+        this(logger, data, listenersFactory, Arrays.asList(parameters));
     }
 
     /**
      * @param logger {@inheritDoc}
-     * @param id the command's id
-     * @param name the command's name
-     * @param description the command's description
      * @param listenersFactory
      * @param parameters the command's parameters
      */
-    protected RealCommandImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, List<RealParameterImpl<?>> parameters) {
-        super(logger, new Command.Data(id, name, description), listenersFactory);
-        enabledValue = new RealValueImpl<>(logger, Command.ENABLED_ID, Command.ENABLED_ID, ENABLED_DESCRIPTION, listenersFactory, new BooleanType(listenersFactory), true);
+    protected RealCommandImpl(Logger logger,
+                              Command.Data data,
+                              ListenersFactory listenersFactory,
+                              List<RealParameterImpl<?>> parameters) {
+        super(logger, data, listenersFactory);
+        enabledValue = new RealValueImpl<>(logger,
+                new Value.Data(Command.ENABLED_ID, Command.ENABLED_ID, ENABLED_DESCRIPTION),
+                listenersFactory,
+                new BooleanType(listenersFactory), true);
         this.parameters = new RealListImpl<>(logger, new com.intuso.housemate.client.v1_0.api.object.List.Data(Command.PARAMETERS_ID, Command.PARAMETERS_ID, "The parameters required by the command"), listenersFactory, parameters);
     }
 

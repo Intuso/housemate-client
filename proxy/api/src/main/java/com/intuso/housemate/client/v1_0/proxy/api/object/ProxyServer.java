@@ -20,10 +20,10 @@ import javax.jms.Session;
  */
 public abstract class ProxyServer<
         COMMAND extends ProxyCommand<?, ?, ?>,
-        AUTOMATIONS extends ProxyList<? extends ProxyAutomation<?, ?, ?, ?, ?>>,
-        DEVICES extends ProxyList<? extends ProxyDevice<?, ?, ?, ?, ?, ?>>,
-        USERS extends ProxyList<? extends ProxyUser<?, ?, ?>>,
-        NODES extends ProxyList<? extends ProxyNode<?, ?, ?>>,
+        AUTOMATIONS extends ProxyList<? extends ProxyAutomation<?, ?, ?, ?, ?>, ?>,
+        DEVICES extends ProxyList<? extends ProxyDevice<?, ?, ?, ?, ?, ?>, ?>,
+        USERS extends ProxyList<? extends ProxyUser<?, ?, ?>, ?>,
+        NODES extends ProxyList<? extends ProxyNode<?, ?, ?>, ?>,
         SERVER extends ProxyServer<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>>
         extends ProxyObject<Server.Data, Server.Listener<? super SERVER>>
         implements Server<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>,

@@ -2,13 +2,12 @@ package com.intuso.housemate.client.v1_0.real.api;
 
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import org.slf4j.Logger;
 
 /**
  */
 public interface RealCommand<
         BOOLEAN_VALUE extends RealValue<Boolean, ?, ?>,
-        PARAMETERS extends RealList<? extends RealParameter<?, ?, ?>>,
+        PARAMETERS extends RealList<? extends RealParameter<?, ?, ?>, ?>,
         COMMAND extends RealCommand<BOOLEAN_VALUE, PARAMETERS, COMMAND>>
         extends Command<Type.InstanceMap, BOOLEAN_VALUE, PARAMETERS, COMMAND> {
 
@@ -17,8 +16,4 @@ public interface RealCommand<
      * @param values the values of the parameters to use
      */
     void perform(Type.InstanceMap values);
-
-    interface Factory<COMMAND extends RealCommand<?, ?, ?>> {
-        COMMAND create(Logger logger, Data data);
-    }
 }

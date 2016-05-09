@@ -2,7 +2,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 
 public interface Node<
         COMMAND extends Command<?, ?, ?, ?>,
-        HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?>>,
+        HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         NODE extends Node>
         extends Object<Node.Listener<? super NODE>>,
         Hardware.Container<HARDWARES> {
@@ -22,7 +22,7 @@ public interface Node<
      *
      * Interface to show that the implementing object has a list of server
      */
-    interface Container<NODES extends List<? extends Node>> {
+    interface Container<NODES extends List<? extends Node<?, ?, ?>, ?>> {
 
         /**
          * Gets the commands list

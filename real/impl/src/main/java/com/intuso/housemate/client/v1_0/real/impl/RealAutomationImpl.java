@@ -4,10 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.*;
 import com.intuso.housemate.client.v1_0.api.Runnable;
-import com.intuso.housemate.client.v1_0.api.object.Automation;
-import com.intuso.housemate.client.v1_0.api.object.Condition;
-import com.intuso.housemate.client.v1_0.api.object.List;
-import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
 import com.intuso.housemate.client.v1_0.real.api.RealCondition;
 import com.intuso.housemate.client.v1_0.real.api.RealTask;
@@ -100,21 +97,24 @@ public final class RealAutomationImpl
 
     /**
      * @param logger {@inheritDoc}
-     * @param listenersFactory
      * @param data the automation's data
+     * @param listenersFactory
      */
     @Inject
-    public RealAutomationImpl(ListenersFactory listenersFactory,
-                              AddConditionCommand.Factory addConditionCommandFactory,
-                              AddTaskCommand.Factory addTaskCommandFactory,
-                              @Assisted final Logger logger,
+    public RealAutomationImpl(@Assisted Logger logger,
                               @Assisted Automation.Data data,
-                              @Assisted RemoveCallback<RealAutomationImpl> removeCallback) {
+                              ListenersFactory listenersFactory,
+                              @Assisted RemoveCallback<RealAutomationImpl> removeCallback,
+                              AddConditionCommand.Factory addConditionCommandFactory,
+                              AddTaskCommand.Factory addTaskCommandFactory) {
         super(logger, data, listenersFactory);
         this.removeCallback = removeCallback;
-        this.renameCommand = new RealCommandImpl(ChildUtil.logger(logger, Renameable.RENAME_ID), Renameable.RENAME_ID, Renameable.RENAME_ID, "Rename the automation",
+        this.renameCommand = new RealCommandImpl(ChildUtil.logger(logger, Renameable.RENAME_ID),
+                new Command.Data(Renameable.RENAME_ID, Renameable.RENAME_ID, "Rename the automation"),
                 listenersFactory,
-                StringType.createParameter(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID), Renameable.NAME_ID, Renameable.NAME_ID, "The new name", listenersFactory)) {
+                StringType.createParameter(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID),
+                        new Parameter.Data(Renameable.NAME_ID, Renameable.NAME_ID, "The new name"),
+                        listenersFactory)) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(values != null && values.getChildren().containsKey(Renameable.NAME_ID)) {
@@ -124,14 +124,21 @@ public final class RealAutomationImpl
                 }
             }
         };
-        this.removeCommand = new RealCommandImpl(ChildUtil.logger(logger, Removeable.REMOVE_ID), Removeable.REMOVE_ID, Removeable.REMOVE_ID, "Remove the automation", listenersFactory) {
+        this.removeCommand = new RealCommandImpl(ChildUtil.logger(logger, Removeable.REMOVE_ID),
+                new Command.Data(Removeable.REMOVE_ID, Removeable.REMOVE_ID, "Remove the automation"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 remove();
             }
         };
-        this.runningValue = BooleanType.createValue(ChildUtil.logger(logger, Runnable.RUNNING_ID), Runnable.RUNNING_ID, Runnable.RUNNING_ID, "Whether the device is running or not", listenersFactory, false);
-        this.startCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.START_ID), Runnable.START_ID, Runnable.START_ID, "Start the device", listenersFactory) {
+        this.runningValue = BooleanType.createValue(ChildUtil.logger(logger, Runnable.RUNNING_ID),
+                new Value.Data(Runnable.RUNNING_ID, Runnable.RUNNING_ID, "Whether the device is running or not"),
+                listenersFactory,
+                false);
+        this.startCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.START_ID),
+                new Command.Data(Runnable.START_ID, Runnable.START_ID, "Start the device"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(!isRunning()) {
@@ -140,7 +147,9 @@ public final class RealAutomationImpl
                 }
             }
         };
-        this.stopCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.STOP_ID), Runnable.STOP_ID, Runnable.STOP_ID, "Stop the device", listenersFactory) {
+        this.stopCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.STOP_ID),
+                new Command.Data(Runnable.STOP_ID, Runnable.STOP_ID, "Stop the device"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(isRunning()) {
@@ -149,13 +158,25 @@ public final class RealAutomationImpl
                 }
             }
         };
-        this.errorValue = StringType.createValue(ChildUtil.logger(logger, Failable.ERROR_ID), Failable.ERROR_ID, Failable.ERROR_ID, "Current error for the automation", listenersFactory, null);
+        this.errorValue = StringType.createValue(ChildUtil.logger(logger, Failable.ERROR_ID),
+                new Value.Data(Failable.ERROR_ID, Failable.ERROR_ID, "Current error for the automation"),
+                listenersFactory,
+                null);
         this.conditions = new RealListImpl<>(ChildUtil.logger(logger, Automation.CONDITIONS_ID), new List.Data(Automation.CONDITIONS_ID, Automation.CONDITIONS_ID, Automation.CONDITIONS_ID), listenersFactory);
-        this.addConditionCommand = addConditionCommandFactory.create(ChildUtil.logger(logger, Automation.ADD_CONDITION_ID), Automation.ADD_CONDITION_ID, Automation.ADD_CONDITION_ID, "Add condition", addConditionCallback, conditionRemoveCallback);
+        this.addConditionCommand = addConditionCommandFactory.create(ChildUtil.logger(logger, Automation.ADD_CONDITION_ID),
+                new Command.Data(Automation.ADD_CONDITION_ID, Automation.ADD_CONDITION_ID, "Add condition"),
+                addConditionCallback,
+                conditionRemoveCallback);
         this.satisfiedTasks = new RealListImpl<>(ChildUtil.logger(logger, Automation.SATISFIED_TASKS_ID), new List.Data(Automation.SATISFIED_TASKS_ID, Automation.SATISFIED_TASKS_ID, Automation.SATISFIED_TASKS_ID), listenersFactory);
-        this.addSatisfiedTaskCommand = addTaskCommandFactory.create(ChildUtil.logger(logger, Automation.ADD_SATISFIED_TASK_ID), Automation.ADD_SATISFIED_TASK_ID, Automation.ADD_SATISFIED_TASK_ID, "Add satisfied task", addSatisfiedTaskCallback, satisfiedTaskRemoveCallback);
+        this.addSatisfiedTaskCommand = addTaskCommandFactory.create(ChildUtil.logger(logger, Automation.ADD_SATISFIED_TASK_ID),
+                new Command.Data(Automation.ADD_SATISFIED_TASK_ID, Automation.ADD_SATISFIED_TASK_ID, "Add satisfied task"),
+                addSatisfiedTaskCallback,
+                satisfiedTaskRemoveCallback);
         this.unsatisfiedTasks = new RealListImpl<>(ChildUtil.logger(logger, Automation.UNSATISFIED_TASKS_ID), new List.Data(Automation.UNSATISFIED_TASKS_ID, Automation.UNSATISFIED_TASKS_ID, Automation.UNSATISFIED_TASKS_ID), listenersFactory);
-        this.addUnsatisfiedTaskCommand = addTaskCommandFactory.create(ChildUtil.logger(logger, Automation.ADD_UNSATISFIED_TASK_ID), Automation.ADD_UNSATISFIED_TASK_ID, Automation.ADD_UNSATISFIED_TASK_ID, "Add unsatisfied task", addUnsatisfiedTaskCallback, unsatisfiedTaskRemoveCallback);
+        this.addUnsatisfiedTaskCommand = addTaskCommandFactory.create(ChildUtil.logger(logger, Automation.ADD_UNSATISFIED_TASK_ID),
+                new Command.Data(Automation.ADD_UNSATISFIED_TASK_ID, Automation.ADD_UNSATISFIED_TASK_ID, "Add unsatisfied task"),
+                addUnsatisfiedTaskCallback,
+                unsatisfiedTaskRemoveCallback);
     }
 
     @Override
@@ -314,5 +335,9 @@ public final class RealAutomationImpl
             conditionListenerRegistration.removeListener();
             conditionListenerRegistration = null;
         }
+    }
+
+    public interface Factory {
+        RealAutomationImpl create(Logger logger, Automation.Data data, RemoveCallback<RealAutomationImpl> removeCallback);
     }
 }

@@ -22,7 +22,9 @@ public abstract class RealTypeImpl<O>
      * @param data {@inheritDoc}
      * @param listenersFactory {@inheritDoc}
      */
-    protected RealTypeImpl(Logger logger, Type.Data data, ListenersFactory listenersFactory) {
+    protected RealTypeImpl(Logger logger,
+                           Type.Data data,
+                           ListenersFactory listenersFactory) {
         super(logger, data, listenersFactory);
     }
 
@@ -46,5 +48,9 @@ public abstract class RealTypeImpl<O>
         for(Instance value : values.getElements())
             result.add(serialiser.deserialise(value));
         return result;
+    }
+
+    public interface Factory<TYPE extends RealTypeImpl<?>> {
+        TYPE create(Logger logger);
     }
 }

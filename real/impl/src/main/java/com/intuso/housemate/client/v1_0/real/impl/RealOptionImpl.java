@@ -19,25 +19,25 @@ public final class RealOptionImpl
     /**
      * @param logger {@inheritDoc}
      * @param listenersFactory
-     * @param id the option's id
-     * @param name the option's name
-     * @param description the option's description
      * @param subTypes the option's sub types
      */
-    public RealOptionImpl(Logger logger, ListenersFactory listenersFactory, String id, String name, String description, RealSubTypeImpl<?>... subTypes) {
-        this(logger, listenersFactory, id, name, description, Arrays.asList(subTypes));
+    public RealOptionImpl(Logger logger,
+                          Option.Data data,
+                          ListenersFactory listenersFactory,
+                          RealSubTypeImpl<?>... subTypes) {
+        this(logger, data, listenersFactory, Arrays.asList(subTypes));
     }
 
     /**
      * @param logger {@inheritDoc}
      * @param listenersFactory
-     * @param id the option's id
-     * @param name the option's name
-     * @param description the option's description
      * @param subTypes the option's sub types
      */
-    public RealOptionImpl(Logger logger, ListenersFactory listenersFactory, String id, String name, String description, List<RealSubTypeImpl<?>> subTypes) {
-        super(logger, new Option.Data(id, name,  description), listenersFactory);
+    public RealOptionImpl(Logger logger,
+                          Option.Data data,
+                          ListenersFactory listenersFactory,
+                          List<RealSubTypeImpl<?>> subTypes) {
+        super(logger, data, listenersFactory);
         this.subTypes = new RealListImpl<>(ChildUtil.logger(logger, Option.SUB_TYPES_ID),
                 new com.intuso.housemate.client.v1_0.api.object.List.Data(Option.SUB_TYPES_ID, "Sub Types", "The sub types of this option"),
                 listenersFactory,

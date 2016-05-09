@@ -3,6 +3,8 @@ package com.intuso.housemate.client.v1_0.real.impl.factory.user;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.User;
 import com.intuso.housemate.client.v1_0.real.api.RealUser;
@@ -27,22 +29,26 @@ public class AddUserCommand extends RealCommandImpl {
     public final static String DESCRIPTION_PARAMETER_DESCRIPTION = "A description of the new user";
     
     private final Callback callback;
-    private final RealUser.Factory<RealUserImpl> userFactory;
+    private final RealUserImpl.Factory userFactory;
     private final RealUser.RemoveCallback<RealUserImpl> removeCallback;
 
     @Inject
     protected AddUserCommand(ListenersFactory listenersFactory,
                              StringType stringType,
-                             RealUser.Factory<RealUserImpl> userFactory,
+                             RealUserImpl.Factory userFactory,
                              @Assisted Logger logger,
-                             @Assisted("id") String id,
-                             @Assisted("name") String name,
-                             @Assisted("description") String description,
+                             @Assisted Command.Data data,
                              @Assisted Callback callback,
                              @Assisted RealUser.RemoveCallback<RealUserImpl> removeCallback) {
-        super(logger, id, name, description, listenersFactory,
-                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, listenersFactory, stringType),
-                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, listenersFactory, stringType));
+        super(logger, data, listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID),
+                        new Parameter.Data(NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID),
+                        new Parameter.Data(DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        stringType));
         this.callback = callback;
         this.userFactory = userFactory;
         this.removeCallback = removeCallback;
@@ -65,10 +71,8 @@ public class AddUserCommand extends RealCommandImpl {
 
     public interface Factory {
         AddUserCommand create(Logger logger,
-                                    @Assisted("id") String id,
-                                    @Assisted("name") String name,
-                                    @Assisted("description") String description,
-                                    Callback callback,
-                                    RealUser.RemoveCallback<RealUserImpl> removeCallback);
+                              Command.Data data,
+                              Callback callback,
+                              RealUser.RemoveCallback<RealUserImpl> removeCallback);
     }
 }

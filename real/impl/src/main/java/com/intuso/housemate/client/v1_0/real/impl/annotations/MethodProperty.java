@@ -20,14 +20,12 @@ public class MethodProperty extends RealPropertyImpl<Object> {
     @Inject
     public MethodProperty(ListenersFactory listenersFactory,
                           final @Assisted Logger logger,
-                          @Assisted("id") String id,
-                          @Assisted("name") String name,
-                          @Assisted("description") String description,
+                          @Assisted Property.Data data,
                           @Assisted RealTypeImpl<Object> type,
                           @Nullable @Assisted("value") Object value,
                           @Assisted final Method method,
                           @Assisted("instance") final Object instance) {
-        super(logger, id, name, description, listenersFactory, type, value);
+        super(logger, data, listenersFactory, type, value);
         method.setAccessible(true);
         addObjectListener(new Property.Listener<RealPropertyImpl<Object>>() {
 
@@ -49,9 +47,7 @@ public class MethodProperty extends RealPropertyImpl<Object> {
 
     public interface Factory {
         MethodProperty create(Logger logger,
-                              @Assisted("id") String id,
-                              @Assisted("name") String name,
-                              @Assisted("description") String description,
+                              Property.Data data,
                               RealTypeImpl<Object> type,
                               @Nullable @Assisted("value") Object value,
                               Method method,

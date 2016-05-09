@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Automation;
+import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
@@ -27,22 +29,26 @@ public class AddAutomationCommand extends RealCommandImpl {
     public final static String DESCRIPTION_PARAMETER_DESCRIPTION = "A description of the new automation";
     
     private final Callback callback;
-    private final RealAutomation.Factory<RealAutomationImpl> automationFactory;
+    private final RealAutomationImpl.Factory automationFactory;
     private final RealAutomation.RemoveCallback<RealAutomationImpl> removeCallback;
 
     @Inject
     protected AddAutomationCommand(ListenersFactory listenersFactory,
                                    StringType stringType,
-                                   RealAutomation.Factory<RealAutomationImpl> automationFactory,
+                                   RealAutomationImpl.Factory automationFactory,
                                    @Assisted Logger logger,
-                                   @Assisted("id") String id,
-                                   @Assisted("name") String name,
-                                   @Assisted("description") String description,
+                                   @Assisted Command.Data data,
                                    @Assisted Callback callback,
                                    @Assisted RealAutomation.RemoveCallback<RealAutomationImpl> removeCallback) {
-        super(logger, id, name, description, listenersFactory,
-                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, listenersFactory, stringType),
-                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, listenersFactory, stringType));
+        super(logger, data, listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID),
+                        new Parameter.Data(NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID),
+                        new Parameter.Data(DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        stringType));
         this.callback = callback;
         this.automationFactory = automationFactory;
         this.removeCallback = removeCallback;
@@ -65,9 +71,7 @@ public class AddAutomationCommand extends RealCommandImpl {
 
     public interface Factory {
         AddAutomationCommand create(Logger logger,
-                                    @Assisted("id") String id,
-                                    @Assisted("name") String name,
-                                    @Assisted("description") String description,
+                                    Command.Data data,
                                     Callback callback,
                                     RealAutomation.RemoveCallback<RealAutomationImpl> removeCallback);
     }

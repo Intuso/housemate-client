@@ -2,7 +2,10 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.object.Parameter;
+import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.Value;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealPropertyImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealValueImpl;
@@ -39,40 +42,29 @@ public class DoubleType extends RealSimpleType<Double> {
     /**
      * Creates a double value object
      * @param logger the log
-     * @param id the value's id
-     * @param name the value's name
-     * @param description the value's description
      * @param value the initial value
      * @return a double value object
      */
-    public static RealValueImpl<Double> createValue(Logger logger, String id, String name, String description, ListenersFactory listenersFactory,
-                                                    Double value) {
-        return new RealValueImpl<>(logger, id, name, description, listenersFactory, new DoubleType(listenersFactory), value);
+    public static RealValueImpl<Double> createValue(Logger logger, Value.Data data, ListenersFactory listenersFactory, Double value) {
+        return new RealValueImpl<>(logger, data, listenersFactory, new DoubleType(listenersFactory), value);
     }
 
     /**
      * Creates a double property object
      * @param logger the log
-     * @param id the property's id
-     * @param name the property's name
-     * @param description the property's description
      * @param values the initial values
      * @return a double property object
      */
-    public static RealPropertyImpl<Double> createProperty(Logger logger, String id, String name, String description, ListenersFactory listenersFactory,
-                                                          List<Double> values) {
-        return new RealPropertyImpl<>(logger, id, name, description, listenersFactory, new DoubleType(listenersFactory), values);
+    public static RealPropertyImpl<Double> createProperty(Logger logger, Property.Data data, ListenersFactory listenersFactory, List<Double> values) {
+        return new RealPropertyImpl<>(logger, data, listenersFactory, new DoubleType(listenersFactory), values);
     }
 
     /**
      * Creates a double parameter object
      * @param logger the log
-     * @param id the parameter's id
-     * @param name the parameter's name
-     * @param description the parameter's description
      * @return a double parameter object
      */
-    public static RealParameterImpl<Double> createParameter(Logger logger, String id, String name, String description, ListenersFactory listenersFactory) {
-        return new RealParameterImpl<>(logger, id, name, description, listenersFactory, new DoubleType(listenersFactory));
+    public static RealParameterImpl<Double> createParameter(Logger logger, Parameter.Data data, ListenersFactory listenersFactory) {
+        return new RealParameterImpl<>(logger, data, listenersFactory, new DoubleType(listenersFactory));
     }
 }

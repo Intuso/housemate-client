@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.object.Option;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealSubTypeImpl;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -117,9 +118,9 @@ public abstract class EnumChoiceType<E extends Enum<E>> extends RealChoiceType<E
             @Override
             public RealOptionImpl apply(E value) {
                 if(optionSubTypes.containsKey(value))
-                    return new RealOptionImpl(logger, listenersFactory, value.name(), value.name(), value.name(), optionSubTypes.get(value));
+                    return new RealOptionImpl(logger, new Option.Data(value.name(), value.name(), value.name()), listenersFactory, optionSubTypes.get(value));
                 else
-                    return new RealOptionImpl(logger, listenersFactory, value.name(), value.name(), value.name());
+                    return new RealOptionImpl(logger, new Option.Data(value.name(), value.name(), value.name()), listenersFactory);
             }
         });
     }

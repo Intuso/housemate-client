@@ -9,6 +9,7 @@ public interface ValueBase<DATA_TYPE,
         LISTENER extends ValueBase.Listener<? super VALUE>, VALUE extends ValueBase<?, ?, ?, ?>>
         extends Object<LISTENER> {
 
+    String TYPE_ID = "type";
     String VALUE_ID = "value";
 
     /**

@@ -4,19 +4,19 @@ import com.intuso.housemate.client.v1_0.api.object.List;
 
 /**
  */
-public interface RealList<CHILD>
-        extends List<CHILD> {
+public interface RealList<ELEMENT, LIST extends RealList<ELEMENT, ?>>
+        extends List<ELEMENT, LIST> {
 
     /**
      * Adds an element to the list
      * @param element the element to add
      */
-    void add(CHILD element);
+    void add(ELEMENT element);
 
     /**
      * Removes an elements from the list
      * @param id the id of the element to remove
      * @return the removed element, or null if there was none for the id
      */
-    CHILD remove(String id);
+    ELEMENT remove(String id);
 }

@@ -19,7 +19,7 @@ public abstract class ProxyHardware<
             COMMAND extends ProxyCommand<?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
             PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
-            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>>,
+            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
             HARDWARE extends ProxyHardware<COMMAND, VALUE, PROPERTY, PROPERTIES, HARDWARE>>
         extends ProxyObject<Hardware.Data, Hardware.Listener<? super HARDWARE>>
         implements Hardware<COMMAND, COMMAND, COMMAND, VALUE, VALUE, PROPERTY, VALUE, PROPERTIES, HARDWARE>,

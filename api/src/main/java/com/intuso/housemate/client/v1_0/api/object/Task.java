@@ -17,7 +17,7 @@ public interface Task<REMOVE_COMMAND extends Command<?, ?, ?, ?>,
         ERROR_VALUE extends Value<?, ?, ?>,
         DRIVER_PROPERTY extends Property<?, ?, ?, ?>,
         DRIVER_LOADED_VALUE extends Value<?, ?, ?>,
-        PROPERTIES extends List<? extends Property<?, ?, ?, ?>>,
+        PROPERTIES extends List<? extends Property<?, ?, ?, ?>, ?>,
         TASK extends Task<REMOVE_COMMAND, RENAME_COMMAND, EXECUTING_VALUE, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, PROPERTIES, TASK>>
         extends Object<Task.Listener<? super TASK>>,
         Property.Container<PROPERTIES>,
@@ -56,7 +56,7 @@ public interface Task<REMOVE_COMMAND extends Command<?, ?, ?, ?>,
      *
      * Interface to show that the implementing object has a list of tasks
      */
-    interface Container<TASKS extends List<? extends Task<?, ?, ?, ?, ?, ?, ?, ?>>> {
+    interface Container<TASKS extends List<? extends Task<?, ?, ?, ?, ?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the task list

@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public abstract class ProxyCommand<
             VALUE extends ProxyValue<?, VALUE>,
-            PARAMETERS extends ProxyList<? extends ProxyParameter<?, ?>>,
+            PARAMETERS extends ProxyList<? extends ProxyParameter<?, ?>, ?>,
             COMMAND extends ProxyCommand<VALUE, PARAMETERS, COMMAND>>
         extends ProxyObject<Command.Data, Command.Listener<? super COMMAND>>
         implements Command<Type.InstanceMap, VALUE, PARAMETERS, COMMAND>, MessageListener {

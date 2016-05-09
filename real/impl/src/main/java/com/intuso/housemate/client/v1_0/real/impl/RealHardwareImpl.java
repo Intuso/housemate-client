@@ -5,10 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.*;
 import com.intuso.housemate.client.v1_0.api.Runnable;
-import com.intuso.housemate.client.v1_0.api.object.Hardware;
-import com.intuso.housemate.client.v1_0.api.object.List;
-import com.intuso.housemate.client.v1_0.api.object.Property;
-import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.driver.HardwareDriver;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
@@ -51,22 +48,25 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
 
     /**
      * @param logger {@inheritDoc}
-     * @param listenersFactory
      * @param data the hardware's data
+     * @param listenersFactory
      */
     @Inject
-    public RealHardwareImpl(ListenersFactory listenersFactory,
-                            AnnotationProcessor annotationProcessor,
-                            HardwareFactoryType driverFactoryType,
-                            @Assisted final Logger logger,
+    public RealHardwareImpl(@Assisted Logger logger,
                             @Assisted Hardware.Data data,
-                            @Assisted RemoveCallback<RealHardwareImpl<DRIVER>> removeCallback) {
+                            ListenersFactory listenersFactory,
+                            @Assisted RemoveCallback<RealHardwareImpl<DRIVER>> removeCallback,
+                            AnnotationProcessor annotationProcessor,
+                            HardwareFactoryType driverFactoryType) {
         super(logger, data, listenersFactory);
         this.annotationProcessor = annotationProcessor;
         this.removeCallback = removeCallback;
-        this.renameCommand = new RealCommandImpl(ChildUtil.logger(logger, Renameable.RENAME_ID), Renameable.RENAME_ID, Renameable.RENAME_ID, "Rename the hardware",
+        this.renameCommand = new RealCommandImpl(ChildUtil.logger(logger, Renameable.RENAME_ID),
+                new Command.Data(Renameable.RENAME_ID, Renameable.RENAME_ID, "Rename the hardware"),
                 listenersFactory,
-                StringType.createParameter(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID), Renameable.NAME_ID, Renameable.NAME_ID, "The new name", listenersFactory)) {
+                StringType.createParameter(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID),
+                        new Parameter.Data(Renameable.NAME_ID, Renameable.NAME_ID, "The new name"),
+                        listenersFactory)) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(values != null && values.getChildren().containsKey(Renameable.NAME_ID)) {
@@ -76,7 +76,9 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
                 }
             }
         };
-        this.removeCommand = new RealCommandImpl(ChildUtil.logger(logger, Removeable.REMOVE_ID), Removeable.REMOVE_ID, Removeable.REMOVE_ID, "Remove the hardware", listenersFactory) {
+        this.removeCommand = new RealCommandImpl(ChildUtil.logger(logger, Removeable.REMOVE_ID),
+                new Command.Data(Removeable.REMOVE_ID, Removeable.REMOVE_ID, "Remove the hardware"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(isRunning())
@@ -84,8 +86,13 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
                 remove();
             }
         };
-        this.runningValue = BooleanType.createValue(ChildUtil.logger(logger, Runnable.RUNNING_ID), Runnable.RUNNING_ID, Runnable.RUNNING_ID, "Whether the hardware is running or not", listenersFactory, false);
-        this.startCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.START_ID), Runnable.START_ID, Runnable.START_ID, "Start the hardware", listenersFactory) {
+        this.runningValue = BooleanType.createValue(ChildUtil.logger(logger, Runnable.RUNNING_ID),
+                new Value.Data(Runnable.RUNNING_ID, Runnable.RUNNING_ID, "Whether the hardware is running or not"),
+                listenersFactory,
+                false);
+        this.startCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.START_ID),
+                new Command.Data(Runnable.START_ID, Runnable.START_ID, "Start the hardware"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(!isRunning()) {
@@ -94,7 +101,9 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
                 }
             }
         };
-        this.stopCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.STOP_ID), Runnable.STOP_ID, Runnable.STOP_ID, "Stop the hardware", listenersFactory) {
+        this.stopCommand = new RealCommandImpl(ChildUtil.logger(logger, Runnable.STOP_ID),
+                new Command.Data(Runnable.STOP_ID, Runnable.STOP_ID, "Stop the hardware"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(isRunning()) {
@@ -103,9 +112,18 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
                 }
             }
         };
-        this.errorValue = StringType.createValue(ChildUtil.logger(logger, Failable.ERROR_ID), Failable.ERROR_ID, Failable.ERROR_ID, "Current error for the hardware", listenersFactory, null);
-        this.driverProperty = (RealPropertyImpl) new RealPropertyImpl(ChildUtil.logger(logger, UsesDriver.DRIVER_ID), UsesDriver.DRIVER_ID, UsesDriver.DRIVER_ID, "The hardware's driver", listenersFactory, driverFactoryType);
-        this.driverLoadedValue = BooleanType.createValue(ChildUtil.logger(logger, UsesDriver.DRIVER_LOADED_ID), UsesDriver.DRIVER_LOADED_ID, UsesDriver.DRIVER_LOADED_ID, "Whether the hardware's driver is loaded or not", listenersFactory, false);
+        this.errorValue = StringType.createValue(ChildUtil.logger(logger, Failable.ERROR_ID),
+                new Value.Data(Failable.ERROR_ID, Failable.ERROR_ID, "Current error for the hardware"),
+                listenersFactory,
+                null);
+        this.driverProperty = (RealPropertyImpl) new RealPropertyImpl(ChildUtil.logger(logger, UsesDriver.DRIVER_ID),
+                new Property.Data(UsesDriver.DRIVER_ID, UsesDriver.DRIVER_ID, "The hardware's driver"),
+                listenersFactory,
+                driverFactoryType);
+        this.driverLoadedValue = BooleanType.createValue(ChildUtil.logger(logger, UsesDriver.DRIVER_LOADED_ID),
+                new Value.Data(UsesDriver.DRIVER_LOADED_ID, UsesDriver.DRIVER_LOADED_ID, "Whether the hardware's driver is loaded or not"),
+                listenersFactory,
+                false);
         this.properties = new RealListImpl<>(ChildUtil.logger(logger, Hardware.PROPERTIES_ID), new List.Data(Hardware.PROPERTIES_ID, Hardware.PROPERTIES_ID, PROPERTIES_DESCRIPTION), listenersFactory);
         driverProperty.addObjectListener(new Property.Listener<RealPropertyImpl<PluginResource<HardwareDriver.Factory<DRIVER>>>>() {
             @Override
@@ -260,5 +278,9 @@ public final class RealHardwareImpl<DRIVER extends HardwareDriver>
     @Override
     public void setError(String error) {
         errorValue.setValue(error);
+    }
+
+    public interface Factory {
+        RealHardwareImpl<?> create(Logger logger, Hardware.Data data, RemoveCallback<RealHardwareImpl<?>> removeCallback);
     }
 }

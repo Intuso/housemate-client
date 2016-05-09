@@ -1,10 +1,10 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
 public interface Server<
-        COMMAND extends Command<?, ?, ?, ?>, AUTOMATIONS extends List<? extends Automation<?, ?, ?, ?, ?, ?, ?, ?, ?>>,
-        DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>>,
-        USERS extends List<? extends User<?, ?, ?, ?>>,
-        NODES extends List<? extends Node<?, ?, ?>>,
+        COMMAND extends Command<?, ?, ?, ?>, AUTOMATIONS extends List<? extends Automation<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
+        DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
+        USERS extends List<? extends User<?, ?, ?, ?>, ?>,
+        NODES extends List<? extends Node<?, ?, ?>, ?>,
         SERVER extends Server>
         extends Object<Server.Listener<? super SERVER>>,
         Device.Container<DEVICES>,
@@ -34,7 +34,7 @@ public interface Server<
      *
      * Interface to show that the implementing object has a list of server
      */
-    interface Container<SERVERS extends List<? extends Server>> {
+    interface Container<SERVERS extends List<? extends Server<?, ?, ?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the commands list

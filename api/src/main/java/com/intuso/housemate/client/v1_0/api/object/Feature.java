@@ -6,8 +6,8 @@ package com.intuso.housemate.client.v1_0.api.object;
  * @param <FEATURE> the type of the feature
  */
 public interface Feature<
-        COMMANDS extends List<? extends Command<?, ?, ?, ?>>,
-        VALUES extends List<? extends Value<?, ?, ?>>,
+        COMMANDS extends List<? extends Command<?, ?, ?, ?>, ?>,
+        VALUES extends List<? extends Value<?, ?, ?>, ?>,
         FEATURE extends Feature<COMMANDS, VALUES, FEATURE>>
         extends
         Object<Feature.Listener<? super FEATURE>>,
@@ -27,7 +27,7 @@ public interface Feature<
      *
      * Interface to show that the implementing object has a list of features
      */
-    interface Container<FEATURES extends List<? extends Feature<?, ?, ?>>> {
+    interface Container<FEATURES extends List<? extends Feature<?, ?, ?>, ?>> {
 
         /**
          * Gets the features list

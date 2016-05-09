@@ -1,6 +1,9 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Feature;
+import com.intuso.housemate.client.v1_0.api.object.List;
 import com.intuso.housemate.client.v1_0.real.api.RealFeature;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
@@ -15,20 +18,16 @@ public final class RealFeatureImpl
     private final RealListImpl<RealCommandImpl> commands;
     private final RealListImpl<RealValueImpl<?>> values;
 
-    /**
-     * @param logger {@inheritDoc}
-     * @param listenersFactory
-     * @param id the feature's id
-     * @param name the feature's name
-     * @param description the feature's description
-     */
-    public RealFeatureImpl(Logger logger, ListenersFactory listenersFactory, String id, String name, String description) {
-        super(logger, new Feature.Data(id, name,  description), listenersFactory);
+    @Inject
+    public RealFeatureImpl(@Assisted final Logger logger,
+                           @Assisted Feature.Data data,
+                           ListenersFactory listenersFactory) {
+        super(logger, data, listenersFactory);
         this.commands = new RealListImpl<>(ChildUtil.logger(logger, Feature.COMMANDS_ID),
-                new com.intuso.housemate.client.v1_0.api.object.List.Data(Feature.COMMANDS_ID, "Commands", "The commands of this feature"),
+                new List.Data(Feature.COMMANDS_ID, "Commands", "The commands of this feature"),
                 listenersFactory);
         this.values = new RealListImpl<>(ChildUtil.logger(logger, Feature.VALUES_ID),
-                new com.intuso.housemate.client.v1_0.api.object.List.Data(Feature.VALUES_ID, "Values", "The values of this feature"),
+                new List.Data(Feature.VALUES_ID, "Values", "The values of this feature"),
                 listenersFactory);
     }
 
@@ -54,5 +53,9 @@ public final class RealFeatureImpl
     @Override
     public RealListImpl<RealValueImpl<?>> getValues() {
         return values;
+    }
+
+    public interface Factory {
+        RealFeatureImpl create(Logger logger, Feature.Data data);
     }
 }

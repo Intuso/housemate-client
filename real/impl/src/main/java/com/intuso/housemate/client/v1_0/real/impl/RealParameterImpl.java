@@ -19,24 +19,23 @@ public final class RealParameterImpl<O>
     /**
      * @param logger {@inheritDoc}
      * @param listenersFactory
-     * @param id the parameter's id
-     * @param name the parameter's name
-     * @param description the parameter's description
      * @param type the type of the parameter's value
      */
     @Inject
     public RealParameterImpl(@Assisted final Logger logger,
-                             @Assisted("id") String id,
-                             @Assisted("name") String name,
-                             @Assisted("description") String description,
+                             @Assisted Parameter.Data data,
                              ListenersFactory listenersFactory,
                              @Assisted RealTypeImpl<O> type) {
-        super(logger, new Parameter.Data(id, name, description), listenersFactory);
+        super(logger, data, listenersFactory);
         this.type = type;
     }
 
     @Override
     public final RealTypeImpl<O> getType() {
         return type;
+    }
+
+    public interface Factory {
+        RealParameterImpl<?> create(Logger logger, Parameter.Data data, RealTypeImpl<?> type);
     }
 }

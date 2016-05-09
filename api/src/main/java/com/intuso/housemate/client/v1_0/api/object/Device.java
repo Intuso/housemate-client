@@ -18,8 +18,8 @@ public interface Device<RENAME_COMMAND extends Command<?, ?, ?, ?>,
         ERROR_VALUE extends Value<?, ?, ?>,
         DRIVER_PROPERTY extends Property<?, ?, ?, ?>,
         DRIVER_LOADED_VALUE extends Value<?, ?, ?>,
-        PROPERTIES extends List<? extends Property<?, ?, ?, ?>>,
-        FEATURES extends List<? extends Feature<?, ?, ?>>,
+        PROPERTIES extends List<? extends Property<?, ?, ?, ?>, ?>,
+        FEATURES extends List<? extends Feature<?, ?, ?>, ?>,
         DEVICE extends Device<RENAME_COMMAND, REMOVE_COMMAND, START_STOP_COMMAND, RUNNING_VALUE, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, PROPERTIES, FEATURES, DEVICE>>
         extends
         Object<Device.Listener<? super DEVICE>>,
@@ -48,7 +48,7 @@ public interface Device<RENAME_COMMAND extends Command<?, ?, ?, ?>,
      *
      * Interface to show that the implementing object has a list of devices
      */
-    interface Container<DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>>> {
+    interface Container<DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the devices list

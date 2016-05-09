@@ -20,8 +20,8 @@ public abstract class ProxyDevice<
         COMMAND extends ProxyCommand<?, ?, COMMAND>,
         VALUE extends ProxyValue<?, VALUE>,
         PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
-        PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>>,
-        FEATURES extends ProxyList<? extends ProxyFeature<?, ?, ?>>,
+        PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
+        FEATURES extends ProxyList<? extends ProxyFeature<?, ?, ?>, ?>,
         DEVICE extends ProxyDevice<COMMAND, VALUE, PROPERTY, PROPERTIES, FEATURES, DEVICE>>
         extends ProxyObject<Device.Data, Device.Listener<? super DEVICE>>
         implements Device<COMMAND, COMMAND, COMMAND, VALUE, VALUE, PROPERTY, VALUE, PROPERTIES, FEATURES, DEVICE>,

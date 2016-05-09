@@ -25,7 +25,7 @@ public interface Parameter<TYPE extends Type<?>,
      *
      * Interface to show that the implementing object has a list of parameters
      */
-    interface Container<PARAMETERS extends List<? extends Parameter<?, ?>>> {
+    interface Container<PARAMETERS extends List<? extends Parameter<?, ?>, ?>> {
 
         /**
          * Gets the parameters list

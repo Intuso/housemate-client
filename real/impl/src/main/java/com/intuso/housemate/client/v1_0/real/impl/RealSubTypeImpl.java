@@ -17,13 +17,13 @@ public final class RealSubTypeImpl<O>
     /**
      * @param logger {@inheritDoc}
      * @param listenersFactory
-     * @param id the sub type's id
-     * @param name the sub type's name
-     * @param description the sub type's description
      * @param type
      */
-    public RealSubTypeImpl(Logger logger, ListenersFactory listenersFactory, String id, String name, String description, RealTypeImpl<O> type) {
-        super(logger, new SubType.Data(id, name, description), listenersFactory);
+    public RealSubTypeImpl(Logger logger,
+                           SubType.Data data,
+                           ListenersFactory listenersFactory,
+                           RealTypeImpl<O> type) {
+        super(logger, data, listenersFactory);
         this.type = type;
     }
 

@@ -9,8 +9,6 @@ public interface Value<DATA_TYPE,
             VALUE extends Value<?, ?, ?>>
         extends ValueBase<DATA_TYPE, TYPE, Value.Listener<? super VALUE>, VALUE> {
 
-    String TYPE_ID = "type";
-
     /**
      * Gets the value's type's id
      * @return the value's type's id
@@ -33,7 +31,7 @@ public interface Value<DATA_TYPE,
      *
      * Interface to show that the implementing object has a list of values
      */
-    interface Container<VALUES extends List<? extends Value<?, ?, ?>>> {
+    interface Container<VALUES extends List<? extends Value<?, ?, ?>, ?>> {
 
         /**
          * Gets the value list

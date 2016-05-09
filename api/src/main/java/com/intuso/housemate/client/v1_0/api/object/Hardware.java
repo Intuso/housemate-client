@@ -14,7 +14,7 @@ public interface Hardware<RENAME_COMMAND extends Command<?, ?, ?, ?>,
         ERROR_VALUE extends Value<?, ?, ?>,
         DRIVER_PROPERTY extends Property<?, ?, ?, ?>,
         DRIVER_LOADED_VALUE extends Value<?, ?, ?>,
-        PROPERTIES extends List<? extends Property<?, ?, ?, ?>>,
+        PROPERTIES extends List<? extends Property<?, ?, ?, ?>, ?>,
         HARDWARE extends Hardware<RENAME_COMMAND, REMOVE_COMMAND, START_STOP_COMMAND, RUNNING_VALUE, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, PROPERTIES, HARDWARE>>
         extends
         Object<Hardware.Listener<? super HARDWARE>>,
@@ -41,7 +41,7 @@ public interface Hardware<RENAME_COMMAND extends Command<?, ?, ?, ?>,
      *
      * Interface to show that the implementing object has a list of devices
      */
-    interface Container<HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?>>> {
+    interface Container<HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the hardware list

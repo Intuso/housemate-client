@@ -5,7 +5,7 @@ import com.intuso.utilities.listener.ListenerRegistration;
 /**
  * @param <ELEMENT> the type of the list's elements
  */
-public interface List<ELEMENT> extends Object<List.Listener<? super ELEMENT>>, Iterable<ELEMENT> {
+public interface List<ELEMENT, LIST extends List<ELEMENT, ?>> extends Object<List.Listener<? super ELEMENT, ? super LIST>>, Iterable<ELEMENT> {
 
     /**
      * Get an element from the list by name
@@ -26,26 +26,26 @@ public interface List<ELEMENT> extends Object<List.Listener<? super ELEMENT>>, I
      * @param callForExistingElements whether the listener should be called for elements already in the list
      * @return the listener registration
      */
-    ListenerRegistration addObjectListener(Listener<? super ELEMENT> listener, boolean callForExistingElements);
+    ListenerRegistration addObjectListener(Listener<? super ELEMENT, ? super LIST> listener, boolean callForExistingElements);
 
     /**
      *
      * Listener interface for lists
      */
-    interface Listener<OBJECT>
+    interface Listener<OBJECT, LIST extends List<OBJECT, ?>>
             extends Object.Listener {
 
         /**
          * Notifies that an element was added to the list
          * @param element the element that was added
          */
-        void elementAdded(OBJECT element);
+        void elementAdded(LIST list, OBJECT element);
 
         /**
          * Notifies that an element was removed from the list
          * @param element the element that was removed
          */
-        void elementRemoved(OBJECT element);
+        void elementRemoved(LIST list, OBJECT element);
     }
 
     /**

@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.Removeable;
 import com.intuso.housemate.client.v1_0.api.Renameable;
-import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.api.object.User;
+import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.real.api.RealUser;
 import com.intuso.housemate.client.v1_0.real.api.type.Email;
 import com.intuso.housemate.client.v1_0.real.impl.type.EmailType;
@@ -31,19 +30,22 @@ public final class RealUserImpl
 
     /**
      * @param logger {@inheritDoc}
-     * @param listenersFactory
      * @param data the user's data
+     * @param listenersFactory
      */
     @Inject
-    public RealUserImpl(ListenersFactory listenersFactory,
-                        @Assisted final Logger logger,
+    public RealUserImpl(@Assisted final Logger logger,
                         @Assisted User.Data data,
+                        ListenersFactory listenersFactory,
                         @Assisted RemoveCallback<RealUserImpl> removeCallback) {
         super(logger, data, listenersFactory);
         this.removeCallback = removeCallback;
-        this.renameCommand = new RealCommandImpl(ChildUtil.logger(logger, Renameable.RENAME_ID), Renameable.RENAME_ID, Renameable.RENAME_ID, "Rename the user",
+        this.renameCommand = new RealCommandImpl(ChildUtil.logger(logger, Renameable.RENAME_ID),
+                new Command.Data(Renameable.RENAME_ID, Renameable.RENAME_ID, "Rename the user"),
                 listenersFactory,
-                StringType.createParameter(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID), Renameable.NAME_ID, Renameable.NAME_ID, "The new name", listenersFactory)) {
+                StringType.createParameter(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID),
+                        new Parameter.Data(Renameable.NAME_ID, Renameable.NAME_ID, "The new name"),
+                        listenersFactory)) {
             @Override
             public void perform(Type.InstanceMap values) {
                 if(values != null && values.getChildren().containsKey(Renameable.NAME_ID)) {
@@ -53,13 +55,18 @@ public final class RealUserImpl
                 }
             }
         };
-        this.removeCommand = new RealCommandImpl(ChildUtil.logger(logger, Removeable.REMOVE_ID), Removeable.REMOVE_ID, Removeable.REMOVE_ID, "Remove the user", listenersFactory) {
+        this.removeCommand = new RealCommandImpl(ChildUtil.logger(logger, Removeable.REMOVE_ID),
+                new Command.Data(Removeable.REMOVE_ID, Removeable.REMOVE_ID, "Remove the user"),
+                listenersFactory) {
             @Override
             public void perform(Type.InstanceMap values) {
                 remove();
             }
         };
-        this.emailProperty = new RealPropertyImpl<>(ChildUtil.logger(logger, User.EMAIL_ID), User.EMAIL_ID, User.EMAIL_ID, User.EMAIL_ID, listenersFactory, new EmailType(listenersFactory));
+        this.emailProperty = new RealPropertyImpl<>(ChildUtil.logger(logger, User.EMAIL_ID),
+                new Property.Data(User.EMAIL_ID, User.EMAIL_ID, User.EMAIL_ID),
+                listenersFactory,
+                new EmailType(listenersFactory));
     }
 
     @Override
@@ -103,5 +110,9 @@ public final class RealUserImpl
 
     protected final void remove() {
         removeCallback.removeUser(this);
+    }
+
+    public interface Factory {
+        RealUserImpl create(Logger logger, User.Data data, RemoveCallback<RealUserImpl> removeCallback);
     }
 }

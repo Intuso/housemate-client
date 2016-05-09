@@ -3,7 +3,6 @@ package com.intuso.housemate.client.v1_0.real.api;
 import com.intuso.housemate.client.v1_0.api.object.Device;
 import com.intuso.housemate.client.v1_0.real.api.driver.DeviceDriver;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
-import org.slf4j.Logger;
 
 /**
  * Base class for all devices
@@ -13,8 +12,8 @@ public interface RealDevice<DRIVER extends DeviceDriver,
         BOOLEAN_VALUE extends RealValue<Boolean, ?, ?>,
         STRING_VALUE extends RealValue<String, ?, ?>,
         DRIVER_PROPERTY extends RealProperty<PluginResource<DeviceDriver.Factory<DRIVER>>, ?, ?, ?>,
-        PROPERTIES extends RealList<? extends RealProperty<?, ?, ?, ?>>,
-        FEATURES extends RealList<? extends RealFeature<?, ?, ?>>,
+        PROPERTIES extends RealList<? extends RealProperty<?, ?, ?, ?>, ?>,
+        FEATURES extends RealList<? extends RealFeature<?, ?, ?>, ?>,
         DEVICE extends RealDevice<DRIVER, COMMAND, BOOLEAN_VALUE, STRING_VALUE, DRIVER_PROPERTY, PROPERTIES, FEATURES, DEVICE>>
         extends Device<
         COMMAND,
@@ -33,15 +32,11 @@ public interface RealDevice<DRIVER extends DeviceDriver,
 
     boolean isDriverLoaded();
 
-    interface Container<DEVICE extends RealDevice<?, ?, ?, ?, ?, ?, ?, ?>, DEVICES extends RealList<? extends DEVICE>> extends Device.Container<DEVICES>, RemoveCallback<DEVICE> {
+    interface Container<DEVICE extends RealDevice<?, ?, ?, ?, ?, ?, ?, ?>, DEVICES extends RealList<? extends DEVICE, ?>> extends Device.Container<DEVICES>, RemoveCallback<DEVICE> {
         void addDevice(DEVICE device);
     }
 
     interface RemoveCallback<DEVICE extends RealDevice<?, ?, ?, ?, ?, ?, ?, ?>> {
         void removeDevice(DEVICE device);
-    }
-
-    interface Factory<DEVICE extends RealDevice<?, ?, ?, ?, ?, ?, ?, ?>> {
-        DEVICE create(Logger logger, Data data, RemoveCallback<DEVICE> removeCallback);
     }
 }

@@ -3,16 +3,15 @@ package com.intuso.housemate.client.v1_0.real.api;
 import com.intuso.housemate.client.v1_0.api.object.Condition;
 import com.intuso.housemate.client.v1_0.real.api.driver.ConditionDriver;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
-import org.slf4j.Logger;
 
 public interface RealCondition<DRIVER extends ConditionDriver,
         COMMAND extends RealCommand<?, ?, ?>,
         BOOLEAN_VALUE extends RealValue<Boolean, ?, ?>,
         STRING_VALUE extends RealValue<String, ?, ?>,
         DRIVER_PROPERTY extends RealProperty<PluginResource<ConditionDriver.Factory<DRIVER>>, ?, ?, ?>,
-        PROPERTIES extends RealList<? extends RealProperty<?, ?, ?, ?>>,
+        PROPERTIES extends RealList<? extends RealProperty<?, ?, ?, ?>, ?>,
         CHILD_CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>,
-        CHILD_CONDITIONS extends RealList<? extends CHILD_CONDITION>,
+        CHILD_CONDITIONS extends RealList<? extends CHILD_CONDITION, ?>,
         CONDITION extends RealCondition<DRIVER, COMMAND, BOOLEAN_VALUE, STRING_VALUE, DRIVER_PROPERTY, PROPERTIES, CHILD_CONDITION, CHILD_CONDITIONS, CONDITION>>
         extends Condition<COMMAND,
         COMMAND,
@@ -51,15 +50,11 @@ public interface RealCondition<DRIVER extends ConditionDriver,
 
     void stop();
 
-    interface Container<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>, CONDITIONS extends RealList<? extends CONDITION>> extends Condition.Container<CONDITIONS>, RemoveCallback {
+    interface Container<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>, CONDITIONS extends RealList<? extends CONDITION, ?>> extends Condition.Container<CONDITIONS>, RemoveCallback {
         void addCondition(CONDITION condition);
     }
 
     interface RemoveCallback<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>> {
         void removeCondition(CONDITION condition);
-    }
-
-    interface Factory<CONDITION extends RealCondition<?, ?, ?, ?, ?, ?, ?, ?, ?>> {
-        CONDITION create(Logger logger, Data data, RemoveCallback<CONDITION> removeCallback);
     }
 }

@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 /**
  * @param <SUB_TYPES> the type of the sub types list
  */
-public interface Option<SUB_TYPES extends List<? extends SubType<?, ?>>,
+public interface Option<SUB_TYPES extends List<? extends SubType<?, ?>, ?>,
         OPTION extends Option<?, ?>>
         extends Object<Option.Listener<? super OPTION>>, SubType.Container<SUB_TYPES> {
 
@@ -19,7 +19,7 @@ public interface Option<SUB_TYPES extends List<? extends SubType<?, ?>>,
      *
      * Interface to show that the implementing object has a list of options
      */
-    interface Container<OPTIONS extends List<? extends Option<?, ?>>> {
+    interface Container<OPTIONS extends List<? extends Option<?, ?>, ?>> {
 
         /**
          * Gets the option list

@@ -22,8 +22,8 @@ import javax.jms.Session;
 public abstract class ProxyAutomation<
             COMMAND extends ProxyCommand<?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
-            CONDITIONS extends ProxyList<? extends ProxyCondition<?, ?, ?, ?, ?, ?>>,
-            TASKS extends ProxyList<? extends ProxyTask<?, ?, ?, ?, ?>>,
+            CONDITIONS extends ProxyList<? extends ProxyCondition<?, ?, ?, ?, ?, ?>, ?>,
+            TASKS extends ProxyList<? extends ProxyTask<?, ?, ?, ?, ?>, ?>,
             AUTOMATION extends ProxyAutomation<COMMAND, VALUE, CONDITIONS, TASKS, AUTOMATION>>
         extends ProxyObject<Automation.Data, Automation.Listener<? super AUTOMATION>>
         implements Automation<COMMAND, COMMAND, COMMAND, COMMAND, VALUE, VALUE, CONDITIONS, TASKS, AUTOMATION>,

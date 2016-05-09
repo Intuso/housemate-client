@@ -15,7 +15,7 @@ import javax.jms.Session;
  */
 public abstract class ProxyNode<
         COMMAND extends ProxyCommand<?, ?, ?>,
-        HARDWARES extends ProxyList<? extends ProxyHardware<?, ?, ?, ?, ?>>,
+        HARDWARES extends ProxyList<? extends ProxyHardware<?, ?, ?, ?, ?>, ?>,
         NODE extends ProxyNode<COMMAND, HARDWARES, NODE>>
         extends ProxyObject<Node.Data, Node.Listener<? super NODE>>
         implements Node<COMMAND, HARDWARES, NODE> {

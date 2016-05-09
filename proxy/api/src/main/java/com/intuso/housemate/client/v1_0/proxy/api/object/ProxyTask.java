@@ -24,7 +24,7 @@ public abstract class ProxyTask<
             COMMAND extends ProxyCommand<?, ?, COMMAND>,
             VALUE extends ProxyValue<?, VALUE>,
             PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
-            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>>,
+            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
             TASK extends ProxyTask<COMMAND, VALUE, PROPERTY, PROPERTIES, TASK>>
         extends ProxyObject<Task.Data, Task.Listener<? super TASK>>
         implements Task<COMMAND, COMMAND, VALUE, VALUE, PROPERTY, VALUE, PROPERTIES, TASK>,

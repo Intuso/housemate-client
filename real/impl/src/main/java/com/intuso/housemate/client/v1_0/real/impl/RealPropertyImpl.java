@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
@@ -23,33 +24,36 @@ public class RealPropertyImpl<O>
 
     /**
      * @param logger {@inheritDoc}
-     * @param id the property's id
-     * @param name the property's name
-     * @param description the property's description
      * @param listenersFactory
      * @param type the property's type
      * @param values the property's initial value
      */
-    public RealPropertyImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, RealTypeImpl<O> type,
+    public RealPropertyImpl(Logger logger,
+                            Property.Data data,
+                            ListenersFactory listenersFactory,
+                            RealTypeImpl<O> type,
                             O... values) {
-        this(logger, id, name, description, listenersFactory, type, Arrays.asList(values));
+        this(logger, data, listenersFactory, type, Arrays.asList(values));
     }
 
     /**
      * @param logger {@inheritDoc}
-     * @param id the property's id
-     * @param name the property's name
-     * @param description the property's description
      * @param listenersFactory
      * @param type the property's type
      * @param values the property's initial value
      */
-    public RealPropertyImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, RealTypeImpl<O> type,
+    public RealPropertyImpl(Logger logger,
+                            Property.Data data,
+                            ListenersFactory listenersFactory,
+                            RealTypeImpl<O> type,
                             List<O> values) {
-        super(logger, new Property.Data(id, name, description), listenersFactory, type, values);
-        setCommand = new RealCommandImpl(ChildUtil.logger(logger, Property.SET_COMMAND_ID), Property.SET_COMMAND_ID, Property.SET_COMMAND_ID,
-                "The function to change the property's value", listenersFactory,
-                new RealParameterImpl<>(ChildUtil.logger(logger, Property.SET_COMMAND_ID, Property.VALUE_PARAM), Property.VALUE_PARAM, Property.VALUE_PARAM, "The new value for the property", listenersFactory, type)) {
+        super(logger, data, listenersFactory, type, values);
+        setCommand = new RealCommandImpl(ChildUtil.logger(logger, Property.SET_COMMAND_ID),
+                new Command.Data(Property.SET_COMMAND_ID, Property.SET_COMMAND_ID, "The function to change the property's value"),
+                listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, Property.SET_COMMAND_ID, Property.VALUE_PARAM),
+                        new Parameter.Data(Property.VALUE_PARAM, Property.VALUE_PARAM, "The new value for the property"),
+                        listenersFactory, type)) {
             @Override
             public void perform(Type.InstanceMap serialisedValues) {
                 List<O> values = RealTypeImpl.deserialiseAll(getType(), serialisedValues.getChildren().get(Property.VALUE_PARAM));

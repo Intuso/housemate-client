@@ -13,7 +13,7 @@ import javax.jms.Session;
  * @param <OPTION> the type of the option
  */
 public abstract class ProxyOption<
-            SUB_TYPES extends ProxyList<? extends ProxySubType<?, ?>>,
+            SUB_TYPES extends ProxyList<? extends ProxySubType<?, ?>, ?>,
             OPTION extends ProxyOption<SUB_TYPES, OPTION>>
         extends ProxyObject<Option.Data, Option.Listener<? super OPTION>>
         implements Option<SUB_TYPES, OPTION> {

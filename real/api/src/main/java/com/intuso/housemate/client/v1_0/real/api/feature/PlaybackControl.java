@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.real.api.device.feature;
+package com.intuso.housemate.client.v1_0.real.api.feature;
 
 import com.intuso.housemate.client.v1_0.real.api.annotations.Command;
 import com.intuso.housemate.client.v1_0.real.api.annotations.Feature;

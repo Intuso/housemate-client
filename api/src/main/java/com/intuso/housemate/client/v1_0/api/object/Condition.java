@@ -19,9 +19,9 @@ public interface Condition<REMOVE_COMMAND extends Command<?, ?, ?, ?>,
         DRIVER_PROPERTY extends Property<?, ?, ?, ?>,
         DRIVER_LOADED_VALUE extends Value<?, ?, ?>,
         SATISFIED_VALUE extends Value<?, ?, ?>,
-        PROPERTIES extends List<? extends Property<?, ?, ?, ?>>,
+        PROPERTIES extends List<? extends Property<?, ?, ?, ?>, ?>,
         ADD_COMMAND extends Command<?, ?, ?, ?>,
-        CHILD_CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>>,
+        CHILD_CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         CONDITION extends Condition<REMOVE_COMMAND, RENAME_COMMAND, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, SATISFIED_VALUE, PROPERTIES, ADD_COMMAND, CHILD_CONDITIONS, CONDITION>>
         extends Object<Condition.Listener<? super CONDITION>>,
         Property.Container<PROPERTIES>,
@@ -70,7 +70,7 @@ public interface Condition<REMOVE_COMMAND extends Command<?, ?, ?, ?>,
      *
      * Interface to show that the implementing object has a list of conditions
      */
-    interface Container<CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>>> {
+    interface Container<CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the conditions list

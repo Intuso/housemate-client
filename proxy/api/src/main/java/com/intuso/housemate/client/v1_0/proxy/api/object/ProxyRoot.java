@@ -1,5 +1,6 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
+import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -13,7 +14,7 @@ import javax.jms.Session;
  * @param <ROOT> the type of the root
  */
 public abstract class ProxyRoot<
-            SERVERS extends ProxyList<? extends ProxyServer<?, ?, ?, ?, ?, ?>>,
+            SERVERS extends ProxyList<? extends ProxyServer<?, ?, ?, ?, ?, ?>, ?>,
             ROOT extends ProxyRoot<SERVERS, ROOT>>
         implements
             Server.Container<SERVERS> {
@@ -28,10 +29,14 @@ public abstract class ProxyRoot<
     public ProxyRoot(Logger logger,
                      ListenersFactory listenersFactory,
                      Connection connection,
-                     ProxyObject.Factory<SERVERS> serversFactory) throws JMSException {
+                     ProxyObject.Factory<SERVERS> serversFactory) {
         servers = serversFactory.create(ChildUtil.logger(logger, SERVERS_ID));
-        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        servers.init(SERVERS_ID, session);
+        try {
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            servers.init(SERVERS_ID, session);
+        } catch(JMSException e) {
+            throw new HousemateException("Failed to create session and initialise servers list");
+        }
     }
 
     @Override

@@ -17,8 +17,8 @@ import java.util.Map;
 /**
  */
 public final class RealListImpl<ELEMENT extends RealObject<?, ?>>
-        extends RealObject<List.Data, List.Listener<? super ELEMENT>>
-        implements RealList<ELEMENT> {
+        extends RealObject<List.Data, List.Listener<? super ELEMENT, ? super RealListImpl<ELEMENT>>>
+        implements RealList<ELEMENT, RealListImpl<ELEMENT>> {
 
     private final Map<String, ELEMENT> elements;
 
@@ -28,7 +28,10 @@ public final class RealListImpl<ELEMENT extends RealObject<?, ?>>
      * @param listenersFactory
      * @param elements the list's elements
      */
-    public RealListImpl(Logger logger, List.Data data, ListenersFactory listenersFactory, ELEMENT ... elements) {
+    public RealListImpl(Logger logger,
+                        List.Data data,
+                        ListenersFactory listenersFactory,
+                        ELEMENT ... elements) {
         this(logger, data, listenersFactory, Lists.newArrayList(elements));
     }
 
@@ -38,7 +41,10 @@ public final class RealListImpl<ELEMENT extends RealObject<?, ?>>
      * @param listenersFactory
      * @param elements the list's elements
      */
-    public RealListImpl(Logger logger, List.Data data, ListenersFactory listenersFactory, java.util.List<ELEMENT> elements) {
+    public RealListImpl(Logger logger,
+                        List.Data data,
+                        ListenersFactory listenersFactory,
+                        java.util.List<ELEMENT> elements) {
         super(logger, data, listenersFactory);
         this.elements = Maps.uniqueIndex(elements, new Function<ELEMENT, String>() {
             @Nullable
@@ -50,11 +56,11 @@ public final class RealListImpl<ELEMENT extends RealObject<?, ?>>
     }
 
     @Override
-    public ListenerRegistration addObjectListener(List.Listener<? super ELEMENT> listener, boolean callForExistingElements) {
+    public ListenerRegistration addObjectListener(List.Listener<? super ELEMENT, ? super RealListImpl<ELEMENT>> listener, boolean callForExistingElements) {
         ListenerRegistration listenerRegistration = super.addObjectListener(listener);
         if(callForExistingElements)
             for(ELEMENT element : this)
-                listener.elementAdded(element);
+                listener.elementAdded(this, element);
         return listenerRegistration;
     }
 
@@ -62,16 +68,16 @@ public final class RealListImpl<ELEMENT extends RealObject<?, ?>>
     public void add(ELEMENT element) {
         if(elements.containsKey(element.getId()))
             throw new HousemateException("Element with id " + element.getId() + " already exists");
-        for(List.Listener<? super ELEMENT> listener : listeners)
-            listener.elementAdded(element);
+        for(List.Listener<? super ELEMENT, ? super RealListImpl<ELEMENT>> listener : listeners)
+            listener.elementAdded(this, element);
     }
 
     @Override
     public ELEMENT remove(String id) {
         ELEMENT element = elements.get(id);
         if(element != null)
-            for(List.Listener<? super ELEMENT> listener : listeners)
-                listener.elementRemoved(element);
+            for(List.Listener<? super ELEMENT, ? super RealListImpl<ELEMENT>> listener : listeners)
+                listener.elementRemoved(this, element);
         return element;
     }
 

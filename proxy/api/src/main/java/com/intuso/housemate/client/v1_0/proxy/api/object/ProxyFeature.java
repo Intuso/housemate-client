@@ -13,8 +13,8 @@ import javax.jms.Session;
  * @param <FEATURE> the feature type
  */
 public abstract class ProxyFeature<
-        COMMANDS extends ProxyList<? extends ProxyCommand<?, ?, ?>>,
-        VALUES extends ProxyList<? extends ProxyValue<?, ?>>,
+        COMMANDS extends ProxyList<? extends ProxyCommand<?, ?, ?>, ?>,
+        VALUES extends ProxyList<? extends ProxyValue<?, ?>, ?>,
         FEATURE extends ProxyFeature<COMMANDS, VALUES, FEATURE>>
         extends ProxyObject<Feature.Data, Feature.Listener<? super FEATURE>>
         implements Feature<COMMANDS, VALUES, FEATURE> {

@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Node;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.factory.hardware.AddHardwareCommand;
@@ -26,7 +27,10 @@ public final class RealNodeImpl
                          AddHardwareCommand.Factory addHardwareCommandFactory) {
         super(logger, data, listenersFactory);
         this.hardwares = new RealListImpl<>(ChildUtil.logger(logger, HARDWARES_ID), new com.intuso.housemate.client.v1_0.api.object.List.Data(HARDWARES_ID, "Hardware", "Hardware"), listenersFactory);
-        this.addHardwareCommand = addHardwareCommandFactory.create(ChildUtil.logger(ChildUtil.logger(logger, ADD_HARDWARE_ID), ADD_HARDWARE_ID), ADD_HARDWARE_ID, ADD_HARDWARE_ID, "Add hardware", this, this);
+        this.addHardwareCommand = addHardwareCommandFactory.create(ChildUtil.logger(logger, ADD_HARDWARE_ID),
+                new Command.Data(ADD_HARDWARE_ID, ADD_HARDWARE_ID, "Add hardware"),
+                this,
+                this);
     }
 
     public RealNodeImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, AddHardwareCommand.Factory addHardwareCommandFactory) {

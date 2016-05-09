@@ -17,8 +17,6 @@ public interface RealValueBase<O,
         LISTENER,
         VALUE> {
 
-    TYPE getType();
-
     /**
      * Gets the object representation of this value
      * @return

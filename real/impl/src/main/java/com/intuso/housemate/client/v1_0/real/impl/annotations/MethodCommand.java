@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl.annotations;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
@@ -25,13 +26,11 @@ public class MethodCommand extends RealCommandImpl {
     @Inject
     protected MethodCommand(ListenersFactory listenersFactory,
                             @Assisted Logger logger,
-                            @Assisted("id") String id,
-                            @Assisted("name") String name,
-                            @Assisted("description") String description,
+                            @Assisted Command.Data data,
                             @Assisted List<RealParameterImpl<?>> parameters,
                             @Assisted Method method,
                             @Assisted Object instance) {
-        super(logger, id, name, description, listenersFactory, parameters);
+        super(logger, data, listenersFactory, parameters);
         this.method = method;
         this.instance = instance;
         parameterConverter = new ParameterConverter(parameters);
@@ -70,9 +69,7 @@ public class MethodCommand extends RealCommandImpl {
 
     public interface Factory {
         MethodCommand create(Logger logger,
-                             @Assisted("id") String id,
-                             @Assisted("name") String name,
-                             @Assisted("description") String description,
+                             Command.Data data,
                              List<RealParameterImpl<?>> parameters,
                              Method method,
                              Object instance);

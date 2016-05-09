@@ -12,9 +12,9 @@ import java.util.Map;
 /**
  * @param <ELEMENT> the type of the child
  */
-public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>>
-        extends ProxyObject<List.Data, List.Listener<? super ELEMENT>>
-        implements List<ELEMENT> {
+public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends ProxyList<ELEMENT, ?>>
+        extends ProxyObject<List.Data, List.Listener<? super ELEMENT, ? super LIST>>
+        implements List<ELEMENT, LIST> {
 
     private final Map<String, ELEMENT> children = Maps.newHashMap();
     private final ProxyObject.Factory<ELEMENT> elementFactory;
@@ -52,9 +52,9 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>>
     }
 
     @Override
-    public ListenerRegistration addObjectListener(List.Listener<? super ELEMENT> listener, boolean callForExistingElements) {
+    public ListenerRegistration addObjectListener(List.Listener<? super ELEMENT, ? super LIST> listener, boolean callForExistingElements) {
         for(ELEMENT element : children.values())
-            listener.elementAdded(element);
+            listener.elementAdded((LIST) this, element);
         return this.addObjectListener(listener);
     }
 }

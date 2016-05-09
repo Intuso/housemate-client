@@ -3,6 +3,8 @@ package com.intuso.housemate.client.v1_0.real.impl.factory.task;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Task;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
@@ -32,24 +34,31 @@ public class AddTaskCommand extends RealCommandImpl {
 
     private final TaskFactoryType taskFactoryType;
     private final Callback callback;
-    private final RealTask.Factory<RealTaskImpl<?>> taskFactory;
+    private final RealTaskImpl.Factory taskFactory;
     private final RealTask.RemoveCallback<RealTaskImpl<?>> removeCallback;
 
     @Inject
     protected AddTaskCommand(ListenersFactory listenersFactory,
                              StringType stringType,
                              TaskFactoryType taskFactoryType,
-                             RealTask.Factory<RealTaskImpl<?>> taskFactory,
+                             RealTaskImpl.Factory taskFactory,
                              @Assisted Logger logger,
-                             @Assisted("id") String id,
-                             @Assisted("name") String name,
-                             @Assisted("description") String description,
+                             @Assisted Command.Data data,
                              @Assisted Callback callback,
                              @Assisted RealTask.RemoveCallback<RealTaskImpl<?>> removeCallback) {
-        super(logger, id, name, description, listenersFactory,
-                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID), NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION, listenersFactory, stringType),
-                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID), DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION, listenersFactory, stringType),
-                new RealParameterImpl<>(ChildUtil.logger(logger, TYPE_PARAMETER_ID), TYPE_PARAMETER_ID, TYPE_PARAMETER_NAME, TYPE_PARAMETER_DESCRIPTION, listenersFactory, taskFactoryType));
+        super(logger, data, listenersFactory,
+                new RealParameterImpl<>(ChildUtil.logger(logger, NAME_PARAMETER_ID),
+                        new Parameter.Data(NAME_PARAMETER_ID, NAME_PARAMETER_NAME, NAME_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID),
+                        new Parameter.Data(DESCRIPTION_PARAMETER_ID, DESCRIPTION_PARAMETER_NAME, DESCRIPTION_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        stringType),
+                new RealParameterImpl<>(ChildUtil.logger(logger, TYPE_PARAMETER_ID),
+                        new Parameter.Data(TYPE_PARAMETER_ID, TYPE_PARAMETER_NAME, TYPE_PARAMETER_DESCRIPTION),
+                        listenersFactory,
+                        taskFactoryType));
         this.taskFactoryType = taskFactoryType;
         this.callback = callback;
         this.taskFactory = taskFactory;
@@ -77,10 +86,8 @@ public class AddTaskCommand extends RealCommandImpl {
 
     public interface Factory {
         AddTaskCommand create(Logger logger,
-                                @Assisted("id") String id,
-                                @Assisted("name") String name,
-                                @Assisted("description") String description,
-                                Callback callback,
-                                RealTask.RemoveCallback<RealTaskImpl<?>> removeCallback);
+                              Command.Data data,
+                              Callback callback,
+                              RealTask.RemoveCallback<RealTaskImpl<?>> removeCallback);
     }
 }

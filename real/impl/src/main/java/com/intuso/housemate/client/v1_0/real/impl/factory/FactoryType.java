@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl.factory;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.api.object.Option;
 import com.intuso.housemate.client.v1_0.real.api.driver.PluginResource;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.type.RealChoiceType;
@@ -35,7 +36,7 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
 
     public void factoryAvailable(String id, String name, String description, FACTORY factory) {
         getFactoryEntry(id, true).factoryAvailable(factory);
-        options.add(new RealOptionImpl(logger, listenersFactory, id, name, description));
+        options.add(new RealOptionImpl(logger, new Option.Data(id, name, description), listenersFactory));
     }
 
     public void factoryUnavailable(String id) {
