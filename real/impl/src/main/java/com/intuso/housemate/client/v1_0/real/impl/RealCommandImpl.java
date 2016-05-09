@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Serialiser;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.Value;
 import com.intuso.housemate.client.v1_0.real.api.RealCommand;
@@ -49,11 +50,14 @@ public abstract class RealCommandImpl
                               ListenersFactory listenersFactory,
                               List<RealParameterImpl<?>> parameters) {
         super(logger, data, listenersFactory);
-        enabledValue = new RealValueImpl<>(logger,
+        enabledValue = new RealValueImpl<>(ChildUtil.logger(logger, Command.ENABLED_ID),
                 new Value.Data(Command.ENABLED_ID, Command.ENABLED_ID, ENABLED_DESCRIPTION),
                 listenersFactory,
                 new BooleanType(listenersFactory), true);
-        this.parameters = new RealListImpl<>(logger, new com.intuso.housemate.client.v1_0.api.object.List.Data(Command.PARAMETERS_ID, Command.PARAMETERS_ID, "The parameters required by the command"), listenersFactory, parameters);
+        this.parameters = new RealListImpl<>(ChildUtil.logger(logger, Command.PARAMETERS_ID),
+                new com.intuso.housemate.client.v1_0.api.object.List.Data(Command.PARAMETERS_ID, Command.PARAMETERS_ID, "The parameters required by the command"),
+                listenersFactory,
+                parameters);
     }
 
     @Override
@@ -131,28 +135,32 @@ public abstract class RealCommandImpl
         if(message instanceof StreamMessage) {
             StreamMessage streamMessage = (StreamMessage) message;
             try {
-                Object object = streamMessage.readObject();
-                if (object instanceof Command.PerformData) {
-                    final PerformData performData = (PerformData) object;
-                    perform(performData.getInstanceMap(), new PerformListener<RealCommandImpl>() {
+                java.lang.Object messageObject = streamMessage.readObject();
+                if(messageObject instanceof byte[]) {
+                    java.lang.Object object = Serialiser.deserialise((byte[]) messageObject);
+                    if (object instanceof Command.PerformData) {
+                        final PerformData performData = (PerformData) object;
+                        perform(performData.getInstanceMap(), new PerformListener<RealCommandImpl>() {
 
-                        @Override
-                        public void commandStarted(RealCommandImpl command) {
-                            performStatus(performData.getOpId(), false, null);
-                        }
+                            @Override
+                            public void commandStarted(RealCommandImpl command) {
+                                performStatus(performData.getOpId(), false, null);
+                            }
 
-                        @Override
-                        public void commandFinished(RealCommandImpl command) {
-                            performStatus(performData.getOpId(), true, null);
-                        }
+                            @Override
+                            public void commandFinished(RealCommandImpl command) {
+                                performStatus(performData.getOpId(), true, null);
+                            }
 
-                        @Override
-                        public void commandFailed(RealCommandImpl command, String error) {
-                            performStatus(performData.getOpId(), true, error);
-                        }
-                    });
+                            @Override
+                            public void commandFailed(RealCommandImpl command, String error) {
+                                performStatus(performData.getOpId(), true, error);
+                            }
+                        });
+                    } else
+                        logger.warn("Deserialised message object that wasn't a {}", PerformData.class.getName());
                 } else
-                    logger.warn("Read message object that wasn't a {}", PerformData.class.getName());
+                    logger.warn("Message data was not a byte[]");
             } catch(JMSException e) {
                 logger.error("Failed to read object from message", e);
             }
@@ -163,7 +171,7 @@ public abstract class RealCommandImpl
     private void performStatus(String opId, boolean finished, String error) {
         try {
             StreamMessage streamMessage = session.createStreamMessage();
-            streamMessage.writeObject(new Command.PerformStatusData(opId, finished, error));
+            streamMessage.writeObject(Serialiser.serialise(new Command.PerformStatusData(opId, finished, error)));
             performStatusProducer.send(streamMessage);
         } catch(JMSException e) {
             logger.error("Failed to send perform status update ({}, {}, {})", opId, finished, error, e);

@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.Serialiser;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -61,10 +62,15 @@ public abstract class ProxyObject<
                     StreamMessage streamMessage = (StreamMessage) message;
                     try {
                         java.lang.Object messageObject = streamMessage.readObject();
-                        if (dataClass.isAssignableFrom(message.getClass())) {
-                            data = (DATA) messageObject;
-                            dataUpdated();
-                        }
+                        if(messageObject instanceof byte[]) {
+                            java.lang.Object object = Serialiser.deserialise((byte[]) messageObject);
+                            if (dataClass.isAssignableFrom(object.getClass())) {
+                                data = (DATA) object;
+                                dataUpdated();
+                            } else
+                                logger.warn("Deserialised message object that wasn't a {}", dataClass.getName());
+                        } else
+                            logger.warn("Message data was not a byte[]");
                     } catch(JMSException e) {
                         logger.error("Could not read object from received message", e);
                     }

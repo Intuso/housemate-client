@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
-import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
@@ -84,12 +84,16 @@ public abstract class ProxyValueBase<
         if(message instanceof StreamMessage) {
             StreamMessage streamMessage = (StreamMessage) message;
             try {
-                java.lang.Object object = streamMessage.readObject();
-                if(object instanceof Type.Instances) {
-                    value = (Type.Instances) object;
-                    // todo call object listeners
+                java.lang.Object messageObject = streamMessage.readObject();
+                if(messageObject instanceof byte[]) {
+                    java.lang.Object object = Serialiser.deserialise((byte[]) messageObject);
+                    if(object instanceof Type.Instances) {
+                        value = (Type.Instances) object;
+                        // todo call object listeners
+                    } else
+                        logger.warn("Deserialised message object that wasn't a {}", Type.Instances.class.getName());
                 } else
-                    logger.warn("Read message object that wasn't a {}", Command.PerformStatusData.class.getName());
+                    logger.warn("Message data was not a byte[]");
             } catch(JMSException e) {
                 logger.error("Failed to read object from message", e);
             }

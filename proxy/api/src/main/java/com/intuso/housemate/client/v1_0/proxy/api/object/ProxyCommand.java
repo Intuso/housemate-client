@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.api.object;
 import com.google.common.collect.Maps;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Serialiser;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -122,7 +123,7 @@ public abstract class ProxyCommand<
         listenerMap.put(id, listener);
         try {
             StreamMessage streamMessage = session.createStreamMessage();
-            streamMessage.writeObject(new Command.PerformData(id, values));
+            streamMessage.writeObject(Serialiser.serialise(new Command.PerformData(id, values)));
             performProducer.send(streamMessage);
         } catch(JMSException e) {
             throw new HousemateException("Failed to send perform message", e);
@@ -134,21 +135,25 @@ public abstract class ProxyCommand<
         if(message instanceof StreamMessage) {
             StreamMessage streamMessage = (StreamMessage) message;
             try {
-                Object object = streamMessage.readObject();
-                if(object instanceof Command.PerformStatusData) {
-                    PerformStatusData performStatusData = (PerformStatusData) object;
-                    if(listenerMap.containsKey(performStatusData.getOpId())) {
-                        if(performStatusData.isFinished()) {
-                            if(performStatusData.getError() == null)
-                                listenerMap.remove(performStatusData.getOpId()).commandFinished(getThis());
-                            else
-                                listenerMap.remove(performStatusData.getOpId()).commandFailed(getThis(), performStatusData.getError());
-                        } else
-                            listenerMap.get(performStatusData.getOpId()).commandStarted(getThis());
-                    }
-                    // todo call object listeners
+                Object messageObject = streamMessage.readObject();
+                if(messageObject instanceof byte[]) {
+                    Object object = Serialiser.deserialise((byte[]) messageObject);
+                    if (object instanceof Command.PerformStatusData) {
+                        PerformStatusData performStatusData = (PerformStatusData) object;
+                        if (listenerMap.containsKey(performStatusData.getOpId())) {
+                            if (performStatusData.isFinished()) {
+                                if (performStatusData.getError() == null)
+                                    listenerMap.remove(performStatusData.getOpId()).commandFinished(getThis());
+                                else
+                                    listenerMap.remove(performStatusData.getOpId()).commandFailed(getThis(), performStatusData.getError());
+                            } else
+                                listenerMap.get(performStatusData.getOpId()).commandStarted(getThis());
+                        }
+                        // todo call object listeners
+                    } else
+                        logger.warn("Deserialised message object that wasn't a {}", PerformStatusData.class.getName());
                 } else
-                    logger.warn("Read message object that wasn't a {}", PerformStatusData.class.getName());
+                    logger.warn("Message data was not a byte[]");
             } catch(JMSException e) {
                 logger.error("Failed to read object from message", e);
             }
