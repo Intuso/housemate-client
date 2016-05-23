@@ -1,7 +1,6 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.object.SubType;
-import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -16,30 +15,25 @@ public abstract class ProxySubType<TYPE extends ProxyType<?>,
         extends ProxyObject<SubType.Data, SubType.Listener<? super SUB_TYPE>>
         implements SubType<TYPE, SUB_TYPE> {
 
-    private final TYPE type;
-
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxySubType(Logger logger, ListenersFactory listenersFactory, ProxyObject.Factory<TYPE> typeFactory) {
+    public ProxySubType(Logger logger, ListenersFactory listenersFactory) {
         super(logger, SubType.Data.class, listenersFactory);
-        type = typeFactory.create(ChildUtil.logger(logger, SubType.TYPE_ID));
     }
 
     @Override
     protected void initChildren(String name, Session session) throws JMSException {
         super.initChildren(name, session);
-        type.init(ChildUtil.name(name, SubType.TYPE_ID), session);
     }
 
     @Override
     protected void uninitChildren() {
         super.uninitChildren();
-        type.uninit();
     }
 
     @Override
     public TYPE getType() {
-        return type;
+        return null; // todo get the type from somewhere
     }
 }

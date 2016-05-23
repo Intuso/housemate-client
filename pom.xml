@@ -19,6 +19,7 @@
     <properties>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <intuso.housemate.plugin.version>1.0.0-SNAPSHOT</intuso.housemate.plugin.version>
         <junit.version>4.8.1</junit.version>
         <guava.version>16.0.1</guava.version>
         <guice.version>4.0</guice.version>

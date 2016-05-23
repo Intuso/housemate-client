@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxySubType;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
@@ -18,8 +17,7 @@ public final class SimpleProxySubType extends ProxySubType<SimpleProxyType, Simp
 
     @Inject
     public SimpleProxySubType(@Assisted Logger logger,
-                              ListenersFactory listenersFactory,
-                              ProxyObject.Factory<SimpleProxyType> typeFactory) {
-        super(logger, listenersFactory, typeFactory);
+                              ListenersFactory listenersFactory) {
+        super(logger, listenersFactory);
     }
 }

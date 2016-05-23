@@ -18,7 +18,7 @@ public abstract class ProxyValue<
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxyValue(Logger logger, ListenersFactory listenersFactory, ProxyObject.Factory<TYPE> typeFactory) {
-        super(logger, Value.Data.class, listenersFactory, typeFactory);
+    public ProxyValue(Logger logger, ListenersFactory listenersFactory) {
+        super(logger, Value.Data.class, listenersFactory);
     }
 }

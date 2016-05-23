@@ -22,8 +22,7 @@ public final class SimpleProxyProperty extends ProxyProperty<
     @Inject
     public SimpleProxyProperty(@Assisted Logger logger,
                                ListenersFactory listenersFactory,
-                               ProxyObject.Factory<SimpleProxyType> typeFactory,
                                ProxyObject.Factory<SimpleProxyCommand> commandFactory) {
-        super(logger, listenersFactory, typeFactory, commandFactory);
+        super(logger, listenersFactory, commandFactory);
     }
 }

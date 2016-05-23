@@ -28,9 +28,8 @@ public abstract class ProxyProperty<TYPE extends ProxyType<?>,
      */
     public ProxyProperty(Logger logger,
                          ListenersFactory listenersFactory,
-                         ProxyObject.Factory<TYPE> typeFactory,
                          ProxyObject.Factory<COMMAND> commandFactory) {
-        super(logger, Property.Data.class, listenersFactory, typeFactory);
+        super(logger, Property.Data.class, listenersFactory);
         setCommand = commandFactory.create(ChildUtil.logger(logger, Property.SET_COMMAND_ID));
     }
 

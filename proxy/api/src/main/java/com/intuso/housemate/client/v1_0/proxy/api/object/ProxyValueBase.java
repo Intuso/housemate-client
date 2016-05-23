@@ -21,7 +21,6 @@ public abstract class ProxyValueBase<
         extends ProxyObject<DATA, LISTENER>
         implements ValueBase<Type.Instances, TYPE, LISTENER, VALUE>, MessageListener {
 
-    private final TYPE type;
     private Session session;
     private MessageConsumer valueConsumer;
 
@@ -32,16 +31,13 @@ public abstract class ProxyValueBase<
      */
     public ProxyValueBase(Logger logger,
                           Class<DATA> dataClass,
-                          ListenersFactory listenersFactory,
-                          ProxyObject.Factory<TYPE> typeFactory) {
+                          ListenersFactory listenersFactory) {
         super(logger, dataClass, listenersFactory);
-        type = typeFactory.create(ChildUtil.logger(logger, Value.TYPE_ID));
     }
 
     @Override
     protected void initChildren(String name, Session session) throws JMSException {
         super.initChildren(name, session);
-        type.init(ChildUtil.name(name, Value.TYPE_ID), session);
         this.session = session;
         valueConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Value.VALUE_ID)));
         valueConsumer.setMessageListener(this);
@@ -50,7 +46,6 @@ public abstract class ProxyValueBase<
     @Override
     protected void uninitChildren() {
         super.uninitChildren();
-        type.uninit();
         if(valueConsumer != null) {
             try {
                 valueConsumer.close();
@@ -71,7 +66,7 @@ public abstract class ProxyValueBase<
 
     @Override
     public TYPE getType() {
-        return type;
+        return null; // todo get the type from somewhere
     }
 
     @Override

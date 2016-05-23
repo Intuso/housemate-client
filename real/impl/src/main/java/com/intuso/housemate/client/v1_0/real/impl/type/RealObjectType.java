@@ -6,24 +6,23 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
  * Type for an object from the object tree
  */
-public class RealObjectType<O extends Object<?>>
+public final class RealObjectType<O extends Object<?>>
         extends RealTypeImpl<RealObjectType.Reference<O>> {
 
     public final static String ID = "object";
     public final static String NAME = "Object";
-
-    private final static Logger logger = LoggerFactory.getLogger(RealObjectType.class);
 
     private final static Joiner JOINER = Joiner.on("/");
     private final static Splitter SPLITTER = Splitter.on("/");
@@ -35,8 +34,8 @@ public class RealObjectType<O extends Object<?>>
      * @param root the root to get the object from
      */
     @Inject
-    public RealObjectType(ListenersFactory listenersFactory, RealNodeImpl root) {
-        super(logger, new ObjectData(ID, NAME, "Path to an object", 1, 1), listenersFactory);
+    public RealObjectType(@Types Logger logger, ListenersFactory listenersFactory, RealNodeImpl root) {
+        super(ChildUtil.logger(logger, ID), new ObjectData(ID, NAME, "Path to an object"), listenersFactory);
         serialiser = new Serialiser<>(root);
     }
 

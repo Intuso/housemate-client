@@ -6,7 +6,8 @@ import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.annotations.ioc.RealAnnotationsModule;
-import com.intuso.housemate.client.v1_0.real.impl.factory.ioc.RealFactoryModule;
+import com.intuso.housemate.client.v1_0.real.impl.type.ioc.RealTypesModule;
+import com.intuso.housemate.client.v1_0.real.impl.utils.ioc.RealUtilsModule;
 
 /**
  */
@@ -16,9 +17,11 @@ public class NodeRealObjectModule extends AbstractModule {
     protected void configure() {
 
         // install other required modules
-        install(new RealFactoryModule());
         install(new RealAnnotationsModule());
+        install(new RealObjectsModule());
         install(new RealTypesModule());
+        install(new RealUtilsModule());
+        install(new LoggersModule());
 
         bind(RealNode.class).to(RealNodeImpl.class);
         bind(RealNodeImpl.class).in(Scopes.SINGLETON);

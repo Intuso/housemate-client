@@ -1,13 +1,15 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.intuso.housemate.client.v1_0.api.object.Node;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
-import com.intuso.housemate.client.v1_0.real.impl.factory.hardware.AddHardwareCommand;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.Root;
+import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -15,55 +17,71 @@ import javax.jms.Session;
 
 public final class RealNodeImpl
         extends RealObject<Node.Data, Node.Listener<? super RealNodeImpl>>
-        implements RealNode<RealCommandImpl, RealHardwareImpl<?>, RealListImpl<RealHardwareImpl<?>>, RealNodeImpl>,
+        implements RealNode<RealCommandImpl, RealHardwareImpl, RealListImpl<RealHardwareImpl>, RealNodeImpl>,
         AddHardwareCommand.Callback {
 
-    private final RealListImpl<RealHardwareImpl<?>> hardwares;
+    private final RealListImpl<RealHardwareImpl> hardwares;
     private final RealCommandImpl addHardwareCommand;
 
-    private RealNodeImpl(Logger logger,
-                         Node.Data data,
-                         ListenersFactory listenersFactory,
-                         AddHardwareCommand.Factory addHardwareCommandFactory) {
-        super(logger, data, listenersFactory);
-        this.hardwares = new RealListImpl<>(ChildUtil.logger(logger, HARDWARES_ID), new com.intuso.housemate.client.v1_0.api.object.List.Data(HARDWARES_ID, "Hardware", "Hardware"), listenersFactory);
-        this.addHardwareCommand = addHardwareCommandFactory.create(ChildUtil.logger(logger, ADD_HARDWARE_ID),
-                new Command.Data(ADD_HARDWARE_ID, ADD_HARDWARE_ID, "Add hardware"),
+    @AssistedInject
+    public RealNodeImpl(@Assisted Logger logger,
+                        @Assisted("id") String id,
+                        @Assisted("name") String name,
+                        @Assisted("description") String description,
+                        ListenersFactory listenersFactory,
+                        RealListImpl.Factory<RealHardwareImpl> hardwaresFactory,
+                        AddHardwareCommand.Factory addHardwareCommandFactory) {
+        super(logger, new Node.Data(id, name, description), listenersFactory);
+        this.hardwares = hardwaresFactory.create(ChildUtil.logger(logger, HARDWARES_ID),
+                HARDWARES_ID,
+                "Hardware",
+                "Hardware",
+                Lists.<RealHardwareImpl>newArrayList());
+        this.addHardwareCommand = addHardwareCommandFactory.create(ChildUtil.logger(logger, HARDWARES_ID),
+                ChildUtil.logger(logger, ADD_HARDWARE_ID),
+                ADD_HARDWARE_ID,
+                ADD_HARDWARE_ID,
+                "Add hardware",
                 this,
                 this);
     }
 
-    public RealNodeImpl(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, AddHardwareCommand.Factory addHardwareCommandFactory) {
-        this(logger, new Node.Data(id, name, description), listenersFactory, addHardwareCommandFactory);
-    }
-
     @Inject
-    public RealNodeImpl(ListenersFactory listenersFactory,
+    public RealNodeImpl(@Root Logger logger,
+                        ListenersFactory listenersFactory,
+                        RealListImpl.Factory<RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory,
                         Connection connection) throws JMSException {
-        this(LoggerFactory.getLogger("com.intuso.housemate.node"), new Node.Data("node", "node", "node"), listenersFactory, addHardwareCommandFactory);
+        this(logger, "node", "node", "node", listenersFactory, hardwaresFactory, addHardwareCommandFactory);
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         this.hardwares.init(HARDWARES_ID, session);
         this.addHardwareCommand.init(ADD_HARDWARE_ID, session);
     }
 
     @Override
-    public RealListImpl<RealHardwareImpl<?>> getHardwares() {
+    public RealListImpl<RealHardwareImpl> getHardwares() {
         return hardwares;
     }
 
     @Override
-    public final void addHardware(RealHardwareImpl<?> hardware) {
+    public final void addHardware(RealHardwareImpl hardware) {
         hardwares.add(hardware);
     }
 
     @Override
-    public final void removeHardware(RealHardwareImpl<?> realHardware) {
+    public final void removeHardware(RealHardwareImpl realHardware) {
         hardwares.remove(realHardware.getId());
     }
 
     @Override
     public RealCommandImpl getAddHardwareCommand() {
         return addHardwareCommand;
+    }
+
+    public interface Factory {
+        RealNodeImpl create(Logger logger,
+                            @Assisted("id") String id,
+                            @Assisted("name") String name,
+                            @Assisted("description") String description);
     }
 }

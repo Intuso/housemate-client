@@ -23,12 +23,14 @@ public abstract class RealObject<DATA extends Object.Data,
     private MessageProducer producer;
 
     protected RealObject(Logger logger, DATA data, ListenersFactory listenersFactory) {
+        logger.debug("Creating");
         this.logger = logger;
         this.data = data;
         this.listeners = listenersFactory.create();
     }
 
     public final void init(String name, Session session) throws JMSException {
+        logger.debug("Init");
         this.session = session;
         producer = session.createProducer(session.createTopic(name));
         sendData();
@@ -38,6 +40,7 @@ public abstract class RealObject<DATA extends Object.Data,
     protected void initChildren(String name, Session session) throws JMSException {}
 
     public final void uninit() {
+        logger.debug("Uninit");
         uninitChildren();
         if(producer != null) {
             try {

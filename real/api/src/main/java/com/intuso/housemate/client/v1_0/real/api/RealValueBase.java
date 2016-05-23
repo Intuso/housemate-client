@@ -21,7 +21,7 @@ public interface RealValueBase<O,
      * Gets the object representation of this value
      * @return
      */
-    List<O> getValues();
+    Iterable<O> getValues();
 
     void setValue(O value);
 

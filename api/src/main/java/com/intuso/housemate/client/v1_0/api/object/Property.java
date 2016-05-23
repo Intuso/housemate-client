@@ -47,16 +47,16 @@ public interface Property<
      *
      * Data object for a property
      */
-    final class Data extends Object.Data {
+    final class Data extends ValueBase.Data {
 
         private static final long serialVersionUID = -1L;
 
-        public final static String TYPE = "property";
+        public final static String OBJECT_TYPE = "property";
 
         private Data() {}
 
-        public Data(String id, String name, String description) {
-            super(TYPE, id, name, description);
+        public Data(String id, String name, String description, String type, int minValues, int maxValues) {
+            super(OBJECT_TYPE, id, name, description, type, minValues, maxValues);
         }
     }
 }

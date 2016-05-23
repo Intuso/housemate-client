@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 /**
  * Base class for types that have a simple type, such as string, integer etc
  */
-public abstract class RealSimpleType<O> extends RealTypeImpl<O> {
+public class RealSimpleType<O> extends RealTypeImpl<O> {
 
     private final TypeSerialiser<O> serialiser;
 

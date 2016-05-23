@@ -2,18 +2,10 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
-import com.intuso.housemate.client.v1_0.api.object.Parameter;
-import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.api.object.Value;
-import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealPropertyImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealValueImpl;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Type for an integer
@@ -37,34 +29,5 @@ public class IntegerType extends RealSimpleType<Integer> {
     @Inject
     public IntegerType(ListenersFactory listenersFactory) {
         super(logger, Type.Simple.Integer, SERIALISER, listenersFactory);
-    }
-
-    /**
-     * Creates an integer value object
-     * @param logger the log
-     * @param value the initial value
-     * @return an integer value object
-     */
-    public static RealValueImpl<Integer> createValue(Logger logger, Value.Data data, ListenersFactory listenersFactory, Integer value) {
-        return new RealValueImpl<>(logger, data, listenersFactory, new IntegerType(listenersFactory), value);
-    }
-
-    /**
-     * Creates an integer property object
-     * @param logger the log
-     * @param values the initial values
-     * @return an integer property object
-     */
-    public static RealPropertyImpl<Integer> createProperty(Logger logger, Property.Data data, ListenersFactory listenersFactory, List<Integer> values) {
-        return new RealPropertyImpl<>(logger, data, listenersFactory, new IntegerType(listenersFactory), values);
-    }
-
-    /**
-     * Creates an integer parameter object
-     * @param logger the log
-     * @return an integer parameter object
-     */
-    public static RealParameterImpl<Integer> createParameter(Logger logger, Parameter.Data data, ListenersFactory listenersFactory) {
-        return new RealParameterImpl<>(logger, data, listenersFactory, new IntegerType(listenersFactory));
     }
 }
