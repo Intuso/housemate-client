@@ -67,7 +67,19 @@ public final class RealCommandImpl
         this.session = session;
         performStatusProducer = session.createProducer(session.createTopic(ChildUtil.name(name, Command.PERFORM_STATUS_ID)));
         performConsumer = session.createConsumer(session.createQueue(ChildUtil.name(name, Command.PERFORM_ID)));
-        performConsumer.setMessageListener(this);
+        // run in separate thread. Setting a message listener for ActiveMQ connections stops and starts the session if
+        // it's already running. However, this causes deadlock if this thread is from a message being processed.
+        // todo probably a better way of dealing with this issue!!
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    performConsumer.setMessageListener(RealCommandImpl.this);
+                } catch (JMSException e) {
+                    logger.error("Failed to subscribe to perform messages, command will never be performed");
+                }
+            }
+        }.start();
     }
 
     @Override

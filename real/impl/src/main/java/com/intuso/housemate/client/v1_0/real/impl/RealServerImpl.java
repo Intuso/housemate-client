@@ -101,6 +101,7 @@ public final class RealServerImpl
                           RealListImpl.Factory<RealDeviceImpl> devicesFactory,
                           RealListImpl.Factory<RealNodeImpl> nodesFactory,
                           RealListImpl.Factory<RealUserImpl> usersFactory,
+                          RealNodeImpl.Factory nodeFactory,
                           AddAutomationCommand.Factory addAutomationCommandFactory,
                           AddDeviceCommand.Factory addDeviceCommandFactory,
                           AddUserCommand.Factory addUserCommandFactory,
@@ -115,6 +116,7 @@ public final class RealServerImpl
         this.users.init(USERS_ID, session);
         this.addUserCommand.init(ADD_USER_ID, session);
         this.nodes.init(NODES_ID, session);
+        this.nodes.add(nodeFactory.create(ChildUtil.logger(logger, NODES_ID, "local"), "local", "Local", "Local Node"));
     }
 
     @Override

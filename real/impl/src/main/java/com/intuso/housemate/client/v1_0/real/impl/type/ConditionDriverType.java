@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
+import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
 import com.intuso.housemate.plugin.v1_0.api.driver.ConditionDriver;
@@ -18,6 +19,6 @@ public class ConditionDriverType extends FactoryType<ConditionDriver.Factory<?>>
 
     @Inject
     protected ConditionDriverType(@Types Logger logger, ListenersFactory listenersFactory, RealOptionImpl.Factory optionFactory) {
-        super(logger, listenersFactory, TYPE_ID, TYPE_NAME, TYPE_DESCRIPTION, optionFactory);
+        super(ChildUtil.logger(logger, TYPE_ID), listenersFactory, TYPE_ID, TYPE_NAME, TYPE_DESCRIPTION, optionFactory);
     }
 }

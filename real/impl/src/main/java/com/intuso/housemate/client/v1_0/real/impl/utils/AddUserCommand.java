@@ -4,12 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealUser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealUserImpl;
-import com.intuso.housemate.client.v1_0.real.impl.type.RegisteredTypes;
 import org.slf4j.Logger;
 
 /**
@@ -30,15 +31,16 @@ public class AddUserCommand {
 
     public static class Factory {
 
-        private final RegisteredTypes registeredTypes;
         private final RealCommandImpl.Factory commandFactory;
+        private final RealParameterImpl.Factory<String> stringParameterFactory;
         private final Performer.Factory performerFactory;
 
         @Inject
-        public Factory(RegisteredTypes registeredTypes, RealCommandImpl.Factory commandFactory,
+        public Factory(RealCommandImpl.Factory commandFactory,
+                       RealParameterImpl.Factory<String> stringParameterFactory,
                        Performer.Factory performerFactory) {
-            this.registeredTypes = registeredTypes;
             this.commandFactory = commandFactory;
+            this.stringParameterFactory = stringParameterFactory;
             this.performerFactory = performerFactory;
         }
 
@@ -50,15 +52,13 @@ public class AddUserCommand {
                                       Callback callback,
                                       RealUser.RemoveCallback<RealUserImpl> removeCallback) {
             return commandFactory.create(logger, id, name, description, performerFactory.create(baseLogger, callback, removeCallback),
-                    Lists.newArrayList(registeredTypes.createParameter(Type.Simple.String.getId(),
-                                    ChildUtil.logger(logger, NAME_PARAMETER_ID),
+                    Lists.newArrayList(stringParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, NAME_PARAMETER_ID),
                                     NAME_PARAMETER_ID,
                                     NAME_PARAMETER_NAME,
                                     NAME_PARAMETER_DESCRIPTION,
                                     1,
                                     1),
-                            registeredTypes.createParameter(Type.Simple.String.getId(),
-                                    ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID),
+                            stringParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, DESCRIPTION_PARAMETER_ID),
                                     DESCRIPTION_PARAMETER_ID,
                                     DESCRIPTION_PARAMETER_NAME,
                                     DESCRIPTION_PARAMETER_DESCRIPTION,

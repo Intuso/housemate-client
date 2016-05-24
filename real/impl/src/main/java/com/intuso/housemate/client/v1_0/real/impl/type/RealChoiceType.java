@@ -45,7 +45,7 @@ public abstract class RealChoiceType<O>
      */
     protected RealChoiceType(Logger logger, String id, String name, String description, ListenersFactory listenersFactory, Iterable<RealOptionImpl> options) {
         super(logger, new ChoiceData(id, name, description), listenersFactory);
-        this.options = new RealListImpl<>(logger,
+        this.options = new RealListImpl<>(ChildUtil.logger(logger, OPTIONS),
                 OPTIONS,
                 OPTIONS,
                 "The options for the choice",

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
@@ -57,19 +58,19 @@ public class AddHardwareCommand {
                                       Callback callback,
                                       RealHardware.RemoveCallback<RealHardwareImpl> removeCallback) {
             return commandFactory.create(logger, id, name, description, performerFactory.create(baseLogger, callback, removeCallback),
-                    Lists.newArrayList(stringParameterFactory.create(ChildUtil.logger(logger, NAME_PARAMETER_ID),
+                    Lists.newArrayList(stringParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, NAME_PARAMETER_ID),
                                     NAME_PARAMETER_ID,
                                     NAME_PARAMETER_NAME,
                                     NAME_PARAMETER_DESCRIPTION,
                                     1,
                                     1),
-                            stringParameterFactory.create(ChildUtil.logger(logger, DESCRIPTION_PARAMETER_ID),
+                            stringParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, DESCRIPTION_PARAMETER_ID),
                                     DESCRIPTION_PARAMETER_ID,
                                     DESCRIPTION_PARAMETER_NAME,
                                     DESCRIPTION_PARAMETER_DESCRIPTION,
                                     1,
                                     1),
-                            hardwareDriverParameterFactory.create(ChildUtil.logger(logger, TYPE_PARAMETER_ID),
+                            hardwareDriverParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, TYPE_PARAMETER_ID),
                                     TYPE_PARAMETER_ID,
                                     TYPE_PARAMETER_NAME,
                                     TYPE_PARAMETER_DESCRIPTION,

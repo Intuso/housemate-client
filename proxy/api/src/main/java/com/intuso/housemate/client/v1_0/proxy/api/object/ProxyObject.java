@@ -28,6 +28,7 @@ public abstract class ProxyObject<
      * @param logger the log
      */
     protected ProxyObject(Logger logger, Class<DATA> dataClass, ListenersFactory listenersFactory) {
+        logger.debug("Creating");
         this.logger = logger;
         this.dataClass = dataClass;
         this.listeners = listenersFactory.create();
@@ -54,6 +55,7 @@ public abstract class ProxyObject<
     }
 
     protected final void init(String name, Session session) throws JMSException {
+        logger.debug("Init");
         consumer = session.createConsumer(session.createTopic(name));
         consumer.setMessageListener(new MessageListener() {
             @Override
@@ -84,6 +86,7 @@ public abstract class ProxyObject<
     protected void initChildren(String name, Session session) throws JMSException {}
 
     protected final void uninit() {
+        logger.debug("Uninit");
         uninitChildren();
         if(consumer != null) {
             try {

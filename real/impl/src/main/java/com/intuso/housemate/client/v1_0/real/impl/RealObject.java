@@ -83,6 +83,7 @@ public abstract class RealObject<DATA extends Object.Data,
             try {
                 StreamMessage streamMessage = session.createStreamMessage();
                 streamMessage.writeObject(Serialiser.serialise(data));
+                // todo send with persistence
                 producer.send(streamMessage);
             } catch (JMSException e) {
                 logger.error("Failed to send data object", e);

@@ -15,19 +15,23 @@ import javax.jms.Session;
  */
 public abstract class ProxyNode<
         COMMAND extends ProxyCommand<?, ?, ?>,
+        TYPES extends ProxyList<? extends ProxyType<?>, ?>,
         HARDWARES extends ProxyList<? extends ProxyHardware<?, ?, ?, ?, ?>, ?>,
-        NODE extends ProxyNode<COMMAND, HARDWARES, NODE>>
+        NODE extends ProxyNode<COMMAND, TYPES, HARDWARES, NODE>>
         extends ProxyObject<Node.Data, Node.Listener<? super NODE>>
-        implements Node<COMMAND, HARDWARES, NODE> {
+        implements Node<COMMAND, TYPES, HARDWARES, NODE> {
 
+    private final TYPES types;
     private final HARDWARES hardwares;
     private final COMMAND addHardwareCommand;
 
     public ProxyNode(Logger logger,
                      ListenersFactory listenersFactory,
                      Factory<COMMAND> commandFactory,
+                     Factory<TYPES> typesFactory,
                      Factory<HARDWARES> hardwaresFactory) {
         super(logger, Node.Data.class, listenersFactory);
+        types = typesFactory.create(ChildUtil.logger(logger, Node.TYPES_ID));
         hardwares = hardwaresFactory.create(ChildUtil.logger(logger, Node.HARDWARES_ID));
         addHardwareCommand = commandFactory.create(ChildUtil.logger(logger, Node.ADD_HARDWARE_ID));
     }
@@ -35,6 +39,7 @@ public abstract class ProxyNode<
     @Override
     protected void initChildren(String name, Session session) throws JMSException {
         super.initChildren(name, session);
+        types.init(ChildUtil.name(name, Node.TYPES_ID), session);
         hardwares.init(ChildUtil.name(name, Node.HARDWARES_ID), session);
         addHardwareCommand.init(ChildUtil.name(name, Node.ADD_HARDWARE_ID), session);
     }
@@ -42,8 +47,14 @@ public abstract class ProxyNode<
     @Override
     protected void uninitChildren() {
         super.uninitChildren();
+        types.uninit();
         hardwares.uninit();
         addHardwareCommand.uninit();
+    }
+
+    @Override
+    public TYPES getTypes() {
+        return types;
     }
 
     @Override

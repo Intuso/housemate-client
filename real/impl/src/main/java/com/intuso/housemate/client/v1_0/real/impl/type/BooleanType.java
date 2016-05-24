@@ -3,9 +3,10 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Type for a boolean
@@ -24,10 +25,8 @@ public class BooleanType extends RealSimpleType<Boolean> {
         }
     };
 
-    private final static Logger logger = LoggerFactory.getLogger(BooleanType.class);
-
     @Inject
-    public BooleanType(ListenersFactory listenersFactory) {
-        super(logger, Type.Simple.Boolean, SERIALISER, listenersFactory);
+    public BooleanType(@Types Logger logger, ListenersFactory listenersFactory) {
+        super(ChildUtil.logger(logger, Simple.Boolean.getId()), Type.Simple.Boolean, SERIALISER, listenersFactory);
     }
 }

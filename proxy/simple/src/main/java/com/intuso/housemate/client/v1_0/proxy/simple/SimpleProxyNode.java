@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 */
 public final class SimpleProxyNode extends ProxyNode<
         SimpleProxyCommand,
+        SimpleProxyList<SimpleProxyType>,
         SimpleProxyList<SimpleProxyHardware>,
         SimpleProxyNode> {
 
@@ -22,7 +23,8 @@ public final class SimpleProxyNode extends ProxyNode<
     public SimpleProxyNode(@Assisted Logger logger,
                            ListenersFactory listenersFactory,
                            Factory<SimpleProxyCommand> commandFactory,
+                           Factory<SimpleProxyList<SimpleProxyType>> typesFactory,
                            Factory<SimpleProxyList<SimpleProxyHardware>> hardwaresFactory) {
-        super(logger, listenersFactory, commandFactory, hardwaresFactory);
+        super(logger, listenersFactory, commandFactory, typesFactory, hardwaresFactory);
     }
 }

@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.simple.ioc;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -8,6 +9,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeature;
 import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeatureFactory;
 import com.intuso.housemate.client.v1_0.proxy.simple.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,7 +28,23 @@ public class SimpleProxyModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyDevice>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyFeature>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyHardware>>() {}));
-        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<ProxyObject<?, ?>>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyAutomation>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyCommand>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyCondition>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyDevice>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyFeature>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyHardware>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyNode>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyOption>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyParameter>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyProperty>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyServer>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxySubType>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyTask>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyType>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyUser>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyList<SimpleProxyValue>>>() {}));
+        install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyNode>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyOption>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyParameter>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyProperty>>() {}));
@@ -36,6 +55,12 @@ public class SimpleProxyModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyUser>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyValue>>() {}));
         bind(new TypeLiteral<ProxyFeatureFactory<SimpleProxyFeature, ProxyFeature>>() {}).to(SimpleProxyFeatureFactory.class);
-        bind(SimpleProxyRoot.class).in(Scopes.SINGLETON);
+        bind(SimpleProxyServer.class).in(Scopes.SINGLETON);
+    }
+
+    @Provides
+    @Root
+    public Logger getRootLogger() {
+        return LoggerFactory.getLogger("com.intuso.housemate.objects");
     }
 }
