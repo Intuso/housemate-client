@@ -36,9 +36,9 @@ public abstract class ProxyValueBase<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        this.session = session;
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         valueConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Value.VALUE_ID)));
         valueConsumer.setMessageListener(this);
     }

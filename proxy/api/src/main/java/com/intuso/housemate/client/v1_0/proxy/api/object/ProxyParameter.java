@@ -4,9 +4,6 @@ import com.intuso.housemate.client.v1_0.api.object.Parameter;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-import javax.jms.JMSException;
-import javax.jms.Session;
-
 /**
  * @param <PARAMETER> the type of the parameter
  */
@@ -20,16 +17,6 @@ public abstract class ProxyParameter<TYPE extends ProxyType<?>,
      */
     public ProxyParameter(Logger logger, ListenersFactory listenersFactory) {
         super(logger, Parameter.Data.class, listenersFactory);
-    }
-
-    @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-    }
-
-    @Override
-    protected void uninitChildren() {
-        super.uninitChildren();
     }
 
     @Override

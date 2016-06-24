@@ -8,8 +8,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.*;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /*
  * @param <PROPERTIES> the type of the properties list
@@ -61,17 +61,17 @@ public abstract class ProxyHardware<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), session);
-        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), session);
-        runningValue.init(ChildUtil.name(name, Runnable.RUNNING_ID), session);
-        startCommand.init(ChildUtil.name(name, Runnable.START_ID), session);
-        stopCommand.init(ChildUtil.name(name, Runnable.STOP_ID), session);
-        errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), session);
-        driverProperty.init(ChildUtil.name(name, UsesDriver.DRIVER_ID), session);
-        driverLoadedValue.init(ChildUtil.name(name, UsesDriver.DRIVER_LOADED_ID), session);
-        properties.init(ChildUtil.name(name, Device.PROPERTIES_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), connection);
+        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), connection);
+        runningValue.init(ChildUtil.name(name, Runnable.RUNNING_ID), connection);
+        startCommand.init(ChildUtil.name(name, Runnable.START_ID), connection);
+        stopCommand.init(ChildUtil.name(name, Runnable.STOP_ID), connection);
+        errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), connection);
+        driverProperty.init(ChildUtil.name(name, UsesDriver.DRIVER_ID), connection);
+        driverLoadedValue.init(ChildUtil.name(name, UsesDriver.DRIVER_LOADED_ID), connection);
+        properties.init(ChildUtil.name(name, Device.PROPERTIES_ID), connection);
     }
 
     @Override

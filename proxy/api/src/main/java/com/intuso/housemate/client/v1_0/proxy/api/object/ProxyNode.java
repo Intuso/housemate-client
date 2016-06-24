@@ -5,8 +5,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /**
  * @param <COMMAND> the type of the command
@@ -37,11 +37,11 @@ public abstract class ProxyNode<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        types.init(ChildUtil.name(name, Node.TYPES_ID), session);
-        hardwares.init(ChildUtil.name(name, Node.HARDWARES_ID), session);
-        addHardwareCommand.init(ChildUtil.name(name, Node.ADD_HARDWARE_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        types.init(ChildUtil.name(name, Node.TYPES_ID), connection);
+        hardwares.init(ChildUtil.name(name, Node.HARDWARES_ID), connection);
+        addHardwareCommand.init(ChildUtil.name(name, Node.ADD_HARDWARE_ID), connection);
     }
 
     @Override

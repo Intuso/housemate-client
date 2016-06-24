@@ -5,8 +5,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /**
  * Base interface for all proxy features
@@ -35,10 +35,10 @@ public abstract class ProxyFeature<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        commands.init(ChildUtil.name(name, Feature.COMMANDS_ID), session);
-        values.init(ChildUtil.name(name, Feature.VALUES_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        commands.init(ChildUtil.name(name, Feature.COMMANDS_ID), connection);
+        values.init(ChildUtil.name(name, Feature.VALUES_ID), connection);
     }
 
     @Override

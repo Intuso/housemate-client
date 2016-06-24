@@ -7,10 +7,7 @@ import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.StreamMessage;
+import javax.jms.*;
 
 public abstract class RealObject<DATA extends Object.Data,
         LISTENER extends com.intuso.housemate.client.v1_0.api.object.Object.Listener>
@@ -29,15 +26,15 @@ public abstract class RealObject<DATA extends Object.Data,
         this.listeners = listenersFactory.create();
     }
 
-    public final void init(String name, Session session) throws JMSException {
+    public final void init(String name, Connection connection) throws JMSException {
         logger.debug("Init");
-        this.session = session;
+        this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         producer = session.createProducer(session.createTopic(name));
+        initChildren(name, connection);
         sendData();
-        initChildren(name, session);
     }
 
-    protected void initChildren(String name, Session session) throws JMSException {}
+    protected void initChildren(String name, Connection connection) throws JMSException {}
 
     public final void uninit() {
         logger.debug("Uninit");
@@ -49,6 +46,14 @@ public abstract class RealObject<DATA extends Object.Data,
                 logger.error("Failed to close producer");
             }
             producer = null;
+        }
+        if(session != null) {
+            try {
+                session.close();
+            } catch(JMSException e) {
+                logger.error("Failed to close session");
+            }
+            session = null;
         }
     }
 
@@ -82,6 +87,7 @@ public abstract class RealObject<DATA extends Object.Data,
         if(producer != null) {
             try {
                 StreamMessage streamMessage = session.createStreamMessage();
+                streamMessage.setBooleanProperty("ActiveMQ.Retain", true);
                 streamMessage.writeObject(Serialiser.serialise(data));
                 // todo send with persistence
                 producer.send(streamMessage);

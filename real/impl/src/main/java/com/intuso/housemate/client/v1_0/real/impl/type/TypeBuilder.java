@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
-import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealSubTypeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
@@ -13,7 +12,6 @@ import com.intuso.housemate.plugin.v1_0.api.annotations.Composite;
 import com.intuso.housemate.plugin.v1_0.api.annotations.Regex;
 import com.intuso.housemate.plugin.v1_0.api.annotations.TypeInfo;
 import com.intuso.housemate.plugin.v1_0.api.type.RegexType;
-import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -24,14 +22,16 @@ import java.util.List;
 public class TypeBuilder {
 
     private final Logger typesLogger;
-    private final ListenersFactory listenersFactory;
-    private final RealOptionImpl.Factory optionFactory;
+    private final EnumChoiceType.Factory enumChoiceTypeFactory;
+    private final RealRegexType.Factory regexTypeFactory;
+    private final RealCompositeType.Factory compositeTypeFactory;
 
     @Inject
-    public TypeBuilder(@Types Logger typesLogger, ListenersFactory listenersFactory, RealOptionImpl.Factory optionFactory) {
+    public TypeBuilder(@Types Logger typesLogger, RealCompositeType.Factory compositeTypeFactory, EnumChoiceType.Factory enumChoiceTypeFactory, RealRegexType.Factory regexTypeFactory) {
         this.typesLogger = typesLogger;
-        this.listenersFactory = listenersFactory;
-        this.optionFactory = optionFactory;
+        this.regexTypeFactory = regexTypeFactory;
+        this.compositeTypeFactory = compositeTypeFactory;
+        this.enumChoiceTypeFactory = enumChoiceTypeFactory;
     }
 
     public RealTypeImpl<?> buildType(Injector injector, Class<?> typeClass) {
@@ -39,32 +39,31 @@ public class TypeBuilder {
             String id = getId(typeClass);
             String name = getName(typeClass, id);
             String description = getDescription(typeClass, name);
-            return new EnumChoiceType<>(ChildUtil.logger(typesLogger, id),
-                    id, name, description, listenersFactory,
-                    (Class<Enum>) typeClass,
-                    optionFactory);
+            return enumChoiceTypeFactory.create(ChildUtil.logger(typesLogger, id),
+                    id,
+                    name,
+                    description,
+                    typeClass);
         } else if(RegexType.class.isAssignableFrom(typeClass)) {
             String id = getId(typeClass);
             String name = getName(typeClass, id);
             String description = getDescription(typeClass, name);
             String regex = getRegex(typeClass);
             RegexType.Factory<?> factory = getRegexTypeFactory(injector, typeClass);
-            return new RealRegexType<>(ChildUtil.logger(typesLogger, id),
+            return regexTypeFactory.create(ChildUtil.logger(typesLogger, id),
                     id,
                     name,
                     description,
-                    listenersFactory,
                     regex,
                     factory);
         } else if(typeClass.getAnnotation(Composite.class) != null) {
             String id = getId(typeClass);
             String name = getName(typeClass, id);
             String description = getDescription(typeClass, name);
-            return new RealCompositeType<>(ChildUtil.logger(typesLogger, id),
+            return compositeTypeFactory.create(ChildUtil.logger(typesLogger, id),
                     id,
                     name,
                     description,
-                    listenersFactory,
                     parseSubTypes(typeClass));
         }
         throw new HousemateException("Unable to determine type of typeClass " + typeClass.getName());

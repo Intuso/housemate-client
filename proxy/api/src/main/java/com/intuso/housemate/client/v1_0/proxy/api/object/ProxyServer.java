@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /**
  * @param <COMMAND> the type of the command
@@ -58,31 +57,30 @@ public abstract class ProxyServer<
         addUserCommand = commandFactory.create(ChildUtil.logger(logger, Server.ADD_USER_ID));
         nodes = nodesFactory.create(ChildUtil.logger(logger, Server.NODES_ID));
         try {
-            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            renameCommand.init(Renameable.RENAME_ID, session);
-            automations.init(Server.AUTOMATIONS_ID, session);
-            addAutomationCommand.init(Server.ADD_AUTOMATION_ID, session);
-            devices.init(Server.DEVICES_ID, session);
-            addDeviceCommand.init(Server.ADD_DEVICE_ID, session);
-            users.init(Server.USERS_ID, session);
-            addUserCommand.init(Server.ADD_USER_ID, session);
-            nodes.init(Server.NODES_ID, session);
+            renameCommand.init(Renameable.RENAME_ID, connection);
+            automations.init(Server.AUTOMATIONS_ID, connection);
+            addAutomationCommand.init(Server.ADD_AUTOMATION_ID, connection);
+            devices.init(Server.DEVICES_ID, connection);
+            addDeviceCommand.init(Server.ADD_DEVICE_ID, connection);
+            users.init(Server.USERS_ID, connection);
+            addUserCommand.init(Server.ADD_USER_ID, connection);
+            nodes.init(Server.NODES_ID, connection);
         } catch(JMSException e) {
-            throw new HousemateException("Failed to create session and initialise servers list");
+            throw new HousemateException("Failed to create session and initialise servers list", e);
         }
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), session);
-        automations.init(ChildUtil.name(name, Server.AUTOMATIONS_ID), session);
-        addAutomationCommand.init(ChildUtil.name(name, Server.ADD_AUTOMATION_ID), session);
-        devices.init(ChildUtil.name(name, Server.DEVICES_ID), session);
-        addDeviceCommand.init(ChildUtil.name(name, Server.ADD_DEVICE_ID), session);
-        users.init(ChildUtil.name(name, Server.USERS_ID), session);
-        addUserCommand.init(ChildUtil.name(name, Server.ADD_USER_ID), session);
-        nodes.init(ChildUtil.name(name, Server.NODES_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), connection);
+        automations.init(ChildUtil.name(name, Server.AUTOMATIONS_ID), connection);
+        addAutomationCommand.init(ChildUtil.name(name, Server.ADD_AUTOMATION_ID), connection);
+        devices.init(ChildUtil.name(name, Server.DEVICES_ID), connection);
+        addDeviceCommand.init(ChildUtil.name(name, Server.ADD_DEVICE_ID), connection);
+        users.init(ChildUtil.name(name, Server.USERS_ID), connection);
+        addUserCommand.init(ChildUtil.name(name, Server.ADD_USER_ID), connection);
+        nodes.init(ChildUtil.name(name, Server.NODES_ID), connection);
     }
 
     @Override

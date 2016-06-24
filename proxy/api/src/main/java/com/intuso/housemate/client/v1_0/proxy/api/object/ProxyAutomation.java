@@ -9,8 +9,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.*;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /**
  * @param <COMMAND> the type of the add command
@@ -70,20 +70,20 @@ public abstract class ProxyAutomation<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), session);
-        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), session);
-        runningValue.init(ChildUtil.name(name, Runnable.RUNNING_ID), session);
-        startCommand.init(ChildUtil.name(name, Runnable.START_ID), session);
-        stopCommand.init(ChildUtil.name(name, Runnable.STOP_ID), session);
-        errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), session);
-        conditions.init(ChildUtil.name(name, Automation.CONDITIONS_ID), session);
-        addConditionCommand.init(ChildUtil.name(name, Automation.ADD_CONDITION_ID), session);
-        satisfiedTasks.init(ChildUtil.name(name, Automation.SATISFIED_TASKS_ID), session);
-        addSatisfiedTaskCommand.init(ChildUtil.name(name, Automation.ADD_SATISFIED_TASK_ID), session);
-        unsatisfiedTasks.init(ChildUtil.name(name, Automation.UNSATISFIED_TASKS_ID), session);
-        addUnsatisfiedTaskCommand.init(ChildUtil.name(name, Automation.ADD_UNSATISFIED_TASK_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), connection);
+        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), connection);
+        runningValue.init(ChildUtil.name(name, Runnable.RUNNING_ID), connection);
+        startCommand.init(ChildUtil.name(name, Runnable.START_ID), connection);
+        stopCommand.init(ChildUtil.name(name, Runnable.STOP_ID), connection);
+        errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), connection);
+        conditions.init(ChildUtil.name(name, Automation.CONDITIONS_ID), connection);
+        addConditionCommand.init(ChildUtil.name(name, Automation.ADD_CONDITION_ID), connection);
+        satisfiedTasks.init(ChildUtil.name(name, Automation.SATISFIED_TASKS_ID), connection);
+        addSatisfiedTaskCommand.init(ChildUtil.name(name, Automation.ADD_SATISFIED_TASK_ID), connection);
+        unsatisfiedTasks.init(ChildUtil.name(name, Automation.UNSATISFIED_TASKS_ID), connection);
+        addUnsatisfiedTaskCommand.init(ChildUtil.name(name, Automation.ADD_UNSATISFIED_TASK_ID), connection);
     }
 
     @Override

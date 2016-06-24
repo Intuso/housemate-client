@@ -47,11 +47,11 @@ public abstract class ProxyCommand<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        enabledValue.init(ChildUtil.name(name, Command.ENABLED_ID), session);
-        parameters.init(ChildUtil.name(name, Command.PARAMETERS_ID), session);
-        this.session = session;
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        enabledValue.init(ChildUtil.name(name, Command.ENABLED_ID), connection);
+        parameters.init(ChildUtil.name(name, Command.PARAMETERS_ID), connection);
+        this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         performProducer = session.createProducer(session.createQueue(ChildUtil.name(name, Command.PERFORM_ID)));
         performStatusConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Command.PERFORM_STATUS_ID)));
         performStatusConsumer.setMessageListener(this);

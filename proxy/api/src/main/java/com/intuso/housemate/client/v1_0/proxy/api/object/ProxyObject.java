@@ -22,6 +22,7 @@ public abstract class ProxyObject<
     private final Class<DATA> dataClass;
 
     protected DATA data;
+    private Session session;
     private MessageConsumer consumer;
 
     /**
@@ -36,17 +37,17 @@ public abstract class ProxyObject<
 
     @Override
     public String getId() {
-        return data.getId();
+        return data == null ? null : data.getId();
     }
 
     @Override
     public String getName() {
-        return data.getName();
+        return data == null ? null : data.getName();
     }
 
     @Override
     public String getDescription() {
-        return data.getDescription();
+        return data == null ? null : data.getDescription();
     }
 
     @Override
@@ -54,36 +55,45 @@ public abstract class ProxyObject<
         return listeners.addListener(listener);
     }
 
-    protected final void init(String name, Session session) throws JMSException {
+    protected final void init(String name, Connection connection) throws JMSException {
         logger.debug("Init");
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         consumer = session.createConsumer(session.createTopic(name));
+        Message retained = consumer.receiveNoWait();
+        if(retained != null) {
+            processReceivedMessage(retained);
+        }
         consumer.setMessageListener(new MessageListener() {
             @Override
             public void onMessage(Message message) {
-                if(message instanceof StreamMessage) {
-                    StreamMessage streamMessage = (StreamMessage) message;
-                    try {
-                        java.lang.Object messageObject = streamMessage.readObject();
-                        if(messageObject instanceof byte[]) {
-                            java.lang.Object object = Serialiser.deserialise((byte[]) messageObject);
-                            if (dataClass.isAssignableFrom(object.getClass())) {
-                                data = (DATA) object;
-                                dataUpdated();
-                            } else
-                                logger.warn("Deserialised message object that wasn't a {}", dataClass.getName());
-                        } else
-                            logger.warn("Message data was not a byte[]");
-                    } catch(JMSException e) {
-                        logger.error("Could not read object from received message", e);
-                    }
-                } else
-                    logger.error("Received message that wasn't a {}", StreamMessage.class.getName());
+                processReceivedMessage(message);
             }
         });
-        initChildren(name, session);
+        initChildren(name, connection);
     }
 
-    protected void initChildren(String name, Session session) throws JMSException {}
+    private void processReceivedMessage(Message message) {
+        if(message instanceof StreamMessage) {
+            StreamMessage streamMessage = (StreamMessage) message;
+            try {
+                java.lang.Object messageObject = streamMessage.readObject();
+                if(messageObject instanceof byte[]) {
+                    java.lang.Object object = Serialiser.deserialise((byte[]) messageObject);
+                    if (dataClass.isAssignableFrom(object.getClass())) {
+                        data = (DATA) object;
+                        dataUpdated();
+                    } else
+                        logger.warn("Deserialised message object that wasn't a {}", dataClass.getName());
+                } else
+                    logger.warn("Message data was not a byte[]");
+            } catch(JMSException e) {
+                logger.error("Could not read object from received message", e);
+            }
+        } else
+            logger.error("Received message that wasn't a {}", StreamMessage.class.getName());
+    }
+
+    protected void initChildren(String name, Connection connection) throws JMSException {}
 
     protected final void uninit() {
         logger.debug("Uninit");
@@ -95,6 +105,14 @@ public abstract class ProxyObject<
                 logger.error("Failed to close consumer");
             }
             consumer = null;
+        }
+        if(session != null) {
+            try {
+                session.close();
+            } catch(JMSException e) {
+                logger.error("Failed to close session");
+            }
+            session = null;
         }
     }
 

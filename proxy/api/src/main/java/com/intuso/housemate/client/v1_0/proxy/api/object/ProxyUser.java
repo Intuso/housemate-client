@@ -8,8 +8,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.ProxyRemoveable;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /**
  * @param <COMMAND> the type of the command
@@ -41,11 +41,11 @@ public abstract class ProxyUser<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), session);
-        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), session);
-        emailProperty.init(ChildUtil.name(name, User.EMAIL_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), connection);
+        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), connection);
+        emailProperty.init(ChildUtil.name(name, User.EMAIL_ID), connection);
     }
 
     @Override

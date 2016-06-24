@@ -28,7 +28,7 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
         this.elementFactory = elementFactory;
     }
 
-    // NB no need to init children, as they'll won't exist before we've init'ed and connected
+    // NB no need to init children, as they won't exist before we've init'ed and connected
 
     @Override
     protected void uninitChildren() {

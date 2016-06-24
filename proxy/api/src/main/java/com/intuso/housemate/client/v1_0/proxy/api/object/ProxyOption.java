@@ -5,8 +5,8 @@ import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
-import javax.jms.Session;
 
 /**
  * @param <SUB_TYPES> the type of the sub types
@@ -31,9 +31,9 @@ public abstract class ProxyOption<
     }
 
     @Override
-    protected void initChildren(String name, Session session) throws JMSException {
-        super.initChildren(name, session);
-        subTypes.init(ChildUtil.name(name, Option.SUB_TYPES_ID), session);
+    protected void initChildren(String name, Connection connection) throws JMSException {
+        super.initChildren(name, connection);
+        subTypes.init(ChildUtil.name(name, Option.SUB_TYPES_ID), connection);
     }
 
     @Override
