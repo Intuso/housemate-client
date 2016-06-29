@@ -39,7 +39,7 @@ public abstract class ProxyValueBase<
     protected void initChildren(String name, Connection connection) throws JMSException {
         super.initChildren(name, connection);
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        valueConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Value.VALUE_ID)));
+        valueConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Value.VALUE_ID) + "?consumer.retroactive=true"));
         valueConsumer.setMessageListener(this);
     }
 

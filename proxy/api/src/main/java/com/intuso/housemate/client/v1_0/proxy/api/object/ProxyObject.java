@@ -58,7 +58,7 @@ public abstract class ProxyObject<
     protected final void init(String name, Connection connection) throws JMSException {
         logger.debug("Init");
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        consumer = session.createConsumer(session.createTopic(name));
+        consumer = session.createConsumer(session.createTopic(name + "?consumer.retroactive=true"));
         Message retained = consumer.receiveNoWait();
         if(retained != null) {
             processReceivedMessage(retained);

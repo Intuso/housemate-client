@@ -53,7 +53,7 @@ public abstract class ProxyCommand<
         parameters.init(ChildUtil.name(name, Command.PARAMETERS_ID), connection);
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         performProducer = session.createProducer(session.createQueue(ChildUtil.name(name, Command.PERFORM_ID)));
-        performStatusConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Command.PERFORM_STATUS_ID)));
+        performStatusConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Command.PERFORM_STATUS_ID) + "?consumer.retroactive=true"));
         performStatusConsumer.setMessageListener(this);
     }
 
@@ -123,7 +123,7 @@ public abstract class ProxyCommand<
         listenerMap.put(id, listener);
         try {
             StreamMessage streamMessage = session.createStreamMessage();
-            streamMessage.writeObject(Serialiser.serialise(new Command.PerformData(id, values)));
+            streamMessage.writeBytes(Serialiser.serialise(new Command.PerformData(id, values)));
             performProducer.send(streamMessage);
         } catch(JMSException e) {
             throw new HousemateException("Failed to send perform message", e);
