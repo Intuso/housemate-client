@@ -10,7 +10,7 @@ import com.intuso.housemate.client.v1_0.real.api.RealDevice;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
 import com.intuso.housemate.client.v1_0.real.impl.*;
 import com.intuso.housemate.plugin.v1_0.api.driver.DeviceDriver;
-import com.intuso.housemate.plugin.v1_0.api.driver.PluginResource;
+import com.intuso.housemate.plugin.v1_0.api.driver.PluginDependency;
 import org.slf4j.Logger;
 
 /**
@@ -36,13 +36,13 @@ public class AddDeviceCommand {
 
         private final RealCommandImpl.Factory commandFactory;
         private final RealParameterImpl.Factory<String> stringParameterFactory;
-        private final RealParameterImpl.Factory<PluginResource<DeviceDriver.Factory<?>>> deviceDriverParameterFactory;
+        private final RealParameterImpl.Factory<PluginDependency<DeviceDriver.Factory<?>>> deviceDriverParameterFactory;
         private final Performer.Factory performerFactory;
 
         @Inject
         public Factory(RealCommandImpl.Factory commandFactory,
                        RealParameterImpl.Factory<String> stringParameterFactory,
-                       RealParameterImpl.Factory<PluginResource<DeviceDriver.Factory<? extends DeviceDriver>>> deviceDriverParameterFactory,
+                       RealParameterImpl.Factory<PluginDependency<DeviceDriver.Factory<? extends DeviceDriver>>> deviceDriverParameterFactory,
                        Performer.Factory performerFactory) {
             this.commandFactory = commandFactory;
             this.stringParameterFactory = stringParameterFactory;
@@ -84,14 +84,14 @@ public class AddDeviceCommand {
         private final Logger logger;
         private final Callback callback;
         private final RealDevice.RemoveCallback<RealDeviceImpl> removeCallback;
-        private final RealTypeImpl<PluginResource<DeviceDriver.Factory<? extends DeviceDriver>>> deviceDriverType;
+        private final RealTypeImpl<PluginDependency<DeviceDriver.Factory<? extends DeviceDriver>>> deviceDriverType;
         private final RealDeviceImpl.Factory deviceFactory;
 
         @Inject
         public Performer(@Assisted Logger logger,
                          @Assisted Callback callback,
                          @Assisted RealDevice.RemoveCallback<RealDeviceImpl> removeCallback,
-                         RealTypeImpl<PluginResource<DeviceDriver.Factory<? extends DeviceDriver>>> deviceDriverType,
+                         RealTypeImpl<PluginDependency<DeviceDriver.Factory<? extends DeviceDriver>>> deviceDriverType,
                          RealDeviceImpl.Factory deviceFactory) {
             this.logger = logger;
             this.deviceDriverType = deviceDriverType;

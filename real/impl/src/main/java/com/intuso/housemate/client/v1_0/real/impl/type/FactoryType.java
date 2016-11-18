@@ -7,7 +7,7 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.impl.RealListGeneratedImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealSubTypeImpl;
-import com.intuso.housemate.plugin.v1_0.api.driver.PluginResource;
+import com.intuso.housemate.plugin.v1_0.api.driver.PluginDependency;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -57,7 +57,7 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
         return value != null && value.getValue() != null ? factories.get(value.getValue()) : null;
     }
 
-    public static class Entry<FACTORY> implements PluginResource<FACTORY> {
+    public static class Entry<FACTORY> implements PluginDependency<FACTORY> {
 
         private FACTORY factory;
         private final Listeners<Listener<FACTORY>> listeners;
@@ -67,7 +67,7 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
         }
 
         @Override
-        public FACTORY getResource() {
+        public FACTORY getDependency() {
             return factory;
         }
 
@@ -79,13 +79,13 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
         private void factoryAvailable(FACTORY factory) {
             this.factory = factory;
             for(Listener<FACTORY> listener : listeners)
-                listener.resourceAvailable(factory);
+                listener.dependencyAvailable(factory);
         }
 
         private void factoryUnavailable() {
             this.factory = null;
             for(Listener<FACTORY> listener : listeners)
-                listener.resourceUnavailable();
+                listener.dependencyUnavailable();
         }
     }
 }
