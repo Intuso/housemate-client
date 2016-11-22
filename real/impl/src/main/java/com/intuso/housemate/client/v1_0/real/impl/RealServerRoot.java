@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddAutomationCommand;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddDeviceCommand;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddUserCommand;
@@ -41,7 +42,7 @@ public final class RealServerRoot extends RealServerImpl {
 
     public void start() {
         try {
-            init("server", connection);
+            init(ChildUtil.name(null, Object.VERSION), connection);
         } catch(JMSException e) {
             throw new HousemateException("Failed to initalise objects");
         }
