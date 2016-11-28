@@ -10,6 +10,7 @@ import javax.jms.JMSException;
 
 /**
  * @param <COMMAND> the type of the command
+ * @param <TYPES> the type of the types list
  * @param <HARDWARES> the type of the hardwares list
  * @param <NODE> the type of the node
  */

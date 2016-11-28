@@ -8,7 +8,7 @@ import com.google.inject.multibindings.Multibinder;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
-import com.intuso.housemate.client.v1_0.real.impl.RealNodeRoot;
+import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.annotations.ioc.RealAnnotationsModule;
 import com.intuso.housemate.client.v1_0.real.impl.type.ioc.RealTypesModule;
 import com.intuso.housemate.client.v1_0.real.impl.utils.ioc.RealUtilsModule;
@@ -34,12 +34,12 @@ public class NodeRootModule extends AbstractModule {
         install(new RealTypesModule());
         install(new RealUtilsModule());
 
-        bind(RealNode.class).to(RealNodeRoot.class);
-        bind(RealNodeRoot.class).in(Scopes.SINGLETON);
+        bind(RealNode.class).to(RealNodeImpl.class);
+        bind(RealNodeImpl.class).in(Scopes.SINGLETON);
 
-        bind(RealHardware.Container.class).to(RealNodeRoot.class);
+        bind(RealHardware.Container.class).to(RealNodeImpl.class);
 
-        Multibinder.newSetBinder(binder(), Service.class).addBinding().to(RealNodeRoot.Service.class);
+        Multibinder.newSetBinder(binder(), Service.class).addBinding().to(RealNodeImpl.Service.class);
     }
 
     @Provides

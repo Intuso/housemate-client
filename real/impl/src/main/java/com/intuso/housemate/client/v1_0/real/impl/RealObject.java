@@ -14,6 +14,8 @@ public abstract class RealObject<DATA extends Object.Data,
         LISTENER extends com.intuso.housemate.client.v1_0.api.object.Object.Listener>
         implements Object<LISTENER> {
 
+    public final static String REAL = "real";
+
     protected final Logger logger;
     protected final boolean persistent;
     protected final DATA data;

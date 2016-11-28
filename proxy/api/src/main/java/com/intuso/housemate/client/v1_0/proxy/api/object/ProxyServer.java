@@ -2,9 +2,11 @@ package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.Renameable;
+import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRenameable;
+import com.intuso.housemate.client.v1_0.proxy.api.Root;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -28,7 +30,10 @@ public abstract class ProxyServer<
         SERVER extends ProxyServer<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>>
         extends ProxyObject<Server.Data, Server.Listener<? super SERVER>>
         implements Server<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>,
-            ProxyRenameable<COMMAND> {
+            ProxyRenameable<COMMAND>,
+            Root {
+
+    private final Connection connection;
 
     private final COMMAND renameCommand;
     private final AUTOMATIONS automations;
@@ -39,15 +44,16 @@ public abstract class ProxyServer<
     private final COMMAND addUserCommand;
     private final NODES nodes;
 
-    public ProxyServer(Logger logger,
+    public ProxyServer(Connection connection,
+                       Logger logger,
                        ListenersFactory listenersFactory,
-                       ProxyObject.Factory<COMMAND> commandFactory,
-                       ProxyObject.Factory<AUTOMATIONS> automationsFactory,
-                       ProxyObject.Factory<DEVICES> devicesFactory,
-                       ProxyObject.Factory<USERS> usersFactory,
-                       ProxyObject.Factory<NODES> nodesFactory,
-                       Connection connection) {
+                       Factory<COMMAND> commandFactory,
+                       Factory<AUTOMATIONS> automationsFactory,
+                       Factory<DEVICES> devicesFactory,
+                       Factory<USERS> usersFactory,
+                       Factory<NODES> nodesFactory) {
         super(logger, Server.Data.class, listenersFactory);
+        this.connection = connection;
         renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID));
         automations = automationsFactory.create(ChildUtil.logger(logger, Server.AUTOMATIONS_ID));
         addAutomationCommand = commandFactory.create(ChildUtil.logger(logger, Server.ADD_AUTOMATION_ID));
@@ -56,18 +62,20 @@ public abstract class ProxyServer<
         users = usersFactory.create(ChildUtil.logger(logger, Server.USERS_ID));
         addUserCommand = commandFactory.create(ChildUtil.logger(logger, Server.ADD_USER_ID));
         nodes = nodesFactory.create(ChildUtil.logger(logger, Server.NODES_ID));
+    }
+
+    @Override
+    public void start() {
         try {
-            renameCommand.init(Renameable.RENAME_ID, connection);
-            automations.init(Server.AUTOMATIONS_ID, connection);
-            addAutomationCommand.init(Server.ADD_AUTOMATION_ID, connection);
-            devices.init(Server.DEVICES_ID, connection);
-            addDeviceCommand.init(Server.ADD_DEVICE_ID, connection);
-            users.init(Server.USERS_ID, connection);
-            addUserCommand.init(Server.ADD_USER_ID, connection);
-            nodes.init(Server.NODES_ID, connection);
+            init(ChildUtil.name(null, Object.VERSION, ProxyObject.PROXY), connection);
         } catch(JMSException e) {
-            throw new HousemateException("Failed to create session and initialise servers list", e);
+            throw new HousemateException("Failed to initalise objects");
         }
+    }
+
+    @Override
+    public void stop() {
+        uninit();
     }
 
     @Override

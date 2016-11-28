@@ -1,16 +1,12 @@
 package com.intuso.housemate.client.v1_0.proxy.simple.ioc;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeature;
 import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeatureFactory;
 import com.intuso.housemate.client.v1_0.proxy.simple.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,6 +16,7 @@ import org.slf4j.LoggerFactory;
  * To change this template use File | Settings | File Templates.
  */
 public class SimpleProxyModule extends AbstractModule {
+
     @Override
     protected void configure() {
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyAutomation>>() {}));
@@ -55,12 +52,5 @@ public class SimpleProxyModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyUser>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyValue>>() {}));
         bind(new TypeLiteral<ProxyFeatureFactory<SimpleProxyFeature, ProxyFeature>>() {}).to(SimpleProxyFeatureFactory.class);
-        bind(SimpleProxyServer.class).in(Scopes.SINGLETON);
-    }
-
-    @Provides
-    @Root
-    public Logger getRootLogger() {
-        return LoggerFactory.getLogger("com.intuso.housemate.objects");
     }
 }

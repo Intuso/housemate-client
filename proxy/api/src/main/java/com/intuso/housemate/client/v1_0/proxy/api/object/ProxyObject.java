@@ -17,6 +17,8 @@ public abstract class ProxyObject<
             DATA extends Object.Data,
             LISTENER extends Object.Listener> implements Object<LISTENER> {
 
+    public final static String PROXY = "proxy";
+
     protected final Logger logger;
     protected final Listeners<LISTENER> listeners;
     private final Class<DATA> dataClass;
@@ -85,7 +87,7 @@ public abstract class ProxyObject<
                     } else
                         logger.warn("Deserialised message object that wasn't a {}", dataClass.getName());
                 } else
-                    logger.warn("Message data was not a byte[]");
+                    logger.warn("Message data was not a {}", byte[].class.getName());
             } catch(JMSException e) {
                 logger.error("Could not read object from received message", e);
             }

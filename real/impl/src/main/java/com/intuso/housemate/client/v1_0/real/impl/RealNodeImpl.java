@@ -1,9 +1,14 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
+import com.google.common.util.concurrent.AbstractIdleService;
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
+import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.Node;
 import com.intuso.housemate.client.v1_0.real.impl.type.RegisteredTypes;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -17,21 +22,25 @@ public class RealNodeImpl
         implements RealNode<RealCommandImpl, RealListGeneratedImpl<RealTypeImpl<?>>, RealHardwareImpl, RealListPersistedImpl<RealHardwareImpl>, RealNodeImpl>,
         AddHardwareCommand.Callback {
 
+    private final String id;
+    private final Connection connection;
+
     private final RealListGeneratedImpl<RealTypeImpl<?>> types;
     private final RealListPersistedImpl<RealHardwareImpl> hardwares;
     private final RealCommandImpl addHardwareCommand;
 
     @AssistedInject
-    public RealNodeImpl(@Assisted final Logger logger,
-                        @Assisted("id") String id,
-                        @Assisted("name") String name,
-                        @Assisted("description") String description,
+    public RealNodeImpl(Connection connection,
+                        @Node final Logger logger,
+                        @Node String id,
                         ListenersFactory listenersFactory,
                         RegisteredTypes registeredTypes,
                         final RealHardwareImpl.Factory hardwareFactory,
                         RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
-        super(logger, true, new com.intuso.housemate.client.v1_0.api.object.Node.Data(id, name, description), listenersFactory);
+        super(logger, true, new com.intuso.housemate.client.v1_0.api.object.Node.Data(id, "node", "node"), listenersFactory);
+        this.id = id;
+        this.connection = connection;
         this.types = registeredTypes.createList(ChildUtil.logger(logger, TYPES_ID),
                 TYPES_ID,
                 "Types",
@@ -94,6 +103,38 @@ public class RealNodeImpl
     @Override
     public RealCommandImpl getAddHardwareCommand() {
         return addHardwareCommand;
+    }
+
+    public void start() {
+        try {
+            init(ChildUtil.name(null, Object.VERSION, RealObject.REAL, Server.NODES_ID, id), connection);
+        } catch(JMSException e) {
+            throw new HousemateException("Failed to initalise objects");
+        }
+    }
+
+    public void stop() {
+        uninit();
+    }
+
+    public static class Service extends AbstractIdleService {
+
+        private final RealNodeImpl node;
+
+        @Inject
+        public Service(RealNodeImpl node) {
+            this.node = node;
+        }
+
+        @Override
+        protected void startUp() throws Exception {
+            node.start();
+        }
+
+        @Override
+        protected void shutDown() throws Exception {
+            node.stop();
+        }
     }
 
     public interface Factory {
