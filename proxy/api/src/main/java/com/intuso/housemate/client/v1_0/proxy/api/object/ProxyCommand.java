@@ -3,13 +3,14 @@ package com.intuso.housemate.client.v1_0.proxy.api.object;
 import com.google.common.collect.Maps;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
-import com.intuso.housemate.client.v1_0.api.object.Serialiser;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Session;
 import java.util.Map;
 
 /**
@@ -22,14 +23,14 @@ public abstract class ProxyCommand<
             PARAMETERS extends ProxyList<? extends ProxyParameter<?, ?>, ?>,
             COMMAND extends ProxyCommand<VALUE, PARAMETERS, COMMAND>>
         extends ProxyObject<Command.Data, Command.Listener<? super COMMAND>>
-        implements Command<Type.InstanceMap, VALUE, PARAMETERS, COMMAND>, MessageListener {
+        implements Command<Type.InstanceMap, VALUE, PARAMETERS, COMMAND> {
 
     private final VALUE enabledValue;
     private final PARAMETERS parameters;
 
     private Session session;
-    private MessageProducer performProducer;
-    private MessageConsumer performStatusConsumer;
+    private JMSUtil.Sender performSender;
+    private JMSUtil.Receiver<PerformStatusData> performStatusReceiver;
 
     private int nextId;
     private final Map<String, Command.PerformListener<? super COMMAND>> listenerMap = Maps.newHashMap();
@@ -52,9 +53,25 @@ public abstract class ProxyCommand<
         enabledValue.init(ChildUtil.name(name, Command.ENABLED_ID), connection);
         parameters.init(ChildUtil.name(name, Command.PARAMETERS_ID), connection);
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        performProducer = session.createProducer(session.createQueue(ChildUtil.name(name, Command.PERFORM_ID)));
-        performStatusConsumer = session.createConsumer(session.createTopic(ChildUtil.name(name, Command.PERFORM_STATUS_ID) + "?consumer.retroactive=true"));
-        performStatusConsumer.setMessageListener(this);
+        performSender = new JMSUtil.Sender(session, session.createProducer(session.createQueue(ChildUtil.name(name, Command.PERFORM_ID))));
+        performStatusReceiver = new JMSUtil.Receiver<>(logger,
+                session.createConsumer(session.createTopic(ChildUtil.name(name, Command.PERFORM_STATUS_ID) + "?consumer.retroactive=true")),
+                PerformStatusData.class,
+                new JMSUtil.Receiver.Listener<PerformStatusData>() {
+                    @Override
+                    public void onMessage(PerformStatusData performStatusData, boolean wasPersisted) {
+                        if (listenerMap.containsKey(performStatusData.getOpId())) {
+                            if (performStatusData.isFinished()) {
+                                if (performStatusData.getError() == null)
+                                    listenerMap.remove(performStatusData.getOpId()).commandFinished(getThis());
+                                else
+                                    listenerMap.remove(performStatusData.getOpId()).commandFailed(getThis(), performStatusData.getError());
+                            } else
+                                listenerMap.get(performStatusData.getOpId()).commandStarted(getThis());
+                        }
+                        // todo call object listeners
+                    }
+                });
     }
 
     @Override
@@ -62,21 +79,21 @@ public abstract class ProxyCommand<
         super.uninitChildren();
         enabledValue.uninit();
         parameters.uninit();
-        if(performProducer != null) {
+        if(performSender != null) {
             try {
-                performProducer.close();
+                performSender.close();
             } catch(JMSException e) {
                 logger.error("Failed to close perform producer");
             }
-            performProducer = null;
+            performSender = null;
         }
-        if(performStatusConsumer != null) {
+        if(performStatusReceiver != null) {
             try {
-                performStatusConsumer.close();
+                performStatusReceiver.close();
             } catch(JMSException e) {
                 logger.error("Failed to close perform status producer");
             }
-            performStatusConsumer = null;
+            performStatusReceiver = null;
         }
         if(session != null) {
             try {
@@ -119,45 +136,19 @@ public abstract class ProxyCommand<
 
     @Override
     public final synchronized void perform(Type.InstanceMap values, Command.PerformListener<? super COMMAND> listener) {
-        String id = "" + nextId++;
-        listenerMap.put(id, listener);
+        String id = null;
+        if(listener != null) {
+            id = "" + nextId++;
+            listenerMap.put(id, listener);
+        }
         try {
-            StreamMessage streamMessage = session.createStreamMessage();
-            streamMessage.writeBytes(Serialiser.serialise(new Command.PerformData(id, values)));
-            performProducer.send(streamMessage);
+            performSender.send(values, true);
         } catch(JMSException e) {
+            if(listener != null) {
+                listenerMap.remove(id);
+                listener.commandFailed(getThis(), "Failed to send perform message: " + e.getMessage());
+            }
             throw new HousemateException("Failed to send perform message", e);
         }
-    }
-
-    @Override
-    public void onMessage(Message message) {
-        if(message instanceof StreamMessage) {
-            StreamMessage streamMessage = (StreamMessage) message;
-            try {
-                Object messageObject = streamMessage.readObject();
-                if(messageObject instanceof byte[]) {
-                    Object object = Serialiser.deserialise((byte[]) messageObject);
-                    if (object instanceof Command.PerformStatusData) {
-                        PerformStatusData performStatusData = (PerformStatusData) object;
-                        if (listenerMap.containsKey(performStatusData.getOpId())) {
-                            if (performStatusData.isFinished()) {
-                                if (performStatusData.getError() == null)
-                                    listenerMap.remove(performStatusData.getOpId()).commandFinished(getThis());
-                                else
-                                    listenerMap.remove(performStatusData.getOpId()).commandFailed(getThis(), performStatusData.getError());
-                            } else
-                                listenerMap.get(performStatusData.getOpId()).commandStarted(getThis());
-                        }
-                        // todo call object listeners
-                    } else
-                        logger.warn("Deserialised message object that wasn't a {}", PerformStatusData.class.getName());
-                } else
-                    logger.warn("Message data was not a byte[]");
-            } catch(JMSException e) {
-                logger.error("Failed to read object from message", e);
-            }
-        } else
-            logger.warn("Received message that wasn't a {}", StreamMessage.class.getName());
     }
 }

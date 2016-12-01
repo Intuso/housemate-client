@@ -122,7 +122,7 @@ public abstract class ProxyObject<
 
     protected void dataUpdated() {}
 
-    public interface Factory<OBJECT extends ProxyObject> {
+    public interface Factory<OBJECT extends ProxyObject<?, ?>> {
         OBJECT create(Logger logger);
     }
 }

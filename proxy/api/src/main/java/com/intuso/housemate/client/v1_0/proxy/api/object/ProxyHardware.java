@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.*;
 import com.intuso.housemate.client.v1_0.api.Runnable;
-import com.intuso.housemate.client.v1_0.api.object.Device;
 import com.intuso.housemate.client.v1_0.api.object.Hardware;
 import com.intuso.housemate.client.v1_0.proxy.api.*;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -51,13 +50,13 @@ public abstract class ProxyHardware<
         super(logger, Hardware.Data.class, listenersFactory);
         renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID));
         removeCommand = commandFactory.create(ChildUtil.logger(logger, Removeable.REMOVE_ID));
-        runningValue = valueFactory.create(ChildUtil.logger(logger, com.intuso.housemate.client.v1_0.api.Runnable.RUNNING_ID));
-        startCommand = commandFactory.create(ChildUtil.logger(logger, com.intuso.housemate.client.v1_0.api.Runnable.START_ID));
+        runningValue = valueFactory.create(ChildUtil.logger(logger, Runnable.RUNNING_ID));
+        startCommand = commandFactory.create(ChildUtil.logger(logger, Runnable.START_ID));
         stopCommand = commandFactory.create(ChildUtil.logger(logger, Runnable.STOP_ID));
         errorValue = valueFactory.create(ChildUtil.logger(logger, Failable.ERROR_ID));
         driverProperty = propertyFactory.create(ChildUtil.logger(logger, UsesDriver.DRIVER_ID));
         driverLoadedValue = valueFactory.create(ChildUtil.logger(logger, UsesDriver.DRIVER_LOADED_ID));
-        properties = propertiesFactory.create(ChildUtil.logger(logger, Device.PROPERTIES_ID));
+        properties = propertiesFactory.create(ChildUtil.logger(logger, Hardware.PROPERTIES_ID));
     }
 
     @Override
@@ -71,7 +70,7 @@ public abstract class ProxyHardware<
         errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), connection);
         driverProperty.init(ChildUtil.name(name, UsesDriver.DRIVER_ID), connection);
         driverLoadedValue.init(ChildUtil.name(name, UsesDriver.DRIVER_LOADED_ID), connection);
-        properties.init(ChildUtil.name(name, Device.PROPERTIES_ID), connection);
+        properties.init(ChildUtil.name(name, Hardware.PROPERTIES_ID), connection);
     }
 
     @Override
