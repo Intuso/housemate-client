@@ -2,8 +2,6 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
@@ -29,7 +27,7 @@ public class RealNodeImpl
     private final RealListPersistedImpl<RealHardwareImpl> hardwares;
     private final RealCommandImpl addHardwareCommand;
 
-    @AssistedInject
+    @Inject
     public RealNodeImpl(Connection connection,
                         @Node final Logger logger,
                         @Node String id,
@@ -135,12 +133,5 @@ public class RealNodeImpl
         protected void shutDown() throws Exception {
             node.stop();
         }
-    }
-
-    public interface Factory {
-        RealNodeImpl create(Logger logger,
-                            @Assisted("id") String id,
-                            @Assisted("name") String name,
-                            @Assisted("description") String description);
     }
 }

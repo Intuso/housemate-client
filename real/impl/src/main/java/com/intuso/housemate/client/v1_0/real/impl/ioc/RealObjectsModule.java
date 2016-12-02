@@ -51,8 +51,6 @@ public class RealObjectsModule extends AbstractModule {
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealHardwareImpl>>() {}));
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealNodeImpl>>() {}));
-        install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealOptionImpl>>() {}));
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealParameterImpl<?>>>() {}));
@@ -82,8 +80,6 @@ public class RealObjectsModule extends AbstractModule {
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListPersistedImpl.Factory<RealHardwareImpl>>() {}));
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealNodeImpl>>() {}));
-        install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListPersistedImpl.Factory<RealOptionImpl>>() {}));
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListPersistedImpl.Factory<RealParameterImpl<?>>>() {}));
@@ -103,10 +99,6 @@ public class RealObjectsModule extends AbstractModule {
         // hardwares
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealHardwareImpl.Factory>() {}));
-
-        // nodes
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealNodeImpl.Factory>() {}));
 
         // options
         install(new FactoryModuleBuilder()
