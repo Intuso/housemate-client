@@ -1,12 +1,13 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
+import com.google.common.util.concurrent.AbstractIdleService;
+import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRenameable;
-import com.intuso.housemate.client.v1_0.proxy.api.Root;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -30,8 +31,7 @@ public abstract class ProxyServer<
         SERVER extends ProxyServer<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>>
         extends ProxyObject<Server.Data, Server.Listener<? super SERVER>>
         implements Server<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>,
-            ProxyRenameable<COMMAND>,
-            Root {
+            ProxyRenameable<COMMAND> {
 
     private final Connection connection;
 
@@ -64,7 +64,6 @@ public abstract class ProxyServer<
         nodes = nodesFactory.create(ChildUtil.logger(logger, Server.NODES_ID));
     }
 
-    @Override
     public void start() {
         try {
             init(ChildUtil.name(null, Object.VERSION, ProxyObject.PROXY), connection);
@@ -73,7 +72,6 @@ public abstract class ProxyServer<
         }
     }
 
-    @Override
     public void stop() {
         uninit();
     }
@@ -139,5 +137,25 @@ public abstract class ProxyServer<
     @Override
     public NODES getNodes() {
         return nodes;
+    }
+
+    public static class Service extends AbstractIdleService {
+
+        private final ProxyServer server;
+
+        @Inject
+        public Service(ProxyServer server) {
+            this.server = server;
+        }
+
+        @Override
+        protected void startUp() throws Exception {
+            server.start();
+        }
+
+        @Override
+        protected void shutDown() throws Exception {
+            server.stop();
+        }
     }
 }

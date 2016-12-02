@@ -5,6 +5,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.multibindings.Multibinder;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyServer;
 import com.intuso.housemate.client.v1_0.proxy.simple.SimpleProxyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,8 @@ public class SimpleProxyServerModule extends AbstractModule {
     protected void configure() {
         install(new SimpleProxyModule());
         bind(SimpleProxyServer.class).in(Scopes.SINGLETON);
-        bind(com.intuso.housemate.client.v1_0.proxy.api.Root.class).to(SimpleProxyServer.class);
-        Multibinder.newSetBinder(binder(), Service.class).addBinding().to(com.intuso.housemate.client.v1_0.proxy.api.Root.Service.class);
+        bind(ProxyServer.class).to(SimpleProxyServer.class);
+        Multibinder.newSetBinder(binder(), Service.class).addBinding().to(ProxyServer.Service.class);
     }
 
     @Provides
