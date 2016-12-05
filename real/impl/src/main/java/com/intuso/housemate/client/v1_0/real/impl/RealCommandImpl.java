@@ -103,7 +103,7 @@ public final class RealCommandImpl
             try {
                 performStatusSender.close();
             } catch(JMSException e) {
-                logger.error("Failed to close perform status producer");
+                logger.error("Failed to close perform status sender");
             }
             performStatusSender = null;
         }
@@ -111,7 +111,7 @@ public final class RealCommandImpl
             try {
                 performReceiver.close();
             } catch(JMSException e) {
-                logger.error("Failed to close perform producer");
+                logger.error("Failed to close perform receiver");
             }
             performReceiver = null;
         }

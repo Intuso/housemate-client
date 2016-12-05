@@ -26,7 +26,7 @@ public abstract class ProxyValueBase<
         implements ValueBase<Type.Instances, TYPE, LISTENER, VALUE> {
 
     private Session session;
-    private JMSUtil.Receiver<Type.Instances> valueConsumer;
+    private JMSUtil.Receiver<Type.Instances> valueReceiver;
 
     private Type.Instances value;
 
@@ -43,7 +43,7 @@ public abstract class ProxyValueBase<
     protected void initChildren(String name, Connection connection) throws JMSException {
         super.initChildren(name, connection);
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        valueConsumer = new JMSUtil.Receiver<>(logger,
+        valueReceiver = new JMSUtil.Receiver<>(logger,
                 session.createConsumer(session.createTopic(ChildUtil.name(name, Value.VALUE_ID) + "?consumer.retroactive=true")),
                 Type.Instances.class,
                 new JMSUtil.Receiver.Listener<Type.Instances>() {
@@ -58,13 +58,13 @@ public abstract class ProxyValueBase<
     @Override
     protected void uninitChildren() {
         super.uninitChildren();
-        if(valueConsumer != null) {
+        if(valueReceiver != null) {
             try {
-                valueConsumer.close();
+                valueReceiver.close();
             } catch(JMSException e) {
-                logger.error("Failed to close value consumer");
+                logger.error("Failed to close value receiver");
             }
-            valueConsumer = null;
+            valueReceiver = null;
         }
         if(session != null) {
             try {

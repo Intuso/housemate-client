@@ -18,13 +18,13 @@ import com.intuso.housemate.client.v1_0.api.Runnable;
  */
 public interface Automation<RENAME_COMMAND extends Command<?, ?, ?, ?>,
         REMOVE_COMMAND extends Command<?, ?, ?, ?>,
-        START_STOP_COMMAND extends Command<?, ?, ?, ?>,
-        ADD_COMMMAND extends Command<?, ?, ?, ?>,
         RUNNING_VALUE extends Value<?, ?, ?>,
+        START_STOP_COMMAND extends Command<?, ?, ?, ?>,
         ERROR_VALUE extends Value<?, ?, ?>,
+        ADD_COMMMAND extends Command<?, ?, ?, ?>,
         CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         TASKS extends List<? extends Task<?, ?, ?, ?, ?, ?, ?, ?>, ?>,
-        AUTOMATION extends Automation<RENAME_COMMAND, REMOVE_COMMAND, START_STOP_COMMAND, ADD_COMMMAND, RUNNING_VALUE, ERROR_VALUE, CONDITIONS, TASKS, AUTOMATION>>
+        AUTOMATION extends Automation<RENAME_COMMAND, REMOVE_COMMAND, RUNNING_VALUE, START_STOP_COMMAND, ERROR_VALUE, ADD_COMMMAND, CONDITIONS, TASKS, AUTOMATION>>
         extends
         Object<Automation.Listener<? super AUTOMATION>>,
         Renameable<RENAME_COMMAND>,

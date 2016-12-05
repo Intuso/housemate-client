@@ -1,14 +1,14 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.common.collect.Lists;
-import com.intuso.housemate.client.v1_0.api.MessageConstants;
-import com.intuso.housemate.client.v1_0.api.object.Serialiser;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.real.api.RealValueBase;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Session;
 import java.util.List;
 
 /**
@@ -26,7 +26,7 @@ public abstract class RealValueBaseImpl<O,
     private final RealTypeImpl<O> type;
 
     private Session session;
-    private MessageProducer valueProducer;
+    private JMSUtil.Sender valueSender;
 
     private Iterable<O> values;
 
@@ -46,19 +46,19 @@ public abstract class RealValueBaseImpl<O,
     protected void initChildren(String name, Connection connection) throws JMSException {
         super.initChildren(name, connection);
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        valueProducer = session.createProducer(session.createTopic(ChildUtil.name(name, ValueBase.VALUE_ID)));
+        valueSender = new JMSUtil.Sender(session, session.createProducer(session.createTopic(ChildUtil.name(name, ValueBase.VALUE_ID))));
     }
 
     @Override
     protected void uninitChildren() {
         super.uninitChildren();
-        if(valueProducer != null) {
+        if(valueSender != null) {
             try {
-                valueProducer.close();
+                valueSender.close();
             } catch(JMSException e) {
-                logger.error("Failed to close value producer");
+                logger.error("Failed to close value sender");
             }
-            valueProducer = null;
+            valueSender = null;
         }
         if(session != null) {
             try {
@@ -100,10 +100,7 @@ public abstract class RealValueBaseImpl<O,
     public final void setValues(List<O> values) {
         this.values = values;
         try {
-            StreamMessage streamMessage = session.createStreamMessage();
-            streamMessage.setBooleanProperty(MessageConstants.STORE, true);
-            streamMessage.writeBytes(Serialiser.serialise(RealTypeImpl.serialiseAll(type, values)));
-            valueProducer.send(streamMessage);
+            valueSender.send(RealTypeImpl.serialiseAll(type, values), true);
         } catch(JMSException e) {
             logger.error("Failed to send value update", e);
         }

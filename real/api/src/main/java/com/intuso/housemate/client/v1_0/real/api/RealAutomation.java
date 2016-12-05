@@ -10,10 +10,8 @@ public interface RealAutomation<COMMAND extends RealCommand<?, ?, ?>,
         AUTOMATION extends RealAutomation<COMMAND, BOOLEAN_VALUE, STRING_VALUE, CONDITIONS, TASKS, AUTOMATION>>
         extends Automation<COMMAND,
         COMMAND,
-        COMMAND,
-        COMMAND,
-        BOOLEAN_VALUE,
-        STRING_VALUE,
+        BOOLEAN_VALUE, COMMAND,
+        STRING_VALUE, COMMAND,
         CONDITIONS,
         TASKS,
         AUTOMATION> {

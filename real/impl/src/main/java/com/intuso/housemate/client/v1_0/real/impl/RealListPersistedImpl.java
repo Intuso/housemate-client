@@ -88,7 +88,7 @@ public final class RealListPersistedImpl<ELEMENT extends RealObject<?, ?>>
             try {
                 existingObjectReceiver.close();
             } catch(JMSException e) {
-                logger.error("Failed to close perform producer");
+                logger.error("Failed to close existing object receiver");
             }
             existingObjectReceiver = null;
         }

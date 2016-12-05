@@ -12,10 +12,7 @@ public interface RealTask<COMMAND extends RealCommand<?, ?, ?>,
         TASK extends RealTask<COMMAND, BOOLEAN_VALUE, STRING_VALUE, DRIVER_PROPERTY, PROPERTIES, TASK>>
         extends Task<COMMAND,
         COMMAND,
-        BOOLEAN_VALUE,
-        STRING_VALUE,
-        DRIVER_PROPERTY,
-        BOOLEAN_VALUE,
+        STRING_VALUE, DRIVER_PROPERTY, BOOLEAN_VALUE, BOOLEAN_VALUE,
         PROPERTIES,
         TASK>,
         TaskDriver.Callback {

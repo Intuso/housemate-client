@@ -83,7 +83,7 @@ public abstract class ProxyCommand<
             try {
                 performSender.close();
             } catch(JMSException e) {
-                logger.error("Failed to close perform producer");
+                logger.error("Failed to close perform sender");
             }
             performSender = null;
         }
@@ -91,7 +91,7 @@ public abstract class ProxyCommand<
             try {
                 performStatusReceiver.close();
             } catch(JMSException e) {
-                logger.error("Failed to close perform status producer");
+                logger.error("Failed to close perform status receiver");
             }
             performStatusReceiver = null;
         }

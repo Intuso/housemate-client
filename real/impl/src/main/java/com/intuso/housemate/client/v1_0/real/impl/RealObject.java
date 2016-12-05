@@ -1,14 +1,14 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
-import com.intuso.housemate.client.v1_0.api.MessageConstants;
 import com.intuso.housemate.client.v1_0.api.object.Object;
-import com.intuso.housemate.client.v1_0.api.object.Serialiser;
 import com.intuso.utilities.listener.ListenerRegistration;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Session;
 
 public abstract class RealObject<DATA extends Object.Data,
         LISTENER extends com.intuso.housemate.client.v1_0.api.object.Object.Listener>
@@ -21,7 +21,7 @@ public abstract class RealObject<DATA extends Object.Data,
     protected final DATA data;
     protected final Listeners<LISTENER> listeners;
     private Session session;
-    private MessageProducer producer;
+    private JMSUtil.Sender sender;
 
     protected RealObject(Logger logger, boolean persistent, DATA data, ListenersFactory listenersFactory) {
         this.persistent = persistent;
@@ -34,7 +34,7 @@ public abstract class RealObject<DATA extends Object.Data,
     public final void init(String name, Connection connection) throws JMSException {
         logger.debug("Init");
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        producer = session.createProducer(session.createTopic(name));
+        sender = new JMSUtil.Sender(session, session.createProducer(session.createTopic(name)));
         initChildren(name, connection);
         sendData();
     }
@@ -44,13 +44,13 @@ public abstract class RealObject<DATA extends Object.Data,
     public final void uninit() {
         logger.debug("Uninit");
         uninitChildren();
-        if(producer != null) {
+        if(sender != null) {
             try {
-                producer.close();
+                sender.close();
             } catch (JMSException e) {
-                logger.error("Failed to close producer");
+                logger.error("Failed to close sender");
             }
-            producer = null;
+            sender = null;
         }
         if(session != null) {
             try {
@@ -89,14 +89,9 @@ public abstract class RealObject<DATA extends Object.Data,
     }
 
     protected final void sendData() {
-        if(producer != null) {
+        if(sender != null) {
             try {
-                StreamMessage streamMessage = session.createStreamMessage();
-                if(persistent)
-                    streamMessage.setBooleanProperty(MessageConstants.STORE, true);
-                streamMessage.writeBytes(Serialiser.serialise(data));
-                // todo send with persistence
-                producer.send(streamMessage);
+                sender.send(data, persistent);
             } catch (JMSException e) {
                 logger.error("Failed to send data object", e);
             }

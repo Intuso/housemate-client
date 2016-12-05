@@ -44,6 +44,7 @@ public abstract class ProxyServer<
     private final COMMAND addUserCommand;
     private final NODES nodes;
 
+    @Inject
     public ProxyServer(Connection connection,
                        Logger logger,
                        ListenersFactory listenersFactory,

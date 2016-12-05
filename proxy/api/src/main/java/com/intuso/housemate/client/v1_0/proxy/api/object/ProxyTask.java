@@ -27,7 +27,7 @@ public abstract class ProxyTask<
             PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
             TASK extends ProxyTask<COMMAND, VALUE, PROPERTY, PROPERTIES, TASK>>
         extends ProxyObject<Task.Data, Task.Listener<? super TASK>>
-        implements Task<COMMAND, COMMAND, VALUE, VALUE, PROPERTY, VALUE, PROPERTIES, TASK>,
+        implements Task<COMMAND, COMMAND, VALUE, PROPERTY, VALUE, VALUE, PROPERTIES, TASK>,
         ProxyFailable<VALUE>,
         ProxyRemoveable<COMMAND>,
         ProxyUsesDriver<PROPERTY, VALUE> {

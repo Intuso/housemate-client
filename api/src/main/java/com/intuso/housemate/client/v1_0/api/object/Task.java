@@ -13,12 +13,12 @@ import com.intuso.housemate.client.v1_0.api.UsesDriver;
  */
 public interface Task<REMOVE_COMMAND extends Command<?, ?, ?, ?>,
         RENAME_COMMAND extends Command<?, ?, ?, ?>,
-        EXECUTING_VALUE extends Value<?, ?, ?>,
         ERROR_VALUE extends Value<?, ?, ?>,
         DRIVER_PROPERTY extends Property<?, ?, ?, ?>,
         DRIVER_LOADED_VALUE extends Value<?, ?, ?>,
+        EXECUTING_VALUE extends Value<?, ?, ?>,
         PROPERTIES extends List<? extends Property<?, ?, ?, ?>, ?>,
-        TASK extends Task<REMOVE_COMMAND, RENAME_COMMAND, EXECUTING_VALUE, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, PROPERTIES, TASK>>
+        TASK extends Task<REMOVE_COMMAND, RENAME_COMMAND, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, EXECUTING_VALUE, PROPERTIES, TASK>>
         extends Object<Task.Listener<? super TASK>>,
         Property.Container<PROPERTIES>,
         Renameable<RENAME_COMMAND>,

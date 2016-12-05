@@ -26,7 +26,7 @@ public abstract class ProxyAutomation<
             TASKS extends ProxyList<? extends ProxyTask<?, ?, ?, ?, ?>, ?>,
             AUTOMATION extends ProxyAutomation<COMMAND, VALUE, CONDITIONS, TASKS, AUTOMATION>>
         extends ProxyObject<Automation.Data, Automation.Listener<? super AUTOMATION>>
-        implements Automation<COMMAND, COMMAND, COMMAND, COMMAND, VALUE, VALUE, CONDITIONS, TASKS, AUTOMATION>,
+        implements Automation<COMMAND, COMMAND, VALUE, COMMAND, VALUE, COMMAND, CONDITIONS, TASKS, AUTOMATION>,
         ProxyFailable<VALUE>,
         ProxyRemoveable<COMMAND>,
         ProxyRenameable<COMMAND>,
