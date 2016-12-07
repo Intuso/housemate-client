@@ -28,7 +28,7 @@ public class SimpleProxyServerModule extends AbstractModule {
     }
 
     @Provides
-    @Root
+    @Server
     public Logger getRootLogger() {
         return LoggerFactory.getLogger("com.intuso.housemate.objects");
     }

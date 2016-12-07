@@ -1,8 +1,8 @@
 package com.intuso.housemate.client.v1_0.proxy.simple;
 
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyServer;
+import com.intuso.housemate.client.v1_0.proxy.simple.ioc.Server;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -24,7 +24,7 @@ public final class SimpleProxyServer extends ProxyServer<
         SimpleProxyServer> {
 
     @Inject
-    public SimpleProxyServer(@Assisted Logger logger,
+    public SimpleProxyServer(@Server Logger logger,
                              Connection connection,
                              ListenersFactory listenersFactory,
                              Factory<SimpleProxyCommand> commandFactory,
