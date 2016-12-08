@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 */
 public final class SimpleProxyHardware extends ProxyHardware<
         SimpleProxyCommand,
+        SimpleProxyList<SimpleProxyCommand>,
         SimpleProxyValue,
+        SimpleProxyList<SimpleProxyValue>,
         SimpleProxyProperty,
         SimpleProxyList<SimpleProxyProperty>,
         SimpleProxyHardware> {
@@ -25,9 +27,11 @@ public final class SimpleProxyHardware extends ProxyHardware<
     public SimpleProxyHardware(@Assisted Logger logger,
                                ListenersFactory listenersFactory,
                                ProxyObject.Factory<SimpleProxyCommand> commandFactory,
+                               ProxyObject.Factory<SimpleProxyList<SimpleProxyCommand>> commandsFactory,
                                ProxyObject.Factory<SimpleProxyValue> valueFactory,
+                               ProxyObject.Factory<SimpleProxyList<SimpleProxyValue>> valuesFactory,
                                ProxyObject.Factory<SimpleProxyProperty> propertyFactory,
                                ProxyObject.Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory) {
-        super(logger, listenersFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory);
+        super(logger, listenersFactory, commandFactory, commandsFactory, valueFactory, valuesFactory, propertyFactory, propertiesFactory);
     }
 }
