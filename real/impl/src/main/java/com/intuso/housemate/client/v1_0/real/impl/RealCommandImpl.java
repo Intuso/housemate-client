@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.real.api.RealCommand;
+import com.intuso.housemate.client.v1_0.real.api.object.RealCommand;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -137,10 +137,6 @@ public final class RealCommandImpl
     @Override
     public void perform(Type.InstanceMap values) {
         performer.perform(values);
-    }
-
-    public interface Performer {
-        void perform(Type.InstanceMap values);
     }
 
     public interface Factory {

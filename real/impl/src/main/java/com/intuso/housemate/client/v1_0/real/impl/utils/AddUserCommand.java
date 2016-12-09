@@ -6,7 +6,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.real.api.RealUser;
+import com.intuso.housemate.client.v1_0.real.api.object.RealUser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;

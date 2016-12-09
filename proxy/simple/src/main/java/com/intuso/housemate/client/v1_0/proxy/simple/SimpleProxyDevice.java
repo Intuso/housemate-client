@@ -16,8 +16,6 @@ import org.slf4j.Logger;
 public final class SimpleProxyDevice extends ProxyDevice<
         SimpleProxyCommand,
         SimpleProxyValue,
-        SimpleProxyProperty,
-        SimpleProxyList<SimpleProxyProperty>,
         SimpleProxyList<SimpleProxyFeature>,
         SimpleProxyDevice> {
 
@@ -26,9 +24,7 @@ public final class SimpleProxyDevice extends ProxyDevice<
                              ListenersFactory listenersFactory,
                              Factory<SimpleProxyCommand> commandFactory,
                              Factory<SimpleProxyValue> valueFactory,
-                             Factory<SimpleProxyProperty> propertyFactory,
-                             Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory,
                              Factory<SimpleProxyList<SimpleProxyFeature>> featuresFactory) {
-        super(logger, listenersFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory, featuresFactory);
+        super(logger, listenersFactory, commandFactory, valueFactory, featuresFactory);
     }
 }

@@ -19,11 +19,6 @@
             <artifactId>housemate-client-1-0-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>housemate-plugin-1-0-api</artifactId>
-            <version>${intuso.housemate.plugin.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>com.google.inject.extensions</groupId>

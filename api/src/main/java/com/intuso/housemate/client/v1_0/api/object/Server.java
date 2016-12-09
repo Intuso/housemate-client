@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 public interface Server<
         COMMAND extends Command<?, ?, ?, ?>,
         AUTOMATIONS extends List<? extends Automation<?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
-        DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
+        DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?>, ?>,
         USERS extends List<? extends User<?, ?, ?, ?>, ?>,
         NODES extends List<? extends Node<?, ?, ?, ?>, ?>,
         SERVER extends Server<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>>

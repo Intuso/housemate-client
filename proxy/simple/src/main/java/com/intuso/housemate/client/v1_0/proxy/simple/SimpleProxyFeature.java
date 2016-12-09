@@ -13,16 +13,23 @@ import org.slf4j.Logger;
 * Time: 13:16
 * To change this template use File | Settings | File Templates.
 */
-public final class SimpleProxyFeature extends ProxyFeature<
+public final class SimpleProxyFeature extends ProxyFeature<SimpleProxyCommand,
         SimpleProxyList<SimpleProxyCommand>,
+        SimpleProxyValue,
         SimpleProxyList<SimpleProxyValue>,
+        SimpleProxyProperty,
+        SimpleProxyList<SimpleProxyProperty>,
         SimpleProxyFeature> {
 
     @Inject
     public SimpleProxyFeature(@Assisted Logger logger,
                               ListenersFactory listenersFactory,
+                              Factory<SimpleProxyCommand> commandFactory,
                               Factory<SimpleProxyList<SimpleProxyCommand>> commandsFactory,
-                              Factory<SimpleProxyList<SimpleProxyValue>> valuesFactory) {
-        super(logger, listenersFactory, commandsFactory, valuesFactory);
+                              Factory<SimpleProxyValue> valueFactory,
+                              Factory<SimpleProxyList<SimpleProxyValue>> valuesFactory,
+                              Factory<SimpleProxyProperty> propertyFactory,
+                              Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory) {
+        super(logger, listenersFactory, commandFactory, commandsFactory, valueFactory, valuesFactory, propertyFactory, propertiesFactory);
     }
 }
