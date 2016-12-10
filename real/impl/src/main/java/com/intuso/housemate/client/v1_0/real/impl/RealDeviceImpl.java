@@ -8,6 +8,7 @@ import com.intuso.housemate.client.v1_0.api.Runnable;
 import com.intuso.housemate.client.v1_0.api.object.Device;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.object.RealDevice;
+import com.intuso.housemate.client.v1_0.real.impl.utils.AddFeatureCommand;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -20,7 +21,8 @@ import javax.jms.JMSException;
 public final class RealDeviceImpl
         extends RealObject<Device.Data, Device.Listener<? super RealDeviceImpl>>
         implements RealDevice<RealCommandImpl, RealValueImpl<Boolean>, RealValueImpl<String>,
-        RealListGeneratedImpl<RealFeatureImpl>, RealDeviceImpl> {
+        RealFeatureImpl, RealListGeneratedImpl<RealFeatureImpl>, RealDeviceImpl>,
+        AddFeatureCommand.Callback {
 
     private final static String FEATURES_DESCRIPTION = "The device's features";
 
@@ -31,6 +33,7 @@ public final class RealDeviceImpl
     private final RealCommandImpl stopCommand;
     private final RealValueImpl<String> errorValue;
     private final RealListGeneratedImpl<RealFeatureImpl> features;
+    private final RealCommandImpl addFeatureCommand;
 
     private final RemoveCallback<RealDeviceImpl> removeCallback;
 
@@ -49,7 +52,8 @@ public final class RealDeviceImpl
                           RealParameterImpl.Factory<String> stringParameterFactory,
                           RealValueImpl.Factory<Boolean> booleanValueFactory,
                           RealValueImpl.Factory<String> stringValueFactory,
-                          RealListGeneratedImpl.Factory<RealFeatureImpl> featuresFactory) {
+                          RealListGeneratedImpl.Factory<RealFeatureImpl> featuresFactory,
+                          AddFeatureCommand.Factory addFeatureCommandFactory) {
         super(logger, true, new Device.Data(id, name, description), listenersFactory);
         this.removeCallback = removeCallback;
         this.renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID),
@@ -132,6 +136,13 @@ public final class RealDeviceImpl
                 Device.FEATURES_ID,
                 FEATURES_DESCRIPTION,
                 Lists.<RealFeatureImpl>newArrayList());
+        this.addFeatureCommand = addFeatureCommandFactory.create(ChildUtil.logger(logger, ADD_FEATURE_ID),
+                ChildUtil.logger(logger, ADD_FEATURE_ID),
+                ADD_FEATURE_ID,
+                ADD_FEATURE_ID,
+                "Add user",
+                this,
+                this);
     }
 
     @Override
@@ -144,6 +155,7 @@ public final class RealDeviceImpl
         stopCommand.init(ChildUtil.name(name, Runnable.STOP_ID), connection);
         errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), connection);
         features.init(ChildUtil.name(name, Device.FEATURES_ID), connection);
+        addFeatureCommand.init(ChildUtil.name(name, ADD_FEATURE_ID), connection);
     }
 
     @Override
@@ -156,6 +168,7 @@ public final class RealDeviceImpl
         stopCommand.uninit();
         errorValue.uninit();
         features.uninit();
+        addFeatureCommand.uninit();
     }
 
     private void setName(String newName) {
@@ -207,6 +220,21 @@ public final class RealDeviceImpl
     @Override
     public RealListGeneratedImpl<RealFeatureImpl> getFeatures() {
         return features;
+    }
+
+    @Override
+    public RealCommandImpl getAddFeatureCommand() {
+        return addFeatureCommand;
+    }
+
+    @Override
+    public void addFeature(RealFeatureImpl feature) {
+        features.add(feature);
+    }
+
+    @Override
+    public void removeFeature(RealFeatureImpl feature) {
+        features.remove(feature.getId());
     }
 
     protected final void _start() {
