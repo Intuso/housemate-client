@@ -5,9 +5,9 @@ import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.util.Types;
-import com.intuso.housemate.client.v1_0.real.api.driver.*;
-import com.intuso.housemate.client.v1_0.real.api.type.Email;
 import com.intuso.housemate.client.v1_0.real.impl.type.*;
+import com.intuso.housemate.plugin.v1_0.api.driver.*;
+import com.intuso.housemate.plugin.v1_0.api.type.Email;
 
 /**
  * Created by tomc on 13/05/16.

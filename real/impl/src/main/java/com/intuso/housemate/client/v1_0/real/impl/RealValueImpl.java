@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Value;
-import com.intuso.housemate.client.v1_0.real.api.object.RealValue;
+import com.intuso.housemate.client.v1_0.real.api.RealValue;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 

@@ -2,7 +2,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
-import com.intuso.housemate.client.v1_0.real.api.object.RealValueBase;
+import com.intuso.housemate.client.v1_0.real.api.RealValueBase;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 

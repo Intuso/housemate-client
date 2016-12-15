@@ -7,8 +7,8 @@ import com.intuso.housemate.client.v1_0.api.Removeable;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.User;
-import com.intuso.housemate.client.v1_0.real.api.object.RealUser;
-import com.intuso.housemate.client.v1_0.real.api.type.Email;
+import com.intuso.housemate.client.v1_0.real.api.RealUser;
+import com.intuso.housemate.plugin.v1_0.api.type.Email;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 

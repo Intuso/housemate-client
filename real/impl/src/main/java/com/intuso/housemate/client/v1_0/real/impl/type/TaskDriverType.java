@@ -1,11 +1,11 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.real.api.driver.TaskDriver;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealListGeneratedImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
+import com.intuso.housemate.plugin.v1_0.api.driver.TaskDriver;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
