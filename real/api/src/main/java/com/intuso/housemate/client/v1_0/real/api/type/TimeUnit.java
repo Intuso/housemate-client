@@ -1,10 +1,10 @@
 package com.intuso.housemate.client.v1_0.real.api.type;
 
-import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Id;
 
 /**
  * Enum of time units
- */@TypeInfo(id = "time-unit", name = "Time Unit", description = "Unit of time")
+ */@Id(value = "time-unit", name = "Time Unit", description = "Unit of time")
 public enum TimeUnit {
 
     /**

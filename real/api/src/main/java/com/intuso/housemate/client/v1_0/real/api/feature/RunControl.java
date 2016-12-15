@@ -2,26 +2,26 @@ package com.intuso.housemate.client.v1_0.real.api.feature;
 
 import com.intuso.housemate.client.v1_0.real.api.annotations.Command;
 import com.intuso.housemate.client.v1_0.real.api.annotations.Feature;
-import com.intuso.housemate.client.v1_0.real.api.annotations.TypeInfo;
+import com.intuso.housemate.client.v1_0.real.api.annotations.Id;
 
 /**
  * Interface to mark real devices that provide power control
  */
 @Feature
-@TypeInfo(id = "run", name = "Run", description = "Run")
+@Id(value = "run", name = "Run", description = "Run")
 public interface RunControl {
 
     /**
      * Callback to turn the device on
      */
     @Command
-    @TypeInfo(id = "start", name = "Start", description = "Start")
+    @Id(value = "start", name = "Start", description = "Start")
     void start();
 
     /**
      * Callback to turn the device off
      */
     @Command
-    @TypeInfo(id = "stop", name = "Stop", description = "Stop")
+    @Id(value = "stop", name = "Stop", description = "Stop")
     void stop();
 }
