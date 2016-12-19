@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.real.impl.annotations;
+package com.intuso.housemate.client.v1_0.real.impl.annotation;
 
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;

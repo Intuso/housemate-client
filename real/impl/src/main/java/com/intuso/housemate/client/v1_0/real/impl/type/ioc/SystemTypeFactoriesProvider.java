@@ -3,9 +3,9 @@ package com.intuso.housemate.client.v1_0.real.impl.type.ioc;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.intuso.housemate.client.v1_0.api.driver.*;
+import com.intuso.housemate.client.v1_0.api.type.Email;
 import com.intuso.housemate.client.v1_0.real.impl.type.TypeFactories;
-import com.intuso.housemate.plugin.v1_0.api.driver.*;
-import com.intuso.housemate.plugin.v1_0.api.type.Email;
 
 /**
  * Created by tomc on 23/05/16.

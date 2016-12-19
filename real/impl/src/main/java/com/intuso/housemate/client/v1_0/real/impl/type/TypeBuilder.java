@@ -4,14 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.annotation.Composite;
+import com.intuso.housemate.client.v1_0.api.annotation.Id;
+import com.intuso.housemate.client.v1_0.api.annotation.Regex;
+import com.intuso.housemate.client.v1_0.api.type.RegexType;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealSubTypeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
-import com.intuso.housemate.plugin.v1_0.api.annotations.Composite;
-import com.intuso.housemate.plugin.v1_0.api.annotations.Id;
-import com.intuso.housemate.plugin.v1_0.api.annotations.Regex;
-import com.intuso.housemate.plugin.v1_0.api.type.RegexType;
 import org.slf4j.Logger;
 
 import java.util.List;

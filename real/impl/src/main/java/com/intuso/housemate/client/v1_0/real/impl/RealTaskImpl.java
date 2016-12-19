@@ -7,13 +7,13 @@ import com.intuso.housemate.client.v1_0.api.Failable;
 import com.intuso.housemate.client.v1_0.api.Removeable;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.UsesDriver;
+import com.intuso.housemate.client.v1_0.api.driver.PluginDependency;
+import com.intuso.housemate.client.v1_0.api.driver.TaskDriver;
 import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Task;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealTask;
-import com.intuso.housemate.client.v1_0.real.impl.annotations.AnnotationParser;
-import com.intuso.housemate.plugin.v1_0.api.driver.PluginDependency;
-import com.intuso.housemate.plugin.v1_0.api.driver.TaskDriver;
+import com.intuso.housemate.client.v1_0.real.impl.annotation.AnnotationParser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 

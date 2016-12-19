@@ -3,8 +3,8 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.type.RegexType;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.housemate.plugin.v1_0.api.type.RegexType;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 

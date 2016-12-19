@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.*;
 import com.intuso.housemate.client.v1_0.api.Runnable;
+import com.intuso.housemate.client.v1_0.api.driver.FeatureDriver;
+import com.intuso.housemate.client.v1_0.api.driver.PluginDependency;
 import com.intuso.housemate.client.v1_0.api.object.Feature;
 import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.real.api.RealFeature;
-import com.intuso.housemate.client.v1_0.real.impl.annotations.AnnotationParser;
-import com.intuso.housemate.plugin.v1_0.api.driver.FeatureDriver;
-import com.intuso.housemate.plugin.v1_0.api.driver.PluginDependency;
+import com.intuso.housemate.client.v1_0.real.impl.annotation.AnnotationParser;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 

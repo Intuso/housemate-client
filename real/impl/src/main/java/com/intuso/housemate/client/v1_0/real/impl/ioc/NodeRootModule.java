@@ -9,7 +9,7 @@ import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
-import com.intuso.housemate.client.v1_0.real.impl.annotations.ioc.AnnotationParserV1_0Module;
+import com.intuso.housemate.client.v1_0.real.impl.annotation.ioc.AnnotationParserV1_0Module;
 import com.intuso.housemate.client.v1_0.real.impl.type.ioc.RealTypesModule;
 import com.intuso.housemate.client.v1_0.real.impl.utils.ioc.RealUtilsModule;
 import org.slf4j.Logger;

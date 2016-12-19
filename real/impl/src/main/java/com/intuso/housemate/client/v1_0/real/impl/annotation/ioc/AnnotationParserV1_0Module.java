@@ -1,10 +1,10 @@
-package com.intuso.housemate.client.v1_0.real.impl.annotations.ioc;
+package com.intuso.housemate.client.v1_0.real.impl.annotation.ioc;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.intuso.housemate.client.v1_0.real.impl.annotations.AnnotationParser;
-import com.intuso.housemate.client.v1_0.real.impl.annotations.AnnotationParserImpl;
-import com.intuso.housemate.client.v1_0.real.impl.annotations.AnnotationParserV1_0;
+import com.intuso.housemate.client.v1_0.real.impl.annotation.AnnotationParser;
+import com.intuso.housemate.client.v1_0.real.impl.annotation.AnnotationParserImpl;
+import com.intuso.housemate.client.v1_0.real.impl.annotation.AnnotationParserV1_0;
 
 /**
  * Created by tomc on 20/03/15.

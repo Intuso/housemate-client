@@ -1,13 +1,13 @@
-package com.intuso.housemate.client.v1_0.real.impl.annotations;
+package com.intuso.housemate.client.v1_0.real.impl.annotation;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.annotation.*;
+import com.intuso.housemate.client.v1_0.api.annotation.Parameter;
 import com.intuso.housemate.client.v1_0.real.impl.*;
 import com.intuso.housemate.client.v1_0.real.impl.type.RegisteredTypes;
-import com.intuso.housemate.plugin.v1_0.api.annotations.*;
-import com.intuso.housemate.plugin.v1_0.api.annotations.Parameter;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;

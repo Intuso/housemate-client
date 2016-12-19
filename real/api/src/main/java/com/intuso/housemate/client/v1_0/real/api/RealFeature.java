@@ -1,8 +1,8 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
+import com.intuso.housemate.client.v1_0.api.driver.FeatureDriver;
+import com.intuso.housemate.client.v1_0.api.driver.PluginDependency;
 import com.intuso.housemate.client.v1_0.api.object.Feature;
-import com.intuso.housemate.plugin.v1_0.api.driver.FeatureDriver;
-import com.intuso.housemate.plugin.v1_0.api.driver.PluginDependency;
 
 /**
  * Base class for all devices
