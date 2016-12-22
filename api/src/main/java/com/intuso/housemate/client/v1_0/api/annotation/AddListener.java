@@ -6,8 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marker for the interface containing the value functions
+ * Annotate a method with this to create a command for your object. All arguments for the command
+ * must have {@link Parameter} annotations
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Values {}
+@Target(ElementType.METHOD)
+public @interface AddListener {}

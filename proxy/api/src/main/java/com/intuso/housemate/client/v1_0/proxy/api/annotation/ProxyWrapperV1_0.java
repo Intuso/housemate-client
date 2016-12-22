@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
+import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,10 +14,10 @@ import java.util.Map;
 /**
  * Created by tomc on 16/12/16.
  */
-public class AnnotationParserV1_0 implements AnnotationParser {
+public class ProxyWrapperV1_0 implements ProxyWrapper {
 
     @Override
-    public <T> T build(ProxyObject<?, ?> object, Class<T> clazz) {
+    public <T> T build(Logger logger, ProxyObject<?, ?> object, Class<T> clazz, String prefix) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] {clazz}, new InvocationHandlerImpl(object));
     }
 

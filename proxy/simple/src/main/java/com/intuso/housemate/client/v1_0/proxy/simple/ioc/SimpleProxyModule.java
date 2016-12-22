@@ -4,8 +4,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
-import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeature;
-import com.intuso.housemate.client.v1_0.proxy.api.object.feature.ProxyFeatureFactory;
 import com.intuso.housemate.client.v1_0.proxy.simple.*;
 
 /**
@@ -51,6 +49,5 @@ public class SimpleProxyModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyType>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyUser>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyValue>>() {}));
-        bind(new TypeLiteral<ProxyFeatureFactory<SimpleProxyFeature, ProxyFeature>>() {}).to(SimpleProxyFeatureFactory.class);
     }
 }

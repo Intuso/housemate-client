@@ -5,6 +5,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.multibindings.Multibinder;
+import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
+import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyServer;
 import com.intuso.housemate.client.v1_0.proxy.simple.SimpleProxyServer;
 import org.slf4j.Logger;
@@ -30,6 +33,6 @@ public class SimpleProxyServerModule extends AbstractModule {
     @Provides
     @Server
     public Logger getRootLogger() {
-        return LoggerFactory.getLogger("com.intuso.housemate.objects");
+        return ChildUtil.logger(LoggerFactory.getLogger(ProxyObject.PROXY), Object.VERSION);
     }
 }

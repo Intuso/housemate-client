@@ -67,7 +67,7 @@ public abstract class ProxyServer<
 
     public void start() {
         try {
-            init(ChildUtil.name(null, Object.VERSION, ProxyObject.PROXY), connection);
+            init(ChildUtil.name(null, ProxyObject.PROXY, Object.VERSION), connection);
         } catch(JMSException e) {
             throw new HousemateException("Failed to initalise objects");
         }

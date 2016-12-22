@@ -105,7 +105,7 @@ public class RealNodeImpl
 
     public void start() {
         try {
-            init(ChildUtil.name(null, Object.VERSION, RealObject.REAL, Server.NODES_ID, id), connection);
+            init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, Server.NODES_ID, id), connection);
         } catch(JMSException e) {
             throw new HousemateException("Failed to initalise objects");
         }

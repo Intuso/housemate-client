@@ -4,7 +4,8 @@ import com.intuso.housemate.client.v1_0.api.annotation.Id;
 
 /**
  * Enum of time units
- */@Id(value = "time-unit", name = "Time Unit", description = "Unit of time")
+ */
+@Id(value = "time-unit", name = "Time Unit", description = "Unit of time")
 public enum TimeUnit {
 
     /**

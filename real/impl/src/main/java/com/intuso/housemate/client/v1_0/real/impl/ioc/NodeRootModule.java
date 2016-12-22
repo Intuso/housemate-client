@@ -5,10 +5,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.multibindings.Multibinder;
+import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
+import com.intuso.housemate.client.v1_0.real.impl.RealObject;
 import com.intuso.housemate.client.v1_0.real.impl.annotation.ioc.AnnotationParserV1_0Module;
 import com.intuso.housemate.client.v1_0.real.impl.type.ioc.RealTypesModule;
 import com.intuso.housemate.client.v1_0.real.impl.utils.ioc.RealUtilsModule;
@@ -50,8 +53,8 @@ public class NodeRootModule extends AbstractModule {
 
     @Provides
     @Node
-    public Logger getRootLogger() {
-        return LoggerFactory.getLogger("com.intuso.housemate.objects");
+    public Logger getRootLogger(@Node String nodeId) {
+        return ChildUtil.logger(LoggerFactory.getLogger(RealObject.REAL), Object.VERSION, Server.NODES_ID, nodeId);
     }
 
     @Provides
