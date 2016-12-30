@@ -6,11 +6,12 @@ import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
-import com.intuso.housemate.client.v1_0.real.impl.ioc.Node;
 import com.intuso.housemate.client.v1_0.real.impl.type.RegisteredTypes;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.properties.api.PropertyRepository;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -19,6 +20,10 @@ public class RealNodeImpl
         extends RealObject<com.intuso.housemate.client.v1_0.api.object.Node.Data, com.intuso.housemate.client.v1_0.api.object.Node.Listener<? super RealNodeImpl>>
         implements RealNode<RealCommandImpl, RealListGeneratedImpl<RealTypeImpl<?>>, RealHardwareImpl, RealListPersistedImpl<RealHardwareImpl>, RealNodeImpl>,
         AddHardwareCommand.Callback {
+
+    public final static String NODE_ID = "node.id";
+    public final static String NODE_NAME = "node.name";
+    public final static String NODE_DESCRIPTION = "node.description";
 
     private final String id;
     private final Connection connection;
@@ -29,15 +34,19 @@ public class RealNodeImpl
 
     @Inject
     public RealNodeImpl(Connection connection,
-                        @Node final Logger logger,
-                        @Node String id,
+                        PropertyRepository propertyRepository,
                         ListenersFactory listenersFactory,
                         RegisteredTypes registeredTypes,
                         final RealHardwareImpl.Factory hardwareFactory,
                         RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
-        super(logger, true, new com.intuso.housemate.client.v1_0.api.object.Node.Data(id, "node", "node"), listenersFactory);
-        this.id = id;
+        super(ChildUtil.logger(LoggerFactory.getLogger(RealObject.REAL), Object.VERSION, Server.NODES_ID, propertyRepository.get(NODE_ID)),
+                true,
+                new com.intuso.housemate.client.v1_0.api.object.Node.Data(propertyRepository.get(NODE_ID),
+                        propertyRepository.get(NODE_NAME),
+                        propertyRepository.get(NODE_DESCRIPTION)),
+                listenersFactory);
+        this.id = propertyRepository.get(NODE_ID);
         this.connection = connection;
         this.types = registeredTypes.createList(ChildUtil.logger(logger, TYPES_ID),
                 TYPES_ID,

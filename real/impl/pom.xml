@@ -15,10 +15,18 @@
 
     <dependencies>
 
+        <!-- API that is implemented -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>housemate-client-1-0-real-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!-- Properties -->
+        <dependency>
+            <groupId>com.intuso.utilities</groupId>
+            <artifactId>utilities-properties-api</artifactId>
+            <version>${intuso.utilities.version}</version>
         </dependency>
 
         <!-- Active MQ -->
