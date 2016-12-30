@@ -58,7 +58,7 @@ public class NodeRootModule extends AbstractModule {
     }
 
     @Provides
-    @Types
+    @Type
     public Logger getTypesLogger(@Node Logger rootLogger) {
         return ChildUtil.logger(rootLogger, "types");
     }

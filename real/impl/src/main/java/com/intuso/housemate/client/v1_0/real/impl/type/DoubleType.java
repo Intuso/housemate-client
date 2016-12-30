@@ -1,10 +1,9 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
-import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.Type;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -26,7 +25,7 @@ public class DoubleType extends RealSimpleType<Double> {
     };
 
     @Inject
-    public DoubleType(@Types Logger logger, ListenersFactory listenersFactory) {
-        super(ChildUtil.logger(logger, Simple.Double.getId()), Type.Simple.Double, SERIALISER, listenersFactory);
+    public DoubleType(@Type Logger logger, ListenersFactory listenersFactory) {
+        super(ChildUtil.logger(logger, Simple.Double.getId()), com.intuso.housemate.client.v1_0.api.object.Type.Simple.Double, SERIALISER, listenersFactory);
     }
 }

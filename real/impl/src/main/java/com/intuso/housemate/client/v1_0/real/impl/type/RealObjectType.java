@@ -9,7 +9,7 @@ import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.housemate.client.v1_0.real.impl.ioc.Types;
+import com.intuso.housemate.client.v1_0.real.impl.ioc.Type;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -34,7 +34,7 @@ public final class RealObjectType<O extends Object<?>>
      * @param root the root to get the object from
      */
     @Inject
-    public RealObjectType(@Types Logger logger, ListenersFactory listenersFactory, RealNodeImpl root) {
+    public RealObjectType(@Type Logger logger, ListenersFactory listenersFactory, RealNodeImpl root) {
         super(ChildUtil.logger(logger, ID), new ObjectData(ID, NAME, "Path to an object"), listenersFactory);
         serialiser = new Serialiser<>(root);
     }
