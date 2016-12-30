@@ -1,8 +1,8 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.common.collect.Lists;
-import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.real.api.RealType;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;

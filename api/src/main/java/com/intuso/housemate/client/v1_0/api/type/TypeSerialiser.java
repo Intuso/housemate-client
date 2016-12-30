@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.api;
+package com.intuso.housemate.client.v1_0.api.type;
 
 import com.intuso.housemate.client.v1_0.api.object.Type;
 
@@ -21,4 +21,9 @@ public interface TypeSerialiser<DATA_TYPE> {
      * @return the converted object
      */
     DATA_TYPE deserialise(Type.Instance instance);
+
+    interface Repository {
+        <O> TypeSerialiser<O> forClass(Class<?> clazz);
+        <O> TypeSerialiser<O> forId(String id);
+    }
 }

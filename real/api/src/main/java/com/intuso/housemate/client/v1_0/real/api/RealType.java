@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
-import com.intuso.housemate.client.v1_0.api.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
 
 /**
  * @param <O> the type of the type instances
