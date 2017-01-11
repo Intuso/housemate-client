@@ -6,11 +6,13 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.api.RealUser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealUserImpl;
+import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import org.slf4j.Logger;
 
 /**
@@ -32,15 +34,17 @@ public class AddUserCommand {
     public static class Factory {
 
         private final RealCommandImpl.Factory commandFactory;
-        private final RealParameterImpl.Factory<String> stringParameterFactory;
+        private final TypeRepository typeRepository;
+        private final RealParameterImpl.Factory parameterFactory;
         private final Performer.Factory performerFactory;
 
         @Inject
         public Factory(RealCommandImpl.Factory commandFactory,
-                       RealParameterImpl.Factory<String> stringParameterFactory,
-                       Performer.Factory performerFactory) {
+                       TypeRepository typeRepository,
+                       RealParameterImpl.Factory parameterFactory, Performer.Factory performerFactory) {
             this.commandFactory = commandFactory;
-            this.stringParameterFactory = stringParameterFactory;
+            this.typeRepository = typeRepository;
+            this.parameterFactory = parameterFactory;
             this.performerFactory = performerFactory;
         }
 
@@ -52,16 +56,19 @@ public class AddUserCommand {
                                       Callback callback,
                                       RealUser.RemoveCallback<RealUserImpl> removeCallback) {
             return commandFactory.create(logger, id, name, description, performerFactory.create(baseLogger, callback, removeCallback),
-                    Lists.newArrayList(stringParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, NAME_PARAMETER_ID),
+                    Lists.newArrayList(
+                            parameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, NAME_PARAMETER_ID),
                                     NAME_PARAMETER_ID,
                                     NAME_PARAMETER_NAME,
                                     NAME_PARAMETER_DESCRIPTION,
+                                    typeRepository.getType(new TypeSpec(String.class)),
                                     1,
                                     1),
-                            stringParameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, DESCRIPTION_PARAMETER_ID),
+                            parameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, DESCRIPTION_PARAMETER_ID),
                                     DESCRIPTION_PARAMETER_ID,
                                     DESCRIPTION_PARAMETER_NAME,
                                     DESCRIPTION_PARAMETER_DESCRIPTION,
+                                    typeRepository.getType(new TypeSpec(String.class)),
                                     1,
                                     1)));
         }

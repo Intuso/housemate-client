@@ -2,6 +2,7 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Type;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -10,7 +11,7 @@ import org.slf4j.Logger;
 /**
  * Type for a boolean
  */
-public class BooleanType extends RealSimpleType<Boolean> {
+public class BooleanType extends RealPrimitiveType<Boolean> {
 
     public final static TypeSerialiser<Boolean> SERIALISER = new TypeSerialiser<Boolean>() {
         @Override
@@ -26,6 +27,10 @@ public class BooleanType extends RealSimpleType<Boolean> {
 
     @Inject
     public BooleanType(@Type Logger logger, ListenersFactory listenersFactory) {
-        super(ChildUtil.logger(logger, Simple.Boolean.getId()), com.intuso.housemate.client.v1_0.api.object.Type.Simple.Boolean, SERIALISER, listenersFactory);
+        super(ChildUtil.logger(logger, Boolean.class.getName()),
+                new PrimitiveData(Boolean.class.getName(), "Boolean", "True or false"),
+                new TypeSpec(Boolean.class),
+                SERIALISER,
+                listenersFactory);
     }
 }

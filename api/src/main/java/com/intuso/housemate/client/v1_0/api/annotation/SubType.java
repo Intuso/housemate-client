@@ -6,19 +6,21 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotate an interface method with this to create a value for your object
+ * Annotate a type's field as a sub type
+ *
+ * @see Command
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Value {
+@Target(ElementType.FIELD)
+public @interface SubType {
 
     /**
-     * The value's type
-     * @return the value's type
+     * The sub type's type
+     * @return the sub type's type
      */
     String restriction() default "";
 
-    int minValues() default 0;
+    int minValues() default -1;
 
     int maxValues() default -1;
 }

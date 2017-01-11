@@ -5,7 +5,9 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.api.RealCommand;
+import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -40,14 +42,16 @@ public final class RealCommandImpl
                               @Assisted Performer performer,
                               @Assisted Iterable<? extends RealParameterImpl<?>> parameters,
                               ListenersFactory listenersFactory,
-                              RealValueImpl.Factory<Boolean> booleanValueFactory,
-                              RealListGeneratedImpl.Factory<RealParameterImpl<?>> parametersFactory) {
+                              RealValueImpl.Factory valueFactory,
+                              RealListGeneratedImpl.Factory<RealParameterImpl<?>> parametersFactory,
+                              TypeRepository typeRepository) {
         super(logger, false, new Command.Data(id, name, description), listenersFactory);
         this.performer = performer;
-        this.enabledValue = booleanValueFactory.create(ChildUtil.logger(logger, Command.ENABLED_ID),
+        this.enabledValue = (RealValueImpl<Boolean>) valueFactory.create(ChildUtil.logger(logger, Command.ENABLED_ID),
                 Command.ENABLED_ID,
                 Command.ENABLED_ID,
                 ENABLED_DESCRIPTION,
+                typeRepository.getType(new TypeSpec(Boolean.class)),
                 1,
                 1,
                 Lists.newArrayList(true));

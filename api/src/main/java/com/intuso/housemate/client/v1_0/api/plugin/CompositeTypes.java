@@ -6,15 +6,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to list the types that the plugin provides
+ * Annotation to list the composite types that the plugin provides
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Types {
+public @interface CompositeTypes {
 
     /**
-     * The list of the types the plugin provides
-     * @return the list of the types the plugin provides
+     * The list of the composite types the plugin provides
+     * @return the list of the composite types the plugin provides
      */
-    Class<?>[] value();
+    CompositeType[] value();
+
 }

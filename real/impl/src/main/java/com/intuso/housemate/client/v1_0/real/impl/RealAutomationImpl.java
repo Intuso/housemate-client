@@ -9,9 +9,11 @@ import com.intuso.housemate.client.v1_0.api.object.Automation;
 import com.intuso.housemate.client.v1_0.api.object.Condition;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.api.RealAutomation;
 import com.intuso.housemate.client.v1_0.real.api.RealCondition;
 import com.intuso.housemate.client.v1_0.real.api.RealTask;
+import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddConditionCommand;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddTaskCommand;
 import com.intuso.utilities.listener.ListenerRegistration;
@@ -107,15 +109,15 @@ public final class RealAutomationImpl
                               @Assisted RemoveCallback<RealAutomationImpl> removeCallback,
                               ListenersFactory listenersFactory,
                               RealCommandImpl.Factory commandFactory,
-                              RealParameterImpl.Factory<String> stringParameterFactory,
-                              RealValueImpl.Factory<Boolean> booleanValueFactory,
-                              RealValueImpl.Factory<String> stringValueFactory,
+                              RealParameterImpl.Factory parameterFactory,
+                              RealValueImpl.Factory valueFactory,
                               final RealConditionImpl.Factory conditionFactory,
                               RealListPersistedImpl.Factory<RealConditionImpl> conditionsFactory,
                               final RealTaskImpl.Factory taskFactory,
                               RealListPersistedImpl.Factory<RealTaskImpl> tasksFactory,
                               AddConditionCommand.Factory addConditionCommandFactory,
-                              AddTaskCommand.Factory addTaskCommandFactory) {
+                              AddTaskCommand.Factory addTaskCommandFactory,
+                              TypeRepository typeRepository) {
         super(logger, true, new Automation.Data(id, name, description), listenersFactory);
         this.removeCallback = removeCallback;
         this.renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID),
@@ -132,10 +134,11 @@ public final class RealAutomationImpl
                         }
                     }
                 },
-                Lists.<RealParameterImpl<?>>newArrayList(stringParameterFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID),
+                Lists.<RealParameterImpl<?>>newArrayList(parameterFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID, Renameable.NAME_ID),
                         Renameable.NAME_ID,
                         Renameable.NAME_ID,
                         "The new name",
+                        typeRepository.getType(new TypeSpec(String.class)),
                         1,
                         1)));
         this.removeCommand = commandFactory.create(ChildUtil.logger(logger, Removeable.REMOVE_ID),
@@ -151,10 +154,11 @@ public final class RealAutomationImpl
                     }
                 },
                 Lists.<RealParameterImpl<?>>newArrayList());
-        this.runningValue = booleanValueFactory.create(ChildUtil.logger(logger, Runnable.RUNNING_ID),
+        this.runningValue = (RealValueImpl<Boolean>) valueFactory.create(ChildUtil.logger(logger, Runnable.RUNNING_ID),
                 Runnable.RUNNING_ID,
                 Runnable.RUNNING_ID,
                 "Whether the device is running or not",
+                typeRepository.getType(new TypeSpec(Boolean.class)),
                 1,
                 1,
                 Lists.newArrayList(false));
@@ -186,10 +190,11 @@ public final class RealAutomationImpl
                     }
                 },
                 Lists.<RealParameterImpl<?>>newArrayList());
-        this.errorValue = stringValueFactory.create(ChildUtil.logger(logger, Failable.ERROR_ID),
+        this.errorValue = (RealValueImpl<String>) valueFactory.create(ChildUtil.logger(logger, Failable.ERROR_ID),
                 Failable.ERROR_ID,
                 Failable.ERROR_ID,
                 "Current error for the automation",
+                typeRepository.getType(new TypeSpec(String.class)),
                 1,
                 1,
                 Lists.<String>newArrayList());

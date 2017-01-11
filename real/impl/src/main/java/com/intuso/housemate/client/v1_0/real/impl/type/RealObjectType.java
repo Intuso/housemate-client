@@ -6,10 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
-import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
+import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.housemate.client.v1_0.real.impl.ioc.Type;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
 
@@ -18,11 +17,8 @@ import java.util.List;
 /**
  * Type for an object from the object tree
  */
-public final class RealObjectType<O extends Object<?>>
+public abstract class RealObjectType<O extends Object<?>>
         extends RealTypeImpl<RealObjectType.Reference<O>> {
-
-    public final static String ID = "object";
-    public final static String NAME = "Object";
 
     private final static Joiner JOINER = Joiner.on("/");
     private final static Splitter SPLITTER = Splitter.on("/");
@@ -34,8 +30,8 @@ public final class RealObjectType<O extends Object<?>>
      * @param root the root to get the object from
      */
     @Inject
-    public RealObjectType(@Type Logger logger, ListenersFactory listenersFactory, RealNodeImpl root) {
-        super(ChildUtil.logger(logger, ID), new ObjectData(ID, NAME, "Path to an object"), listenersFactory);
+    public RealObjectType(Logger logger, String id, String name, String description, TypeSpec typeSpec, ListenersFactory listenersFactory, RealNodeImpl root) {
+        super(logger, new ObjectData(id, name, description), typeSpec, listenersFactory);
         serialiser = new Serialiser<>(root);
     }
 

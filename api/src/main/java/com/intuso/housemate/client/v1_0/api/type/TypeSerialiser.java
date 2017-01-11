@@ -23,7 +23,6 @@ public interface TypeSerialiser<DATA_TYPE> {
     DATA_TYPE deserialise(Type.Instance instance);
 
     interface Repository {
-        <O> TypeSerialiser<O> forClass(Class<?> clazz);
-        <O> TypeSerialiser<O> forId(String id);
+        <O> TypeSerialiser<O> getSerialiser(TypeSpec typeSpec);
     }
 }

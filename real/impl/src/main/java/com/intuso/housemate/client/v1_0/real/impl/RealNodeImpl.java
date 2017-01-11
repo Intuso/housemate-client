@@ -6,7 +6,7 @@ import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
-import com.intuso.housemate.client.v1_0.real.impl.type.RegisteredTypes;
+import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.listener.ListenersFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
@@ -36,7 +36,7 @@ public class RealNodeImpl
     public RealNodeImpl(Connection connection,
                         PropertyRepository propertyRepository,
                         ListenersFactory listenersFactory,
-                        RegisteredTypes registeredTypes,
+                        TypeRepository typeRepository,
                         final RealHardwareImpl.Factory hardwareFactory,
                         RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
@@ -48,7 +48,7 @@ public class RealNodeImpl
                 listenersFactory);
         this.id = propertyRepository.get(NODE_ID);
         this.connection = connection;
-        this.types = registeredTypes.createList(ChildUtil.logger(logger, TYPES_ID),
+        this.types = typeRepository.createList(ChildUtil.logger(logger, TYPES_ID),
                 TYPES_ID,
                 "Types",
                 "Types");

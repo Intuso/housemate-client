@@ -8,6 +8,7 @@ import com.intuso.housemate.client.v1_0.api.annotation.*;
 import com.intuso.housemate.client.v1_0.api.annotation.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.proxy.api.object.*;
 import com.intuso.utilities.listener.Listeners;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -90,9 +91,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
                     return new Problem(clazz.getName() + " command method " + method.toString() + " has no " + Id.class.getName() + " annotation for parameter " + p);
                 if(parameter == null)
                     parameter = new ParameterDefaultImpl();
-                TypeSerialiser typeSerialiser = parameter.value().length() == 0
-                        ? typeSerialiserRepository.forClass(method.getParameterTypes()[p])
-                        : typeSerialiserRepository.forId(parameter.value());
+                TypeSerialiser typeSerialiser = typeSerialiserRepository.getSerialiser(new TypeSpec(method.getParameterTypes()[p], parameter.restriction()));
                 parameterSerialisers[p] = new ParameterSerialiser(parameterId.value(), parameter.minValues(), parameter.maxValues(), typeSerialiser);
             }
             return new CommandInvoker(
@@ -109,9 +108,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
                 return new Problem(clazz.getName() + " property method " + method.toString() + " has no " + Id.class.getName() + " annotation");
             if(!(object instanceof ProxyProperty.Container))
                 return new Problem(clazz.getName() + " has a property method " + method.toString() + " but the object being wrapped is not a " + ProxyProperty.Container.class.getName());
-            TypeSerialiser typeSerialiser = property.value().length() == 0
-                    ? typeSerialiserRepository.forClass(method.getParameterTypes()[0])
-                    : typeSerialiserRepository.forId(property.value());
+            TypeSerialiser typeSerialiser = typeSerialiserRepository.getSerialiser(new TypeSpec(method.getParameterTypes()[0], property.restriction()));
             return new PropertySetter(
                     ((ProxyProperty.Container<? extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>>) object).getProperties(),
                     id.value(),
@@ -140,15 +137,11 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
                 if (method.getAnnotation(Value.class) != null) {
                     Value value = method.getAnnotation(Value.class);
                     if(method.getParameterTypes().length != 1)
-                        throw new HousemateException(clazz.getName() + " property method should have a single argument");
+                        throw new HousemateException(clazz.getName() + " value method \" + method.toString() + \" should have a single argument");
                     Id id = method.getAnnotation(Id.class);
                     if(id == null)
-                        throw new HousemateException(clazz.getName() + " property method " + method.toString() + " has no " + Id.class.getName() + " annotation");
-                    if(!(object instanceof ProxyProperty.Container))
-                        throw new HousemateException(clazz.getName() + " has a property method " + method.toString() + " but the object being wrapped is not a " + ProxyProperty.Container.class.getName());
-                    TypeSerialiser typeSerialiser = value.value().length() == 0
-                            ? typeSerialiserRepository.forClass(method.getParameterTypes()[0])
-                            : typeSerialiserRepository.forId(value.value());
+                        throw new HousemateException(clazz.getName() + " value method " + method.toString() + " has no " + Id.class.getName() + " annotation");
+                    TypeSerialiser typeSerialiser = typeSerialiserRepository.getSerialiser(new TypeSpec(method.getParameterTypes()[0], value.restriction()));
                     addValueListener(listeners, method, values, id.value(), new ValueDeserialiser(List.class.isAssignableFrom(method.getParameterTypes()[0]), typeSerialiser));
                 }
             }
@@ -437,7 +430,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
     private class ParameterDefaultImpl implements Parameter {
 
         @Override
-        public String value() {
+        public String restriction() {
             return "";
         }
 

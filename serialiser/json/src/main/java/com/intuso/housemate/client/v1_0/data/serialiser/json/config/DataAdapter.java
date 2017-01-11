@@ -28,7 +28,7 @@ public class DataAdapter extends RuntimeTypeAdapterFactory<Object.Data> {
         registerSubtype(Type.CompositeData.class, "compoundType");
         registerSubtype(Type.ObjectData.class, "objectType");
         registerSubtype(Type.RegexData.class, "regexType");
-        registerSubtype(Type.SimpleData.class, "simpleType");
+        registerSubtype(Type.PrimitiveData.class, "simpleType");
         registerSubtype(User.Data.class, "user");
         registerSubtype(Value.Data.class, "value");
     }
