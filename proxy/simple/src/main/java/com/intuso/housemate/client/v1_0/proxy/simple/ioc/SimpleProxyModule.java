@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.simple.ioc;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.intuso.housemate.client.v1_0.proxy.api.annotation.ioc.ProxyWrapperModule;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyObject;
 import com.intuso.housemate.client.v1_0.proxy.simple.*;
 
@@ -17,6 +18,9 @@ public class SimpleProxyModule extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        install(new ProxyWrapperModule());
+
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyAutomation>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyCommand>>() {}));
         install(new FactoryModuleBuilder().build(new TypeLiteral<ProxyObject.Factory<SimpleProxyCondition>>() {}));
