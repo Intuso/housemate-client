@@ -7,7 +7,7 @@ import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.annotation.*;
 import com.intuso.housemate.client.v1_0.api.annotation.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.proxy.api.object.*;
 import com.intuso.utilities.listener.Listeners;
