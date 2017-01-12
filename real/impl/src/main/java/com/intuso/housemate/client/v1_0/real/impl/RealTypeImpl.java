@@ -2,7 +2,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.api.type.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.api.RealType;
 import com.intuso.utilities.listener.ListenersFactory;
@@ -29,7 +29,7 @@ public abstract class RealTypeImpl<O>
                            Type.Data data,
                            TypeSpec spec,
                            ListenersFactory listenersFactory) {
-        super(logger, false, data, listenersFactory);
+        super(logger, data, listenersFactory);
         this.spec = spec;
     }
 

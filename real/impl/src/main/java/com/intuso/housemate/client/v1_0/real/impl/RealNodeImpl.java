@@ -41,7 +41,6 @@ public class RealNodeImpl
                         RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
         super(ChildUtil.logger(LoggerFactory.getLogger(RealObject.REAL), Object.VERSION, Server.NODES_ID, propertyRepository.get(NODE_ID)),
-                true,
                 new com.intuso.housemate.client.v1_0.api.object.Node.Data(propertyRepository.get(NODE_ID),
                         propertyRepository.get(NODE_NAME),
                         propertyRepository.get(NODE_DESCRIPTION)),
