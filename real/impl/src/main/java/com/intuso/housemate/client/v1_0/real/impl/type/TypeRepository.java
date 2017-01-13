@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
-import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
+import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.real.impl.RealListGeneratedImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import org.slf4j.Logger;
@@ -30,13 +30,22 @@ public final class TypeRepository implements TypeSerialiser.Repository {
                           IntegerType integerType,
                           StringType stringType,
                           // regex types
-                          EmailType emailType) {
+                          EmailType emailType,
+                          // factory types
+                          ConditionDriverType conditionDriverType,
+                          FeatureDriverType featureDriverType,
+                          HardwareDriverType hardwareDriverType,
+                          TaskDriverType taskDriverType) {
         this.typesFactory = typesFactory;
         typeAvailable(booleanType);
         typeAvailable(doubleType);
         typeAvailable(integerType);
         typeAvailable(stringType);
         typeAvailable(emailType);
+        typeAvailable(conditionDriverType);
+        typeAvailable(featureDriverType);
+        typeAvailable(hardwareDriverType);
+        typeAvailable(taskDriverType);
     }
 
     public RealListGeneratedImpl<RealTypeImpl<?>> createList(Logger logger, String id, String name, String description) {
