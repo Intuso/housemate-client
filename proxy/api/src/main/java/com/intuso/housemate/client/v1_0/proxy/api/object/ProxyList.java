@@ -146,4 +146,9 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
             listener.elementAdded((LIST) this, element);
         return this.addObjectListener(listener);
     }
+
+    @Override
+    public ProxyObject<?, ?> getChild(String id) {
+        return get(id);
+    }
 }

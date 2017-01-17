@@ -1,9 +1,5 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
-import com.intuso.housemate.client.v1_0.api.Failable;
-import com.intuso.housemate.client.v1_0.api.Removeable;
-import com.intuso.housemate.client.v1_0.api.Renameable;
-import com.intuso.housemate.client.v1_0.api.UsesDriver;
 import com.intuso.housemate.client.v1_0.api.object.Task;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyFailable;
@@ -50,25 +46,25 @@ public abstract class ProxyTask<
                           ProxyObject.Factory<PROPERTY> propertyFactory,
                           ProxyObject.Factory<PROPERTIES> propertiesFactory) {
         super(logger, Task.Data.class, listenersFactory);
-        renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID));
-        removeCommand = commandFactory.create(ChildUtil.logger(logger, Removeable.REMOVE_ID));
-        errorValue = valueFactory.create(ChildUtil.logger(logger, Failable.ERROR_ID));
-        driverProperty = propertyFactory.create(ChildUtil.logger(logger, UsesDriver.DRIVER_ID));
-        driverLoadedValue = valueFactory.create(ChildUtil.logger(logger, UsesDriver.DRIVER_LOADED_ID));
-        properties = propertiesFactory.create(ChildUtil.logger(logger, Task.PROPERTIES_ID));
-        executingValue = valueFactory.create(ChildUtil.logger(logger, Task.EXECUTING_ID));
+        renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID));
+        removeCommand = commandFactory.create(ChildUtil.logger(logger, REMOVE_ID));
+        errorValue = valueFactory.create(ChildUtil.logger(logger, ERROR_ID));
+        driverProperty = propertyFactory.create(ChildUtil.logger(logger, DRIVER_ID));
+        driverLoadedValue = valueFactory.create(ChildUtil.logger(logger, DRIVER_LOADED_ID));
+        properties = propertiesFactory.create(ChildUtil.logger(logger, PROPERTIES_ID));
+        executingValue = valueFactory.create(ChildUtil.logger(logger, EXECUTING_ID));
     }
 
     @Override
     protected void initChildren(String name, Connection connection) throws JMSException {
         super.initChildren(name, connection);
-        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), connection);
-        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), connection);
-        errorValue.init(ChildUtil.name(name, Failable.ERROR_ID), connection);
-        driverProperty.init(ChildUtil.name(name, UsesDriver.DRIVER_ID), connection);
-        driverLoadedValue.init(ChildUtil.name(name, UsesDriver.DRIVER_LOADED_ID), connection);
-        properties.init(ChildUtil.name(name, Task.PROPERTIES_ID), connection);
-        executingValue.init(ChildUtil.name(name, Task.EXECUTING_ID), connection);
+        renameCommand.init(ChildUtil.name(name, RENAME_ID), connection);
+        removeCommand.init(ChildUtil.name(name, REMOVE_ID), connection);
+        errorValue.init(ChildUtil.name(name, ERROR_ID), connection);
+        driverProperty.init(ChildUtil.name(name, DRIVER_ID), connection);
+        driverLoadedValue.init(ChildUtil.name(name, DRIVER_LOADED_ID), connection);
+        properties.init(ChildUtil.name(name, PROPERTIES_ID), connection);
+        executingValue.init(ChildUtil.name(name, EXECUTING_ID), connection);
     }
 
     @Override
@@ -133,5 +129,24 @@ public abstract class ProxyTask<
     @Override
     public final VALUE getExecutingValue() {
         return executingValue;
+    }
+
+    @Override
+    public ProxyObject<?, ?> getChild(String id) {
+        if(RENAME_ID.equals(id))
+            return renameCommand;
+        else if(REMOVE_ID.equals(id))
+            return removeCommand;
+        else if(ERROR_ID.equals(id))
+            return errorValue;
+        else if(DRIVER_ID.equals(id))
+            return driverProperty;
+        else if(DRIVER_LOADED_ID.equals(id))
+            return driverLoadedValue;
+        else if(PROPERTIES_ID.equals(id))
+            return properties;
+        else if(EXECUTING_ID.equals(id))
+            return executingValue;
+        return null;
     }
 }

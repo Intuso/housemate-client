@@ -1,7 +1,5 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
-import com.intuso.housemate.client.v1_0.api.Removeable;
-import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.object.User;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRemoveable;
@@ -35,17 +33,17 @@ public abstract class ProxyUser<
                      ProxyObject.Factory<COMMAND> commandFactory,
                      ProxyObject.Factory<PROPERTY> propertyFactory) {
         super(logger, User.Data.class, listenersFactory);
-        renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID));
-        removeCommand = commandFactory.create(ChildUtil.logger(logger, Removeable.REMOVE_ID));
-        emailProperty = propertyFactory.create(ChildUtil.logger(logger, User.EMAIL_ID));
+        renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID));
+        removeCommand = commandFactory.create(ChildUtil.logger(logger, REMOVE_ID));
+        emailProperty = propertyFactory.create(ChildUtil.logger(logger, EMAIL_ID));
     }
 
     @Override
     protected void initChildren(String name, Connection connection) throws JMSException {
         super.initChildren(name, connection);
-        renameCommand.init(ChildUtil.name(name, Renameable.RENAME_ID), connection);
-        removeCommand.init(ChildUtil.name(name, Removeable.REMOVE_ID), connection);
-        emailProperty.init(ChildUtil.name(name, User.EMAIL_ID), connection);
+        renameCommand.init(ChildUtil.name(name, RENAME_ID), connection);
+        removeCommand.init(ChildUtil.name(name, REMOVE_ID), connection);
+        emailProperty.init(ChildUtil.name(name, EMAIL_ID), connection);
     }
 
     @Override
@@ -69,5 +67,16 @@ public abstract class ProxyUser<
     @Override
     public PROPERTY getEmailProperty() {
         return emailProperty;
+    }
+
+    @Override
+    public ProxyObject<?, ?> getChild(String id) {
+        if(RENAME_ID.equals(id))
+            return renameCommand;
+        else if(REMOVE_ID.equals(id))
+            return removeCommand;
+        else if(EMAIL_ID.equals(id))
+            return emailProperty;
+        return null;
     }
 }
