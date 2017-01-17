@@ -1,8 +1,9 @@
-package com.intuso.housemate.client.v1_0.api.type.serialiser;
+package com.intuso.housemate.client.v1_0.proxy.api.object.type.serialiser;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
+import com.intuso.housemate.client.v1_0.api.type.serialiser.*;
 
 import java.util.Map;
 

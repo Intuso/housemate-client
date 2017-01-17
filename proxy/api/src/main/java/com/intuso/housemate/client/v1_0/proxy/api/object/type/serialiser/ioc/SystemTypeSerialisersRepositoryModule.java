@@ -1,9 +1,9 @@
-package com.intuso.housemate.client.v1_0.api.type.serialiser.ioc;
+package com.intuso.housemate.client.v1_0.proxy.api.object.type.serialiser.ioc;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.intuso.housemate.client.v1_0.api.type.serialiser.SystemTypeSerialisersRepository;
 import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
+import com.intuso.housemate.client.v1_0.proxy.api.object.type.serialiser.SystemTypeSerialisersRepository;
 
 /**
  * Created by tomc on 12/01/17.
