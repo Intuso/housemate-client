@@ -1,9 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.impl.type.ioc;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Key;
 import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.Multibinder;
 import com.intuso.housemate.client.v1_0.api.plugin.PluginListener;
@@ -29,9 +27,6 @@ public class RealTypesModule extends AbstractModule {
         bind(TaskDriverType.class).in(Scopes.SINGLETON);
         bind(TypeRepository.class).in(Scopes.SINGLETON);
         bind(TypeSerialiser.Repository.class).to(TypeRepository.class);
-
-        // bind implementations
-        bind(new TypeLiteral<TypeSerialiser<RealObjectType.Reference<?>>>() {}).to(new Key<RealObjectType.Serialiser<?>>() {}).in(Scopes.SINGLETON);
 
         // bind driver plugin listener
         bind(TypesV1_0PluginsListener.class).in(Scopes.SINGLETON);

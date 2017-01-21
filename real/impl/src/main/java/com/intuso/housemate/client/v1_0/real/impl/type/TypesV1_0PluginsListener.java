@@ -71,13 +71,15 @@ public class TypesV1_0PluginsListener implements PluginListener {
     private void addTypes(Plugin plugin) {
         for(RegexType regexType : plugin.getRegexTypes()) {
             logger.debug("Adding regex type " + getClass().getName());
-            types.typeAvailable(regexTypeFactory.create(
-                    ChildUtil.logger(typeLogger, new TypeSpec(String.class, regexType.id().value()).toString()),
-                    regexType.id().value(),
-                    regexType.id().name(),
-                    regexType.id().description(),
-                    regexType.regex()
-            ));
+            types.typeAvailable(
+                    new TypeSpec(String.class, regexType.id().value()),
+                    regexTypeFactory.create(
+                            ChildUtil.logger(typeLogger, "string:" + regexType.id().value()),
+                            "string:" + regexType.id().value(),
+                            regexType.id().name(),
+                            regexType.id().description(),
+                            regexType.regex()
+                    ));
         }
     }
 
@@ -153,7 +155,7 @@ public class TypesV1_0PluginsListener implements PluginListener {
             Id id = getClassAnnotation(taskDriverClass, Id.class);
             if(id == null)
                 logger.error("No " + Id.class + " annotation found on " + taskDriverClass.getName());
-            else 
+            else
                 taskDriverType.addFactory(id.value(), id.name(), id.description(), asFactory(TaskDriver.class, TaskDriver.Factory.class, taskDriverClass));
         }
     }

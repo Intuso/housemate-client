@@ -1,7 +1,6 @@
 package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.api.type.serialiser.BooleanSerialiser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Type;
@@ -17,7 +16,6 @@ public class BooleanType extends RealPrimitiveType<Boolean> {
     public BooleanType(@Type Logger logger, ListenersFactory listenersFactory) {
         super(ChildUtil.logger(logger, Boolean.class.getName()),
                 new PrimitiveData(Boolean.class.getName(), "Boolean", "True or false"),
-                new TypeSpec(Boolean.class),
                 BooleanSerialiser.INSTANCE,
                 listenersFactory);
     }

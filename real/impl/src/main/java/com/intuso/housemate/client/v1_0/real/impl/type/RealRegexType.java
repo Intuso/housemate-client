@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.utilities.listener.ListenersFactory;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ public class RealRegexType extends RealTypeImpl<String> {
 
     /**
      * @param logger the log
-     * @param extension the type's extension
+     * @param id the type's id
      * @param name the type's name
      * @param description the type's description
      * @param listenersFactory
@@ -22,14 +21,13 @@ public class RealRegexType extends RealTypeImpl<String> {
      */
     @Inject
     protected RealRegexType(@Assisted Logger logger,
-                            @Assisted("extension") String extension,
+                            @Assisted("id") String id,
                             @Assisted("name") String name,
                             @Assisted("description") String description,
                             @Assisted("regexPattern") String regexPattern,
                             ListenersFactory listenersFactory) {
         super(logger,
-                new RegexData(String.class.getName() + "." + extension, name, description, regexPattern),
-                new TypeSpec(String.class, extension),
+                new RegexData(id, name, description, regexPattern),
                 listenersFactory);
     }
 
@@ -45,7 +43,7 @@ public class RealRegexType extends RealTypeImpl<String> {
 
     public interface Factory {
         RealRegexType create(Logger logger,
-                             @Assisted("extension") String extension,
+                             @Assisted("id") String id,
                              @Assisted("name") String name,
                              @Assisted("description") String description,
                              @Assisted("regexPattern") String regexPattern);

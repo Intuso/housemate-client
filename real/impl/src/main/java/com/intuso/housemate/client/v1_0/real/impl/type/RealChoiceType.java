@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Option;
-import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealListGeneratedImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
@@ -32,15 +31,14 @@ public abstract class RealChoiceType<O>
      * @param listenersFactory
      * @param options the type's options
      */
-    protected RealChoiceType(Logger logger,
-                             String id,
-                             String name,
-                             String description,
-                             TypeSpec typeSpec,
+    protected RealChoiceType(@Assisted Logger logger,
+                             @Assisted("id") String id,
+                             @Assisted("name") String name,
+                             @Assisted("description") String description,
+                             @Assisted Iterable<RealOptionImpl> options,
                              ListenersFactory listenersFactory,
-                             RealListGeneratedImpl.Factory<RealOptionImpl> optionsFactory,
-                             Iterable<RealOptionImpl> options) {
-        super(logger, new ChoiceData(id, name, description), typeSpec, listenersFactory);
+                             RealListGeneratedImpl.Factory<RealOptionImpl> optionsFactory) {
+        super(logger, new ChoiceData(id, name, description), listenersFactory);
         this.options = optionsFactory.create(logger,
                 OPTIONS,
                 OPTIONS,
@@ -71,7 +69,6 @@ public abstract class RealChoiceType<O>
                                      @Assisted("id") String id,
                                      @Assisted("name") String name,
                                      @Assisted("description") String description,
-                                     TypeSpec typeSpec,
                                      Iterable<RealOptionImpl> options);
     }
 }

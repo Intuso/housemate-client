@@ -1,12 +1,12 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
-import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.listener.ListenersFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
@@ -36,7 +36,7 @@ public class RealNodeImpl
     public RealNodeImpl(Connection connection,
                         PropertyRepository propertyRepository,
                         ListenersFactory listenersFactory,
-                        TypeRepository typeRepository,
+                        RealListGeneratedImpl.Factory<RealTypeImpl<?>> typesFactory,
                         final RealHardwareImpl.Factory hardwareFactory,
                         RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
@@ -47,10 +47,11 @@ public class RealNodeImpl
                 listenersFactory);
         this.id = propertyRepository.get(NODE_ID);
         this.connection = connection;
-        this.types = typeRepository.createList(ChildUtil.logger(logger, TYPES_ID),
+        this.types = typesFactory.create(ChildUtil.logger(logger, TYPES_ID),
                 TYPES_ID,
                 "Types",
-                "Types");
+                "Types",
+                Lists.<RealTypeImpl<?>>newArrayList());
         this.hardwares = hardwaresFactory.create(ChildUtil.logger(logger, HARDWARES_ID),
                 HARDWARES_ID,
                 "Hardware",
