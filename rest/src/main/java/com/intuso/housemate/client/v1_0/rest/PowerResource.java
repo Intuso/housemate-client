@@ -13,7 +13,7 @@ public interface PowerResource {
 
     @GET
     @Produces("application/json")
-    Page<Device.Data> list(@QueryParam("offset") int offset, @QueryParam("limit") int limit);
+    Page<Device.Data> list(@QueryParam("offset") @DefaultValue("0") int offset, @QueryParam("limit") @DefaultValue("20") int limit);
 
     @GET
     @Path("/{id}")
