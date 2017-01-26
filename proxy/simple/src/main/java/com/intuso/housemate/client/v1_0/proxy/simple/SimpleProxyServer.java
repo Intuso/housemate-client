@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.simple;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.proxy.api.object.ProxyServer;
 import com.intuso.housemate.client.v1_0.proxy.simple.ioc.Server;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;
@@ -26,12 +26,12 @@ public final class SimpleProxyServer extends ProxyServer<
     @Inject
     public SimpleProxyServer(@Server Logger logger,
                              Connection connection,
-                             ListenersFactory listenersFactory,
+                             ManagedCollectionFactory managedCollectionFactory,
                              Factory<SimpleProxyCommand> commandFactory,
                              Factory<SimpleProxyList<SimpleProxyAutomation>> automationsFactory,
                              Factory<SimpleProxyList<SimpleProxyDevice>> devicesFactory,
                              Factory<SimpleProxyList<SimpleProxyUser>> usersFactory,
                              Factory<SimpleProxyList<SimpleProxyNode>> nodesFactory) {
-        super(connection, logger, listenersFactory, commandFactory, automationsFactory, devicesFactory, usersFactory, nodesFactory);
+        super(connection, logger, managedCollectionFactory, commandFactory, automationsFactory, devicesFactory, usersFactory, nodesFactory);
     }
 }

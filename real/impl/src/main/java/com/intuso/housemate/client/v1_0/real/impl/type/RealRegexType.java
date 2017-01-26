@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 /**
@@ -16,7 +16,7 @@ public class RealRegexType extends RealTypeImpl<String> {
      * @param id the type's id
      * @param name the type's name
      * @param description the type's description
-     * @param listenersFactory
+     * @param managedCollectionFactory
      * @param regexPattern the regex pattern that values must match
      */
     @Inject
@@ -25,10 +25,10 @@ public class RealRegexType extends RealTypeImpl<String> {
                             @Assisted("name") String name,
                             @Assisted("description") String description,
                             @Assisted("regexPattern") String regexPattern,
-                            ListenersFactory listenersFactory) {
+                            ManagedCollectionFactory managedCollectionFactory) {
         super(logger,
                 new RegexData(id, name, description, regexPattern),
-                listenersFactory);
+                managedCollectionFactory);
     }
 
     @Override

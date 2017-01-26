@@ -8,7 +8,7 @@ import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public class RealNodeImpl
     @Inject
     public RealNodeImpl(Connection connection,
                         PropertyRepository propertyRepository,
-                        ListenersFactory listenersFactory,
+                        ManagedCollectionFactory managedCollectionFactory,
                         RealListGeneratedImpl.Factory<RealTypeImpl<?>> typesFactory,
                         final RealHardwareImpl.Factory hardwareFactory,
                         RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
@@ -44,7 +44,7 @@ public class RealNodeImpl
                 new com.intuso.housemate.client.v1_0.api.object.Node.Data(propertyRepository.get(NODE_ID),
                         propertyRepository.get(NODE_NAME),
                         propertyRepository.get(NODE_DESCRIPTION)),
-                listenersFactory);
+                managedCollectionFactory);
         this.id = propertyRepository.get(NODE_ID);
         this.connection = connection;
         this.types = typesFactory.create(ChildUtil.logger(logger, TYPES_ID),

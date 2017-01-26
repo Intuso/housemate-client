@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.type.serialiser.IntegerSerialiser;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.ioc.Type;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 /**
@@ -13,10 +13,10 @@ import org.slf4j.Logger;
 public class IntegerType extends RealPrimitiveType<Integer> {
 
     @Inject
-    public IntegerType(@Type Logger logger, ListenersFactory listenersFactory) {
+    public IntegerType(@Type Logger logger, ManagedCollectionFactory managedCollectionFactory) {
         super(ChildUtil.logger(logger, Integer.class.getName()),
                 new PrimitiveData(Integer.class.getName(), "Integer", "A whole number"),
                 IntegerSerialiser.INSTANCE,
-                listenersFactory);
+                managedCollectionFactory);
     }
 }

@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.util.Types;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.driver.*;
+import com.intuso.housemate.client.v1_0.api.type.ObjectReference;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.proxy.simple.SimpleProxyHardware;
@@ -49,7 +50,7 @@ public final class TypeRepository implements TypeSerialiser.Repository {
         typeAvailable(new TypeSpec(int.class), integerType);
         typeAvailable(new TypeSpec(String.class), stringType);
         typeAvailable(new TypeSpec(String.class, "email"), emailType);
-        typeAvailable(new TypeSpec(SimpleProxyHardware.class), hardwareType);
+        typeAvailable(new TypeSpec(Types.newParameterizedType(ObjectReference.class, SimpleProxyHardware.class)), hardwareType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, ConditionDriver.class)), conditionDriverType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, FeatureDriver.class)), featureDriverType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, HardwareDriver.class)), hardwareDriverType);

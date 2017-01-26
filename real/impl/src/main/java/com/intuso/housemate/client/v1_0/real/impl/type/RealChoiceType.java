@@ -6,7 +6,7 @@ import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
 import com.intuso.housemate.client.v1_0.real.impl.RealListGeneratedImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;
@@ -28,7 +28,7 @@ public abstract class RealChoiceType<O>
      * @param id the type's id
      * @param name the type's name
      * @param description the type's description
-     * @param listenersFactory
+     * @param managedCollectionFactory
      * @param options the type's options
      */
     protected RealChoiceType(@Assisted Logger logger,
@@ -36,9 +36,9 @@ public abstract class RealChoiceType<O>
                              @Assisted("name") String name,
                              @Assisted("description") String description,
                              @Assisted Iterable<RealOptionImpl> options,
-                             ListenersFactory listenersFactory,
+                             ManagedCollectionFactory managedCollectionFactory,
                              RealListGeneratedImpl.Factory<RealOptionImpl> optionsFactory) {
-        super(logger, new ChoiceData(id, name, description), listenersFactory);
+        super(logger, new ChoiceData(id, name, description), managedCollectionFactory);
         this.options = optionsFactory.create(logger,
                 OPTIONS,
                 OPTIONS,

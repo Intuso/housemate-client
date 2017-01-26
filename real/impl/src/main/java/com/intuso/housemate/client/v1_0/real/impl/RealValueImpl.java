@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Value;
 import com.intuso.housemate.client.v1_0.real.api.RealValue;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 /**
@@ -16,7 +16,7 @@ public final class RealValueImpl<O>
 
     /**
      * @param logger {@inheritDoc}
-     * @param listenersFactory
+     * @param managedCollectionFactory
      * @param type the type of the value's value
      */
     @Inject
@@ -28,8 +28,8 @@ public final class RealValueImpl<O>
                          @Assisted("min") int minValues,
                          @Assisted("max") int maxValues,
                          @Assisted Iterable values,
-                         ListenersFactory listenersFactory) {
-        super(logger, new Value.Data(id, name, description, type.getId(), minValues, maxValues), listenersFactory, type, values);
+                         ManagedCollectionFactory managedCollectionFactory) {
+        super(logger, new Value.Data(id, name, description, type.getId(), minValues, maxValues), managedCollectionFactory, type, values);
     }
 
     public interface Factory {

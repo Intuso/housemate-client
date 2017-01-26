@@ -2,7 +2,7 @@ package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.Value;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 /**
@@ -18,8 +18,8 @@ public abstract class ProxyValue<
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxyValue(Logger logger, ListenersFactory listenersFactory) {
-        super(logger, Value.Data.class, listenersFactory);
+    public ProxyValue(Logger logger, ManagedCollectionFactory managedCollectionFactory) {
+        super(logger, Value.Data.class, managedCollectionFactory);
     }
 
     @Override

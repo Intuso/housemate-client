@@ -4,7 +4,7 @@ import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;
@@ -32,8 +32,8 @@ public abstract class ProxyValueBase<
      */
     public ProxyValueBase(Logger logger,
                           Class<DATA> dataClass,
-                          ListenersFactory listenersFactory) {
-        super(logger, dataClass, listenersFactory);
+                          ManagedCollectionFactory managedCollectionFactory) {
+        super(logger, dataClass, managedCollectionFactory);
     }
 
     @Override

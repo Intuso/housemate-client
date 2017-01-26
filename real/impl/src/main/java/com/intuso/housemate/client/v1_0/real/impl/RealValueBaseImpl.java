@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.real.api.RealValueBase;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;
@@ -31,12 +31,12 @@ public abstract class RealValueBaseImpl<O,
 
     /**
      * @param logger {@inheritDoc}
-     * @param listenersFactory
+     * @param managedCollectionFactory
      * @param data {@inheritDoc}
      * @param type the type of the value's value
      */
-    public RealValueBaseImpl(Logger logger, DATA data, ListenersFactory listenersFactory, RealTypeImpl<O> type, Iterable<O> values) {
-        super(logger, data, listenersFactory);
+    public RealValueBaseImpl(Logger logger, DATA data, ManagedCollectionFactory managedCollectionFactory, RealTypeImpl<O> type, Iterable<O> values) {
+        super(logger, data, managedCollectionFactory);
         this.type = type;
         this.values = values;
     }
@@ -91,10 +91,12 @@ public abstract class RealValueBaseImpl<O,
         for(LISTENER listener : listeners)
             listener.valueChanging((VALUE)this);
         this.values = values;
-        try {
-            valueSender.send(RealTypeImpl.serialiseAll(type, values), true);
-        } catch(JMSException e) {
-            logger.error("Failed to send value update", e);
+        if(valueSender != null) {
+            try {
+                valueSender.send(RealTypeImpl.serialiseAll(type, values), true);
+            } catch (JMSException e) {
+                logger.error("Failed to send value update", e);
+            }
         }
         for(LISTENER listener : listeners)
             listener.valueChanged((VALUE)this);

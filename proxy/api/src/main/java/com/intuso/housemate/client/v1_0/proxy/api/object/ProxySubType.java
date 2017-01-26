@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.object.SubType;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 /**
@@ -15,8 +15,8 @@ public abstract class ProxySubType<TYPE extends ProxyType<?>,
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxySubType(Logger logger, ListenersFactory listenersFactory) {
-        super(logger, SubType.Data.class, listenersFactory);
+    public ProxySubType(Logger logger, ManagedCollectionFactory managedCollectionFactory) {
+        super(logger, SubType.Data.class, managedCollectionFactory);
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRenameable;
-import com.intuso.utilities.listener.ListenersFactory;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;
@@ -47,13 +47,13 @@ public abstract class ProxyServer<
     @Inject
     public ProxyServer(Connection connection,
                        Logger logger,
-                       ListenersFactory listenersFactory,
+                       ManagedCollectionFactory managedCollectionFactory,
                        Factory<COMMAND> commandFactory,
                        Factory<AUTOMATIONS> automationsFactory,
                        Factory<DEVICES> devicesFactory,
                        Factory<USERS> usersFactory,
                        Factory<NODES> nodesFactory) {
-        super(logger, Server.Data.class, listenersFactory);
+        super(logger, Server.Data.class, managedCollectionFactory);
         this.connection = connection;
         renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID));
         automations = automationsFactory.create(ChildUtil.logger(logger, AUTOMATIONS_ID));
@@ -162,14 +162,21 @@ public abstract class ProxyServer<
     }
 
     public <T extends ProxyObject<?, ?>> T find(String[] path) {
+        return find(path, true);
+    }
+
+    public <T extends ProxyObject<?, ?>> T find(String[] path, boolean fail) {
         ProxyObject current = this;
         for(int i = 0; i < path.length; i++) {
             current = current.getChild(path[i]);
             if(current == null) {
-                if(i == 0)
-                    throw new HousemateException("Could not find " + path[i] + " for server");
-                else
-                    throw new HousemateException("Could not find " + path[i] + " at " + Joiner.on(".").join(Arrays.copyOfRange(path, 0, i)));
+                if(fail) {
+                    if (i == 0)
+                        throw new HousemateException("Could not find " + path[i] + " for server");
+                    else
+                        throw new HousemateException("Could not find " + path[i] + " at " + Joiner.on(".").join(Arrays.copyOfRange(path, 0, i)));
+                } else
+                    return null;
             }
         }
         return (T) current;
