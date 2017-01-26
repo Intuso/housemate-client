@@ -1,6 +1,6 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
-import com.intuso.utilities.listener.MemberRegistration;
+import com.intuso.utilities.listener.ManagedCollection;
 
 import java.io.Serializable;
 
@@ -41,7 +41,7 @@ public interface Object<LISTENER extends Object.Listener> {
      * @param listener the listener to add
      * @return the listener registration
      */
-    MemberRegistration addObjectListener(LISTENER listener);
+    ManagedCollection.Registration addObjectListener(LISTENER listener);
 
     /**
      *

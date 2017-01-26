@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.api.feature;
 
 import com.intuso.housemate.client.v1_0.api.annotation.*;
-import com.intuso.utilities.listener.MemberRegistration;
+import com.intuso.utilities.listener.ManagedCollection;
 
 /**
  * API for running something
@@ -47,7 +47,7 @@ public interface RunControl {
          * Add a listener
          */
         @AddListener
-        MemberRegistration addListener(Listener listener);
+        ManagedCollection.Registration addListener(Listener listener);
     }
 
     interface Listener {

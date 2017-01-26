@@ -1,6 +1,8 @@
 package com.intuso.housemate.client.v1_0.api.type;
 
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.utilities.listener.ManagedCollection;
+import com.intuso.utilities.listener.ManagedCollectionFactory;
 
 /**
  * Reference for an object containing the object's path, and the object if it exists
@@ -8,21 +10,24 @@ import com.intuso.housemate.client.v1_0.api.object.Object;
  */
 public class ObjectReference<O extends Object<?>> {
 
+    private final ManagedCollection<Listener<O>> listeners;
+
     private final String[] path;
     private O object;
 
     /**
      * @param path the path to the object
      */
-    public ObjectReference(String[] path) {
-        this(path, null);
+    public ObjectReference(ManagedCollectionFactory managedCollectionFactory, String[] path) {
+        this(managedCollectionFactory, path, null);
     }
 
     /**
      * @param path the object's path
      * @param object the object
      */
-    public ObjectReference(String[] path, O object) {
+    public ObjectReference(ManagedCollectionFactory listenersFactory, String[] path, O object) {
+        this.listeners = listenersFactory.create();
         this.path = path;
         this.object = object;
     }
@@ -47,8 +52,22 @@ public class ObjectReference<O extends Object<?>> {
      * Sets the object
      * @param object the object
      */
-    public void setObject(O object) {
-        // todo check the object's path matches the path inside this reference
+    protected void setObject(O object) {
         this.object = object;
+        if(object != null)
+            for(Listener<O> listener : listeners)
+                listener.available(object);
+        else
+            for(Listener<O> listener : listeners)
+                listener.unavailable();
+    }
+
+    public ManagedCollection.Registration addListener(Listener<O> listener) {
+        return listeners.add(listener);
+    }
+
+    public interface Listener<O extends Object<?>> {
+        void available(O object);
+        void unavailable();
     }
 }

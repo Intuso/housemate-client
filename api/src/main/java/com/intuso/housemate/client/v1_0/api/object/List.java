@@ -1,6 +1,6 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
-import com.intuso.utilities.listener.MemberRegistration;
+import com.intuso.utilities.listener.ManagedCollection;
 
 /**
  * @param <ELEMENT> the type of the list's elements
@@ -37,7 +37,7 @@ public interface List<ELEMENT,
      * @param callForExistingElements whether the listener should be called for elements already in the list
      * @return the listener registration
      */
-    MemberRegistration addObjectListener(Listener<? super ELEMENT, ? super LIST> listener, boolean callForExistingElements);
+    ManagedCollection.Registration addObjectListener(Listener<? super ELEMENT, ? super LIST> listener, boolean callForExistingElements);
 
     /**
      *
