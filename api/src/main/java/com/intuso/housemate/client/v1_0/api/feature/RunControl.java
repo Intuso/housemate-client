@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.api.feature;
 
 import com.intuso.housemate.client.v1_0.api.annotation.*;
-import com.intuso.utilities.listener.ManagedCollection;
+import com.intuso.utilities.collection.ManagedCollection;
 
 /**
  * API for running something

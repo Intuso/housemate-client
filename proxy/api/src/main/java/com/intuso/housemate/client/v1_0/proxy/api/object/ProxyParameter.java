@@ -1,7 +1,7 @@
 package com.intuso.housemate.client.v1_0.proxy.api.object;
 
 import com.intuso.housemate.client.v1_0.api.object.Parameter;
-import com.intuso.utilities.listener.ManagedCollectionFactory;
+import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 /**

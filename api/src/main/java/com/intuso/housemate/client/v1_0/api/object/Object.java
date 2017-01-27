@@ -1,6 +1,6 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
-import com.intuso.utilities.listener.ManagedCollection;
+import com.intuso.utilities.collection.ManagedCollection;
 
 import java.io.Serializable;
 

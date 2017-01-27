@@ -5,7 +5,7 @@ import com.intuso.housemate.client.v1_0.proxy.api.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyFailable;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyRemoveable;
 import com.intuso.housemate.client.v1_0.proxy.api.ProxyUsesDriver;
-import com.intuso.utilities.listener.ManagedCollectionFactory;
+import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 import javax.jms.Connection;

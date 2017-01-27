@@ -4,7 +4,7 @@ import com.intuso.housemate.client.v1_0.api.annotation.AddListener;
 import com.intuso.housemate.client.v1_0.api.annotation.Feature;
 import com.intuso.housemate.client.v1_0.api.annotation.Id;
 import com.intuso.housemate.client.v1_0.api.annotation.Value;
-import com.intuso.utilities.listener.ManagedCollection;
+import com.intuso.utilities.collection.ManagedCollection;
 
 /**
  * API for temperature monitoring
