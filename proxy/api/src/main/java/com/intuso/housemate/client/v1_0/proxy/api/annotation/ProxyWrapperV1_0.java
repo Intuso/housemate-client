@@ -37,7 +37,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
 
     @Override
     public <T> T build(Logger logger, ProxyObject<?, ?> object, Class<T> clazz, String prefix) {
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] {clazz}, new InvocationHandlerImpl(object, clazz));
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] {clazz}, new InvocationHandlerImpl(object, clazz, prefix));
     }
 
     private Object defaultValueFor(Class<?> clazz) {
@@ -62,11 +62,13 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
 
         private final ProxyObject<?, ?> object;
         private final Class<?> clazz;
+        private final String prefix;
         private final Map<Method, MethodInvocationHandler> handlers = Maps.newHashMap();
 
-        private InvocationHandlerImpl(ProxyObject<?, ?> object, Class<?> clazz) {
+        private InvocationHandlerImpl(ProxyObject<?, ?> object, Class<?> clazz, String prefix) {
             this.object = object;
             this.clazz = clazz;
+            this.prefix = prefix != null ? prefix : "";
         }
 
         @Override
@@ -114,7 +116,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
             }
             return new CommandInvoker(
                     ((ProxyCommand.Container<? extends ProxyList<? extends ProxyCommand<?, ?, ?>, ?>>) object).getCommands(),
-                    id.value(),
+                    prefix + id.value(),
                     parameterSerialisers);
         }
 
@@ -128,7 +130,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
             TypeSerialiser typeSerialiser = typeSerialiserRepository.getSerialiser(new TypeSpec(method.getParameterTypes()[0], property.restriction()));
             return new PropertySetter(
                     ((ProxyProperty.Container<? extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>>) object).getProperties(),
-                    id.value(),
+                    prefix + id.value(),
                     new PropertyValueSerialiser(property.minValues(), property.maxValues(), typeSerialiser));
         }
 
@@ -142,7 +144,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
             TypeSerialiser typeSerialiser = typeSerialiserRepository.getSerialiser(new TypeSpec(method.getGenericReturnType(), value.restriction()));
             return new ValueGetter(
                     ((ProxyValue.Container<? extends ProxyList<? extends ProxyValue<?, ?>, ?>>) object).getValues(),
-                    id.value(),
+                    prefix + id.value(),
                     new ValueDeserialiser(List.class.isAssignableFrom(method.getReturnType()), typeSerialiser, defaultValueFor(method.getReturnType())));
         }
 
@@ -173,7 +175,7 @@ public class ProxyWrapperV1_0 implements ProxyWrapper {
                     if(id == null)
                         throw new HousemateException(clazz.getName() + " value method " + method.toString() + " has no " + Id.class.getName() + " annotation");
                     TypeSerialiser typeSerialiser = typeSerialiserRepository.getSerialiser(new TypeSpec(method.getParameterTypes()[0], value.restriction()));
-                    addValueListener(listeners, method, values, id.value(), new ValueDeserialiser(List.class.isAssignableFrom(method.getParameterTypes()[0]), typeSerialiser, defaultValueFor(method.getParameterTypes()[0])));
+                    addValueListener(listeners, method, values, prefix + id.value(), new ValueDeserialiser(List.class.isAssignableFrom(method.getParameterTypes()[0]), typeSerialiser, defaultValueFor(method.getParameterTypes()[0])));
                 }
             }
             if(clazz.getSuperclass() != null)
