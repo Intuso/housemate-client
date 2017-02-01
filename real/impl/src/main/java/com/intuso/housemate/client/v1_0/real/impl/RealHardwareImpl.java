@@ -10,6 +10,7 @@ import com.intuso.housemate.client.v1_0.api.Runnable;
 import com.intuso.housemate.client.v1_0.api.driver.HardwareDriver;
 import com.intuso.housemate.client.v1_0.api.driver.PluginDependency;
 import com.intuso.housemate.client.v1_0.api.object.Hardware;
+import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
@@ -32,11 +33,12 @@ public final class RealHardwareImpl
         implements RealHardware<RealCommandImpl, RealValueImpl<Boolean>, RealValueImpl<String>,
         RealPropertyImpl<PluginDependency<HardwareDriver.Factory<?>>>, RealListGeneratedImpl<RealCommandImpl>,
         RealListGeneratedImpl<RealValueImpl<?>>, RealListGeneratedImpl<RealPropertyImpl<?>>,
-        RealHardwareImpl> {
+        RealListPersistedImpl<RealConnectedDeviceImpl>, RealHardwareImpl> {
 
     private final static String COMMANDS_DESCRIPTION = "The hardware's commands";
     private final static String VALUES_DESCRIPTION = "The hardware's values";
     private final static String PROPERTIES_DESCRIPTION = "The hardware's properties";
+    private final static String DEVICES_DESCRIPTION = "The hardware's connected devices";
 
     private final AnnotationParser annotationParser;
 
@@ -51,12 +53,13 @@ public final class RealHardwareImpl
     private final RealListGeneratedImpl<RealCommandImpl> commands;
     private final RealListGeneratedImpl<RealValueImpl<?>> values;
     private final RealListGeneratedImpl<RealPropertyImpl<?>> properties;
+    private final RealListPersistedImpl<RealConnectedDeviceImpl> devices;
 
     private final RemoveCallback<RealHardwareImpl> removeCallback;
 
-    private final Map<Object, Iterable<RealCommandImpl>> objectCommands = Maps.newHashMap();
-    private final Map<Object, Iterable<RealValueImpl<?>>> objectValues = Maps.newHashMap();
-    private final Map<Object, Iterable<RealPropertyImpl<?>>> objectProperties = Maps.newHashMap();
+    private final Map<java.lang.Object, Iterable<RealCommandImpl>> objectCommands = Maps.newHashMap();
+    private final Map<java.lang.Object, Iterable<RealValueImpl<?>>> objectValues = Maps.newHashMap();
+    private final Map<java.lang.Object, Iterable<RealPropertyImpl<?>>> objectProperties = Maps.newHashMap();
 
     private ManagedCollection.Registration driverAvailableListenerRegsitration;
     private HardwareDriver driver;
@@ -80,7 +83,8 @@ public final class RealHardwareImpl
                             TypeRepository typeRepository,
                             RealListGeneratedImpl.Factory<RealCommandImpl> commandsFactory,
                             RealListGeneratedImpl.Factory<RealValueImpl<?>> valuesFactory,
-                            RealListGeneratedImpl.Factory<RealPropertyImpl<?>> propertiesFactory) {
+                            RealListGeneratedImpl.Factory<RealPropertyImpl<?>> propertiesFactory,
+                            RealListPersistedImpl.Factory<RealConnectedDeviceImpl> devicesFactory) {
         super(logger, new Hardware.Data(id, name, description), managedCollectionFactory);
         this.annotationParser = annotationParser;
         this.removeCallback = removeCallback;
@@ -193,6 +197,17 @@ public final class RealHardwareImpl
                 Hardware.PROPERTIES_ID,
                 PROPERTIES_DESCRIPTION,
                 Lists.<RealPropertyImpl<?>>newArrayList());
+        this.devices = devicesFactory.create(ChildUtil.logger(logger, Hardware.DEVICES_ID),
+                Hardware.DEVICES_ID,
+                Hardware.DEVICES_ID,
+                DEVICES_DESCRIPTION,
+                new RealListPersistedImpl.ExistingObjectFactory<RealConnectedDeviceImpl>() {
+                    @Override
+                    public RealConnectedDeviceImpl create(Logger parentLogger, Object.Data data) {
+                        // todo
+                        return null;
+                    }
+                });
         driverProperty.addObjectListener(new Property.Listener<RealPropertyImpl<PluginDependency<HardwareDriver.Factory<?>>>>() {
             @Override
             public void valueChanging(RealPropertyImpl<PluginDependency<HardwareDriver.Factory<?>>> factoryRealProperty) {
@@ -278,6 +293,7 @@ public final class RealHardwareImpl
         commands.init(ChildUtil.name(name, Hardware.COMMANDS_ID), connection);
         values.init(ChildUtil.name(name, Hardware.VALUES_ID), connection);
         properties.init(ChildUtil.name(name, Hardware.PROPERTIES_ID), connection);
+        devices.init(ChildUtil.name(name, Hardware.DEVICES_ID), connection);
         if(isRunning())
             _start();
     }
@@ -297,6 +313,7 @@ public final class RealHardwareImpl
         commands.uninit();
         values.uninit();
         properties.uninit();
+        devices.uninit();
     }
 
     private void setName(String newName) {
@@ -378,6 +395,11 @@ public final class RealHardwareImpl
         return properties;
     }
 
+    @Override
+    public final RealListPersistedImpl<RealConnectedDeviceImpl> getConnectedDevices() {
+        return devices;
+    }
+
     protected final void _start() {
         try {
             if(isDriverLoaded())
@@ -398,7 +420,7 @@ public final class RealHardwareImpl
     }
 
     @Override
-    public void addObject(Object object, String prefix) {
+    public void addObject(java.lang.Object object, String prefix) {
         if(objectCommands.containsKey(object) || objectValues.containsKey(object) || objectProperties.containsKey(object))
             throw new HousemateException("Object is already added");
         objectCommands.put(object, annotationParser.findCommands(ChildUtil.logger(logger, COMMANDS_ID), prefix, object));
@@ -413,7 +435,7 @@ public final class RealHardwareImpl
     }
 
     @Override
-    public void removeObject(Object object) {
+    public void removeObject(java.lang.Object object) {
         if(objectCommands.containsKey(object))
             for(RealCommandImpl command : objectCommands.remove(object))
                 commands.add(command);

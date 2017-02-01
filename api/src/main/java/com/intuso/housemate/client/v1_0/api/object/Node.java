@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 public interface Node<
         COMMAND extends Command<?, ?, ?, ?>,
         TYPES extends List<? extends Type<?>, ?>,
-        HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
+        HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         NODE extends Node<COMMAND, TYPES, HARDWARES, NODE>>
         extends Object<Node.Listener<? super NODE>>,
         Type.Container<TYPES>,
