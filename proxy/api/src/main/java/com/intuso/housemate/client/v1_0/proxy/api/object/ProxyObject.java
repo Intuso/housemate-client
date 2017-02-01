@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.api.object;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.type.ObjectReference;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
@@ -23,8 +24,9 @@ public abstract class ProxyObject<
     public final static String PROXY = "proxy";
 
     protected final Logger logger;
-    protected final ManagedCollection<LISTENER> listeners;
     private final Class<DATA> dataClass;
+    private final ManagedCollectionFactory managedCollectionFactory;
+    protected final ManagedCollection<LISTENER> listeners;
 
     private final List<ObjectReferenceImpl> references = Lists.newArrayList();
     private final Map<String, Map<ObjectReferenceImpl, Integer>> missingReferences = Maps.newHashMap();
@@ -38,6 +40,7 @@ public abstract class ProxyObject<
     protected ProxyObject(Logger logger, Class<DATA> dataClass, ManagedCollectionFactory managedCollectionFactory) {
         logger.debug("Creating");
         this.logger = logger;
+        this.managedCollectionFactory = managedCollectionFactory;
         this.dataClass = dataClass;
         this.listeners = managedCollectionFactory.create();
     }
@@ -101,7 +104,13 @@ public abstract class ProxyObject<
 
     public abstract ProxyObject<?, ?> getChild(String id);
 
-    protected final void manageReference(ObjectReferenceImpl reference, int pathIndex) {
+    public <O extends ProxyObject<?, ?>> ObjectReference<O> reference(String[] path) {
+        ObjectReferenceImpl<O> reference = new ObjectReferenceImpl<>(managedCollectionFactory, path);
+        reference(reference, 0);
+        return reference;
+    }
+
+    protected void reference(ObjectReferenceImpl reference, int pathIndex) {
         if(pathIndex == reference.getPath().length) {
             references.add(reference);
             reference.setObject(this);
@@ -109,7 +118,7 @@ public abstract class ProxyObject<
             String id = reference.getPath()[pathIndex];
             ProxyObject<?, ?> child = getChild(id);
             if(child != null)
-                child.manageReference(reference, pathIndex + 1);
+                child.reference(reference, pathIndex + 1);
             else {
                 if(!missingReferences.containsKey(id))
                     missingReferences.put(id, Maps.<ObjectReferenceImpl, Integer>newHashMap());
