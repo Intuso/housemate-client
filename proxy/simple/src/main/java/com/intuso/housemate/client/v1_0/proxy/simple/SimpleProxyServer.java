@@ -18,7 +18,7 @@ import javax.jms.Connection;
 public final class SimpleProxyServer extends ProxyServer<
         SimpleProxyCommand,
         SimpleProxyList<SimpleProxyAutomation>,
-        SimpleProxyList<SimpleProxyDevice>,
+        SimpleProxyList<SimpleProxySystem>,
         SimpleProxyList<SimpleProxyUser>,
         SimpleProxyList<SimpleProxyNode>,
         SimpleProxyServer> {
@@ -29,7 +29,7 @@ public final class SimpleProxyServer extends ProxyServer<
                              ManagedCollectionFactory managedCollectionFactory,
                              Factory<SimpleProxyCommand> commandFactory,
                              Factory<SimpleProxyList<SimpleProxyAutomation>> automationsFactory,
-                             Factory<SimpleProxyList<SimpleProxyDevice>> devicesFactory,
+                             Factory<SimpleProxyList<SimpleProxySystem>> devicesFactory,
                              Factory<SimpleProxyList<SimpleProxyUser>> usersFactory,
                              Factory<SimpleProxyList<SimpleProxyNode>> nodesFactory) {
         super(connection, logger, managedCollectionFactory, commandFactory, automationsFactory, devicesFactory, usersFactory, nodesFactory);

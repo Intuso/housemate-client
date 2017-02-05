@@ -25,7 +25,7 @@ import java.util.Arrays;
 public abstract class ProxyServer<
         COMMAND extends ProxyCommand<?, ?, ?>,
         AUTOMATIONS extends ProxyList<? extends ProxyAutomation<?, ?, ?, ?, ?>, ?>,
-        DEVICES extends ProxyList<? extends ProxyDevice<?, ?, ?, ?>, ?>,
+        DEVICES extends ProxyList<? extends ProxySystem<?, ?, ?, ?>, ?>,
         USERS extends ProxyList<? extends ProxyUser<?, ?, ?>, ?>,
         NODES extends ProxyList<? extends ProxyNode<?, ?, ?, ?>, ?>,
         SERVER extends ProxyServer<COMMAND, AUTOMATIONS, DEVICES, USERS, NODES, SERVER>>
@@ -58,8 +58,8 @@ public abstract class ProxyServer<
         renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID));
         automations = automationsFactory.create(ChildUtil.logger(logger, AUTOMATIONS_ID));
         addAutomationCommand = commandFactory.create(ChildUtil.logger(logger, ADD_AUTOMATION_ID));
-        devices = devicesFactory.create(ChildUtil.logger(logger, DEVICES_ID));
-        addDeviceCommand = commandFactory.create(ChildUtil.logger(logger, ADD_DEVICE_ID));
+        devices = devicesFactory.create(ChildUtil.logger(logger, SYSTEMS_ID));
+        addDeviceCommand = commandFactory.create(ChildUtil.logger(logger, ADD_SYSTEM_ID));
         users = usersFactory.create(ChildUtil.logger(logger, USERS_ID));
         addUserCommand = commandFactory.create(ChildUtil.logger(logger, ADD_USER_ID));
         nodes = nodesFactory.create(ChildUtil.logger(logger, NODES_ID));
@@ -83,8 +83,8 @@ public abstract class ProxyServer<
         renameCommand.init(ChildUtil.name(name, RENAME_ID), connection);
         automations.init(ChildUtil.name(name, AUTOMATIONS_ID), connection);
         addAutomationCommand.init(ChildUtil.name(name, ADD_AUTOMATION_ID), connection);
-        devices.init(ChildUtil.name(name, DEVICES_ID), connection);
-        addDeviceCommand.init(ChildUtil.name(name, ADD_DEVICE_ID), connection);
+        devices.init(ChildUtil.name(name, SYSTEMS_ID), connection);
+        addDeviceCommand.init(ChildUtil.name(name, ADD_SYSTEM_ID), connection);
         users.init(ChildUtil.name(name, USERS_ID), connection);
         addUserCommand.init(ChildUtil.name(name, ADD_USER_ID), connection);
         nodes.init(ChildUtil.name(name, NODES_ID), connection);
@@ -122,7 +122,7 @@ public abstract class ProxyServer<
         return devices;
     }
 
-    public COMMAND getAddDeviceCommand() {
+    public COMMAND getAddSystemCommand() {
         return addDeviceCommand;
     }
 
@@ -146,13 +146,13 @@ public abstract class ProxyServer<
             return renameCommand;
         else if(ADD_AUTOMATION_ID.equals(id))
             return addAutomationCommand;
-        else if(ADD_DEVICE_ID.equals(id))
+        else if(ADD_SYSTEM_ID.equals(id))
             return addDeviceCommand;
         else if(ADD_USER_ID.equals(id))
             return addUserCommand;
         else if(AUTOMATIONS_ID.equals(id))
             return automations;
-        else if(DEVICES_ID.equals(id))
+        else if(SYSTEMS_ID.equals(id))
             return devices;
         else if(NODES_ID.equals(id))
             return nodes;

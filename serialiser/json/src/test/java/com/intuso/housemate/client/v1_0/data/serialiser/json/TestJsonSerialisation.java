@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.data.serialiser.json;
 
 import com.intuso.housemate.client.v1_0.api.object.*;
+import com.intuso.housemate.client.v1_0.api.object.System;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,9 +53,9 @@ public class TestJsonSerialisation {
 
     @Test
     public void testDeviceData() {
-        Device.Data startData = new Device.Data("testDevice", "Test Device", "A device for testing");
+        System.Data startData = new System.Data("testDevice", "Test Device", "A device for testing");
         String json = serialiser.serialise(startData);
-        Device.Data endData = serialiser.deserialise(json, Device.Data.class);
+        System.Data endData = serialiser.deserialise(json, System.Data.class);
         assertEquals(startData.getId(), endData.getId());
         assertEquals(startData.getName(), endData.getName());
         assertEquals(startData.getDescription(), endData.getDescription());

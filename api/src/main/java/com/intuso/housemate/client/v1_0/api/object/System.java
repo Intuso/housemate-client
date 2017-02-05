@@ -7,15 +7,15 @@ import com.intuso.housemate.client.v1_0.api.Renameable;
 /**
  * @param <ERROR_VALUE> the type of the error value
  * @param <COMMAND> the type of the command
- * @param <DEVICE> the type of the device
+ * @param <SYSTEM> the type of the device
  */
-public interface Device<
+public interface System<
         ERROR_VALUE extends Value<?, ?, ?>,
         COMMAND extends Command<?, ?, ?, ?>,
         DEVICES extends List<? extends Property<?, ?, ?, ?>, ?>,
-        DEVICE extends Device<ERROR_VALUE, COMMAND, DEVICES, DEVICE>>
+        SYSTEM extends System<ERROR_VALUE, COMMAND, DEVICES, SYSTEM>>
         extends
-        Object<Device.Listener<? super DEVICE>>,
+        Object<System.Listener<? super SYSTEM>>,
         Renameable<COMMAND>,
         Failable<ERROR_VALUE>,
         Removeable<COMMAND> {
@@ -46,21 +46,21 @@ public interface Device<
      *
      * Listener interface for devices
      */
-    interface Listener<DEVICE extends Device<?, ?, ?, ?>> extends Object.Listener,
-            Failable.Listener<DEVICE>,
-            Renameable.Listener<DEVICE> {}
+    interface Listener<SYSTEM extends System<?, ?, ?, ?>> extends Object.Listener,
+            Failable.Listener<SYSTEM>,
+            Renameable.Listener<SYSTEM> {}
 
     /**
      *
      * Interface to show that the implementing object has a list of devices
      */
-    interface Container<DEVICES extends List<? extends Device<?, ?, ?, ?>, ?>> {
+    interface Container<SYSTEMS extends List<? extends System<?, ?, ?, ?>, ?>> {
 
         /**
          * Gets the devices list
          * @return the devices list
          */
-        DEVICES getDevices();
+        SYSTEMS getDevices();
     }
 
     /**
@@ -70,7 +70,7 @@ public interface Device<
 
         private static final long serialVersionUID = -1L;
 
-        public final static String OBJECT_CLASS = "device";
+        public final static String OBJECT_CLASS = "system";
 
         public Data() {}
 

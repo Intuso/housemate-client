@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.data.serialiser.json.config;
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.System;
 
 /**
  * Created by tomc on 04/06/14.
@@ -14,7 +15,7 @@ public class DataAdapter extends RuntimeTypeAdapterFactory<Object.Data> {
         registerSubtype(Automation.Data.class, "automation");
         registerSubtype(Command.Data.class, "command");
         registerSubtype(Condition.Data.class, "condition");
-        registerSubtype(Device.Data.class, "device");
+        registerSubtype(System.Data.class, "device");
         registerSubtype(Hardware.Data.class, "hardware");
         registerSubtype(List.Data.class, "list");
         registerSubtype(Option.Data.class, "option");
