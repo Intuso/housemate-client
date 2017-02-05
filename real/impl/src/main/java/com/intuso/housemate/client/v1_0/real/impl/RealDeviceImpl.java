@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.Renameable;
-import com.intuso.housemate.client.v1_0.api.object.ConnectedDevice;
+import com.intuso.housemate.client.v1_0.api.object.Device;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
-import com.intuso.housemate.client.v1_0.real.api.RealConnectedDevice;
+import com.intuso.housemate.client.v1_0.real.api.RealDevice;
 import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
@@ -15,13 +15,13 @@ import org.slf4j.Logger;
 import javax.jms.Connection;
 import javax.jms.JMSException;
 
-public final class RealConnectedDeviceImpl
-        extends RealObject<ConnectedDevice.Data, ConnectedDevice.Listener<? super RealConnectedDeviceImpl>>
-        implements RealConnectedDevice<RealCommandImpl,
-                RealListGeneratedImpl<RealCommandImpl>,
-                RealListGeneratedImpl<RealValueImpl<?>>,
-                RealListGeneratedImpl<RealPropertyImpl<?>>,
-                RealConnectedDeviceImpl> {
+public final class RealDeviceImpl
+        extends RealObject<Device.Data, Device.Listener<? super RealDeviceImpl>>
+        implements RealDevice<RealCommandImpl,
+                        RealListGeneratedImpl<RealCommandImpl>,
+                        RealListGeneratedImpl<RealValueImpl<?>>,
+                        RealListGeneratedImpl<RealPropertyImpl<?>>,
+        RealDeviceImpl> {
 
     private final static String PROPERTIES_DESCRIPTION = "The device's properties";
 
@@ -31,18 +31,18 @@ public final class RealConnectedDeviceImpl
     private final RealListGeneratedImpl<RealPropertyImpl<?>> properties;
 
     @Inject
-    public RealConnectedDeviceImpl(@Assisted final Logger logger,
-                                   @Assisted("id") String id,
-                                   @Assisted("name") String name,
-                                   @Assisted("description") String description,
-                                   ManagedCollectionFactory managedCollectionFactory,
-                                   RealCommandImpl.Factory commandFactory,
-                                   RealParameterImpl.Factory parameterFactory,
-                                   RealListGeneratedImpl.Factory<RealCommandImpl> commandsFactory,
-                                   RealListGeneratedImpl.Factory<RealValueImpl<?>> valuesFactory,
-                                   RealListGeneratedImpl.Factory<RealPropertyImpl<?>> propertiesFactory,
-                                   TypeRepository typeRepository) {
-        super(logger, new ConnectedDevice.Data(id, name, description), managedCollectionFactory);
+    public RealDeviceImpl(@Assisted final Logger logger,
+                          @Assisted("id") String id,
+                          @Assisted("name") String name,
+                          @Assisted("description") String description,
+                          ManagedCollectionFactory managedCollectionFactory,
+                          RealCommandImpl.Factory commandFactory,
+                          RealParameterImpl.Factory parameterFactory,
+                          RealListGeneratedImpl.Factory<RealCommandImpl> commandsFactory,
+                          RealListGeneratedImpl.Factory<RealValueImpl<?>> valuesFactory,
+                          RealListGeneratedImpl.Factory<RealPropertyImpl<?>> propertiesFactory,
+                          TypeRepository typeRepository) {
+        super(logger, new Device.Data(id, name, description), managedCollectionFactory);
         this.renameCommand = commandFactory.create(ChildUtil.logger(logger, Renameable.RENAME_ID),
                 Renameable.RENAME_ID,
                 Renameable.RENAME_ID,
@@ -52,7 +52,7 @@ public final class RealConnectedDeviceImpl
                     public void perform(Type.InstanceMap values) {
                         if(values != null && values.getChildren().containsKey(Renameable.NAME_ID)) {
                             String newName = values.getChildren().get(Renameable.NAME_ID).getFirstValue();
-                            if (newName != null && !RealConnectedDeviceImpl.this.getName().equals(newName))
+                            if (newName != null && !RealDeviceImpl.this.getName().equals(newName))
                                 setName(newName);
                         }
                     }
@@ -83,8 +83,8 @@ public final class RealConnectedDeviceImpl
 
     private void setName(String newName) {
         getData().setName(newName);
-        for(ConnectedDevice.Listener<? super RealConnectedDeviceImpl> listener : listeners)
-            listener.renamed(RealConnectedDeviceImpl.this, RealConnectedDeviceImpl.this.getName(), newName);
+        for(Device.Listener<? super RealDeviceImpl> listener : listeners)
+            listener.renamed(RealDeviceImpl.this, RealDeviceImpl.this.getName(), newName);
         data.setName(newName);
         sendData();
     }
@@ -128,9 +128,9 @@ public final class RealConnectedDeviceImpl
     }
 
     public interface Factory {
-        RealConnectedDeviceImpl create(Logger logger,
-                               @Assisted("id") String id,
-                               @Assisted("name") String name,
-                               @Assisted("description") String description);
+        RealDeviceImpl create(Logger logger,
+                              @Assisted("id") String id,
+                              @Assisted("name") String name,
+                              @Assisted("description") String description);
     }
 }
