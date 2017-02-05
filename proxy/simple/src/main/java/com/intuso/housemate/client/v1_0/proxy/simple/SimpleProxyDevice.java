@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 * To change this template use File | Settings | File Templates.
 */
 public final class SimpleProxyDevice extends ProxyDevice<
-        SimpleProxyCommand,
         SimpleProxyValue,
-        SimpleProxyList<SimpleProxyFeature>,
+        SimpleProxyCommand,
+        SimpleProxyList<SimpleProxyProperty>,
         SimpleProxyDevice> {
 
     @Inject
@@ -24,7 +24,7 @@ public final class SimpleProxyDevice extends ProxyDevice<
                              ManagedCollectionFactory managedCollectionFactory,
                              Factory<SimpleProxyCommand> commandFactory,
                              Factory<SimpleProxyValue> valueFactory,
-                             Factory<SimpleProxyList<SimpleProxyFeature>> featuresFactory) {
-        super(logger, managedCollectionFactory, commandFactory, valueFactory, featuresFactory);
+                             Factory<SimpleProxyList<SimpleProxyProperty>> propertiesFactory) {
+        super(logger, managedCollectionFactory, valueFactory, commandFactory, propertiesFactory);
     }
 }

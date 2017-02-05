@@ -8,7 +8,6 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.util.Types;
 import com.intuso.housemate.client.v1_0.api.annotation.Id;
 import com.intuso.housemate.client.v1_0.api.driver.ConditionDriver;
-import com.intuso.housemate.client.v1_0.api.driver.FeatureDriver;
 import com.intuso.housemate.client.v1_0.api.driver.HardwareDriver;
 import com.intuso.housemate.client.v1_0.api.driver.TaskDriver;
 import com.intuso.housemate.client.v1_0.api.plugin.Plugin;
@@ -34,18 +33,16 @@ public class TypesV1_0PluginsListener implements PluginListener {
     private final TypeRepository types;
     private final RealRegexType.Factory regexTypeFactory;
     private final ConditionDriverType conditionDriverType;
-    private final FeatureDriverType featureDriverType;
     private final HardwareDriverType hardwareDriverType;
     private final TaskDriverType taskDriverType;
 
     @Inject
-    public TypesV1_0PluginsListener(@Type Logger typeLogger, Injector injector, TypeRepository types, RealRegexType.Factory regexTypeFactory, ConditionDriverType conditionDriverType, FeatureDriverType featureDriverType, HardwareDriverType hardwareDriverType, TaskDriverType taskDriverType) {
+    public TypesV1_0PluginsListener(@Type Logger typeLogger, Injector injector, TypeRepository types, RealRegexType.Factory regexTypeFactory, ConditionDriverType conditionDriverType, HardwareDriverType hardwareDriverType, TaskDriverType taskDriverType) {
         this.typeLogger = typeLogger;
         this.injector = injector;
         this.types = types;
         this.regexTypeFactory = regexTypeFactory;
         this.conditionDriverType = conditionDriverType;
-        this.featureDriverType = featureDriverType;
         this.hardwareDriverType = hardwareDriverType;
         this.taskDriverType = taskDriverType;
     }
@@ -54,7 +51,6 @@ public class TypesV1_0PluginsListener implements PluginListener {
     public void pluginAdded(Plugin plugin) {
         addTypes(plugin);
         addConditionDriverFactories(plugin);
-        addFeatureDriverFactories(plugin);
         addHardwareDriverFactories(plugin);
         addTaskDriverFactories(plugin);
     }
@@ -63,7 +59,6 @@ public class TypesV1_0PluginsListener implements PluginListener {
     public void pluginRemoved(Plugin plugin) {
         removeTypes(plugin);
         removeConditionDriverFactories(plugin);
-        removeFeatureDriverFactories(plugin);
         removeHardwareDriverFactories(plugin);
         removeTaskDriverFactories(plugin);
     }
@@ -106,26 +101,6 @@ public class TypesV1_0PluginsListener implements PluginListener {
             if(id != null) {
                 logger.debug("Removing condition factory for type " + id.value());
                 conditionDriverType.removeFactory(id.value());
-            }
-        }
-    }
-
-    private void addFeatureDriverFactories(Plugin plugin) {
-        for(Class<? extends FeatureDriver> featureDriverClass : plugin.getFeatureDrivers()) {
-            Id id = getClassAnnotation(featureDriverClass, Id.class);
-            if(id == null)
-                logger.error("No " + Id.class + " annotation found on " + featureDriverClass.getName());
-            else
-                featureDriverType.addFactory(id.value(), id.name(), id.description(), asFactory(FeatureDriver.class, FeatureDriver.Factory.class, featureDriverClass));
-        }
-    }
-
-    private void removeFeatureDriverFactories(Plugin plugin) {
-        for(Class<? extends FeatureDriver> featureDriverClass : plugin.getFeatureDrivers()) {
-            Id id = getClassAnnotation(featureDriverClass, Id.class);
-            if(id != null) {
-                logger.debug("Removing feature factory for type " + id.value());
-                featureDriverType.removeFactory(id.value());
             }
         }
     }

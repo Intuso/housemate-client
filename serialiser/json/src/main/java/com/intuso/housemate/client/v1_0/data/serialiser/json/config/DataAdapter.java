@@ -15,7 +15,6 @@ public class DataAdapter extends RuntimeTypeAdapterFactory<Object.Data> {
         registerSubtype(Command.Data.class, "command");
         registerSubtype(Condition.Data.class, "condition");
         registerSubtype(Device.Data.class, "device");
-        registerSubtype(Feature.Data.class, "feature");
         registerSubtype(Hardware.Data.class, "hardware");
         registerSubtype(List.Data.class, "list");
         registerSubtype(Option.Data.class, "option");

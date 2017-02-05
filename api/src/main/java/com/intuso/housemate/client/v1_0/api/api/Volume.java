@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.api.feature;
+package com.intuso.housemate.client.v1_0.api.api;
 
 import com.intuso.housemate.client.v1_0.api.annotation.*;
 import com.intuso.utilities.collection.ManagedCollection;
@@ -7,9 +7,9 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for controlling volume
  */
 @Id(value = "volume", name = "Volume", description = "Volume")
-public interface VolumeControl {
+public interface Volume {
 
-    String ID = VolumeControl.class.getAnnotation(Id.class).value();
+    String ID = Volume.class.getAnnotation(Id.class).value();
 
     /**
      * Mute the device

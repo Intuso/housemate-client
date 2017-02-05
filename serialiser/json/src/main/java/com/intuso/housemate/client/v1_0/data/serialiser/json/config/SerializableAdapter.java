@@ -21,7 +21,6 @@ public class SerializableAdapter extends RuntimeTypeAdapterFactory<Serializable>
         registerSubtype(Command.PerformStatusData.class, "commandPerformStatus");
         registerSubtype(Condition.Data.class, "condition");
         registerSubtype(Device.Data.class, "device");
-        registerSubtype(Feature.Data.class, "feature");
         registerSubtype(Hardware.Data.class, "hardware");
         registerSubtype(List.Data.class, "list");
         registerSubtype(Option.Data.class, "option");

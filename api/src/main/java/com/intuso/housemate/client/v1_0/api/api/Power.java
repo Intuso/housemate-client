@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.api.feature;
+package com.intuso.housemate.client.v1_0.api.api;
 
 import com.intuso.housemate.client.v1_0.api.annotation.*;
 import com.intuso.utilities.collection.ManagedCollection;
@@ -7,9 +7,9 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for controlling power
  */
 @Id(value = "power", name = "Power", description = "Power")
-public interface PowerControl {
+public interface Power {
 
-    String ID = PowerControl.class.getAnnotation(Id.class).value();
+    String ID = Power.class.getAnnotation(Id.class).value();
 
     /**
      * Turn on

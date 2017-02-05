@@ -22,7 +22,6 @@ public class RealTypesModule extends AbstractModule {
         install(new FactoryModuleBuilder().build(RealRegexType.Factory.class));
 
         bind(ConditionDriverType.class).in(Scopes.SINGLETON);
-        bind(FeatureDriverType.class).in(Scopes.SINGLETON);
         bind(HardwareDriverType.class).in(Scopes.SINGLETON);
         bind(TaskDriverType.class).in(Scopes.SINGLETON);
         bind(TypeRepository.class).in(Scopes.SINGLETON);

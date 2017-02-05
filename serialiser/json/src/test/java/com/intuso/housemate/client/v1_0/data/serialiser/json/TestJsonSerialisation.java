@@ -61,16 +61,6 @@ public class TestJsonSerialisation {
     }
 
     @Test
-    public void testFeatureData() {
-        Feature.Data startData = new Feature.Data("testDevice", "Test Device", "A device for testing");
-        String json = serialiser.serialise(startData);
-        Feature.Data endData = serialiser.deserialise(json, Feature.Data.class);
-        assertEquals(startData.getId(), endData.getId());
-        assertEquals(startData.getName(), endData.getName());
-        assertEquals(startData.getDescription(), endData.getDescription());
-    }
-
-    @Test
     public void testTypeInstancesData() {
         Type.Instances startTypeInstances = new Type.Instances(new Type.Instance("value"));
         String json = serialiser.serialise(startTypeInstances);

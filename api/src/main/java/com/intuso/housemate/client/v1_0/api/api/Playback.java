@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.api.feature;
+package com.intuso.housemate.client.v1_0.api.api;
 
 import com.intuso.housemate.client.v1_0.api.annotation.*;
 import com.intuso.utilities.collection.ManagedCollection;
@@ -7,9 +7,9 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for controlling playback
  */
 @Id(value = "playback", name = "Playback", description = "Playback")
-public interface PlaybackControl {
+public interface Playback {
 
-    String ID = PlaybackControl.class.getAnnotation(Id.class).value();
+    String ID = Playback.class.getAnnotation(Id.class).value();
 
     /**
      * Play

@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.api.feature;
+package com.intuso.housemate.client.v1_0.api.api;
 
 import com.intuso.housemate.client.v1_0.api.annotation.*;
 import com.intuso.utilities.collection.ManagedCollection;
@@ -7,9 +7,9 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for running something
  */
 @Id(value = "run", name = "Run", description = "Run")
-public interface RunControl {
+public interface Run {
 
-    String ID = RunControl.class.getAnnotation(Id.class).value();
+    String ID = Run.class.getAnnotation(Id.class).value();
 
     /**
      * Start

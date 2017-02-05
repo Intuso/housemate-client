@@ -37,7 +37,6 @@ public final class TypeRepository implements TypeSerialiser.Repository {
                           HardwareType hardwareType,
                           // factory types
                           ConditionDriverType conditionDriverType,
-                          FeatureDriverType featureDriverType,
                           HardwareDriverType hardwareDriverType,
                           TaskDriverType taskDriverType) {
         typeAvailable(new TypeSpec(Boolean.class), booleanType);
@@ -52,7 +51,6 @@ public final class TypeRepository implements TypeSerialiser.Repository {
         typeAvailable(new TypeSpec(String.class, "email"), emailType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(ObjectReference.class, SimpleProxyHardware.class)), hardwareType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, ConditionDriver.class)), conditionDriverType);
-        typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, FeatureDriver.class)), featureDriverType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, HardwareDriver.class)), hardwareDriverType);
         typeAvailable(new TypeSpec(Types.newParameterizedType(PluginDependency.class, TaskDriver.class)), taskDriverType);
     }
