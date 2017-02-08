@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl.ioc;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.real.impl.*;
 
 /**
@@ -25,10 +26,6 @@ public class RealObjectsModule extends AbstractModule {
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealCommandImpl>>() {}));
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealDeviceImpl>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealHardwareImpl>>() {}));
-        install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealOptionImpl>>() {}));
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealParameterImpl<?>>>() {}));
@@ -42,23 +39,15 @@ public class RealObjectsModule extends AbstractModule {
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealValueImpl<?>>>() {}));
         // persisted
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealCommandImpl>>() {}));
+                .build(new TypeLiteral<RealListPersistedImpl.Factory<Device.Data, RealDeviceImpl>>() {}));
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealDeviceImpl>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealHardwareImpl>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealOptionImpl>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealParameterImpl<?>>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealPropertyImpl<?>>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealSubTypeImpl<?>>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealTypeImpl<?>>>() {}));
-        install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<RealValueImpl<?>>>() {}));
+                .build(new TypeLiteral<RealListPersistedImpl.Factory<Hardware.Data, RealHardwareImpl>>() {}));
+        // persisted data classes
+        bind(new TypeLiteral<Class<Device.Data>>() {}).toInstance(Device.Data.class);
+        bind(new TypeLiteral<Class<Hardware.Data>>() {}).toInstance(Hardware.Data.class);
+        // persisted element factories
+        bind(new TypeLiteral<RealListPersistedImpl.ElementFactory<Device.Data, RealDeviceImpl>>() {}).to(RealDeviceImpl.LoadPersisted.class);
+        bind(new TypeLiteral<RealListPersistedImpl.ElementFactory<Hardware.Data, RealHardwareImpl>>() {}).to(RealHardwareImpl.LoadPersisted.class);
 
         // hardwares
         install(new FactoryModuleBuilder()

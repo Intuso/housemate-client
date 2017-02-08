@@ -7,11 +7,7 @@ import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
-import com.intuso.housemate.client.v1_0.real.api.RealHardware;
-import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
-import com.intuso.housemate.client.v1_0.real.impl.RealCommandImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealHardwareImpl;
-import com.intuso.housemate.client.v1_0.real.impl.RealParameterImpl;
+import com.intuso.housemate.client.v1_0.real.impl.*;
 import com.intuso.housemate.client.v1_0.real.impl.type.TypeRepository;
 import org.slf4j.Logger;
 
@@ -56,7 +52,7 @@ public class AddHardwareCommand {
                                       String name,
                                       String description,
                                       Callback callback,
-                                      RealHardware.RemoveCallback<RealHardwareImpl> removeCallback) {
+                                      RealListPersistedImpl.RemoveCallback<RealHardwareImpl> removeCallback) {
             return commandFactory.create(logger, id, name, description, performerFactory.create(baseLogger, callback, removeCallback),
                     Lists.newArrayList(
                             parameterFactory.create(ChildUtil.logger(logger, Command.PARAMETERS_ID, NAME_PARAMETER_ID),
@@ -80,13 +76,13 @@ public class AddHardwareCommand {
 
         private final Logger logger;
         private final Callback callback;
-        private final RealHardware.RemoveCallback<RealHardwareImpl> removeCallback;
+        private final RealListPersistedImpl.RemoveCallback<RealHardwareImpl> removeCallback;
         private final RealHardwareImpl.Factory hardwareFactory;
 
         @Inject
         public Performer(@Assisted Logger logger,
                          @Assisted Callback callback,
-                         @Assisted RealHardware.RemoveCallback<RealHardwareImpl> removeCallback,
+                         @Assisted RealListPersistedImpl.RemoveCallback<RealHardwareImpl> removeCallback,
                          RealHardwareImpl.Factory hardwareFactory) {
             this.logger = logger;
             this.callback = callback;
@@ -110,7 +106,7 @@ public class AddHardwareCommand {
         public interface Factory {
             Performer create(Logger logger,
                              Callback callback,
-                             RealHardware.RemoveCallback<RealHardwareImpl> removeCallback);
+                             RealListPersistedImpl.RemoveCallback<RealHardwareImpl> removeCallback);
         }
     }
 }

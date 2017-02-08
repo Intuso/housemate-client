@@ -4,13 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
+import com.intuso.housemate.client.v1_0.api.object.Hardware;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.Connection;
@@ -18,7 +18,7 @@ import javax.jms.JMSException;
 
 public class RealNodeImpl
         extends RealObject<com.intuso.housemate.client.v1_0.api.object.Node.Data, com.intuso.housemate.client.v1_0.api.object.Node.Listener<? super RealNodeImpl>>
-        implements RealNode<RealCommandImpl, RealListGeneratedImpl<RealTypeImpl<?>>, RealHardwareImpl, RealListPersistedImpl<RealHardwareImpl>, RealNodeImpl>,
+        implements RealNode<RealCommandImpl, RealListGeneratedImpl<RealTypeImpl<?>>, RealHardwareImpl, RealListPersistedImpl<Hardware.Data, RealHardwareImpl>, RealNodeImpl>,
         AddHardwareCommand.Callback {
 
     public final static String NODE_ID = "node.id";
@@ -29,7 +29,7 @@ public class RealNodeImpl
     private final Connection connection;
 
     private final RealListGeneratedImpl<RealTypeImpl<?>> types;
-    private final RealListPersistedImpl<RealHardwareImpl> hardwares;
+    private final RealListPersistedImpl<Hardware.Data, RealHardwareImpl> hardwares;
     private final RealCommandImpl addHardwareCommand;
 
     @Inject
@@ -37,8 +37,7 @@ public class RealNodeImpl
                         PropertyRepository propertyRepository,
                         ManagedCollectionFactory managedCollectionFactory,
                         RealListGeneratedImpl.Factory<RealTypeImpl<?>> typesFactory,
-                        final RealHardwareImpl.Factory hardwareFactory,
-                        RealListPersistedImpl.Factory<RealHardwareImpl> hardwaresFactory,
+                        RealListPersistedImpl.Factory<Hardware.Data, RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
         super(ChildUtil.logger(LoggerFactory.getLogger(RealObject.REAL), Object.VERSION, Server.NODES_ID, propertyRepository.get(NODE_ID)),
                 new com.intuso.housemate.client.v1_0.api.object.Node.Data(propertyRepository.get(NODE_ID),
@@ -55,20 +54,14 @@ public class RealNodeImpl
         this.hardwares = hardwaresFactory.create(ChildUtil.logger(logger, HARDWARES_ID),
                 HARDWARES_ID,
                 "Hardware",
-                "Hardware",
-                new RealListPersistedImpl.ExistingObjectFactory<RealHardwareImpl>() {
-                    @Override
-                    public RealHardwareImpl create(Logger parentLogger, Object.Data data) {
-                        return hardwareFactory.create(ChildUtil.logger(parentLogger, data.getId()), data.getId(), data.getName(), data.getDescription(), RealNodeImpl.this);
-                    }
-                });
+                "Hardware");
         this.addHardwareCommand = addHardwareCommandFactory.create(ChildUtil.logger(logger, HARDWARES_ID),
                 ChildUtil.logger(logger, ADD_HARDWARE_ID),
                 ADD_HARDWARE_ID,
                 ADD_HARDWARE_ID,
                 "Add hardware",
                 this,
-                this);
+                hardwares.getRemoveCallback());
     }
 
     @Override
@@ -93,18 +86,13 @@ public class RealNodeImpl
     }
 
     @Override
-    public RealListPersistedImpl<RealHardwareImpl> getHardwares() {
+    public RealListPersistedImpl<Hardware.Data, RealHardwareImpl> getHardwares() {
         return hardwares;
     }
 
     @Override
     public final void addHardware(RealHardwareImpl hardware) {
         hardwares.add(hardware);
-    }
-
-    @Override
-    public final void removeHardware(RealHardwareImpl realHardware) {
-        hardwares.remove(realHardware.getId());
     }
 
     @Override
