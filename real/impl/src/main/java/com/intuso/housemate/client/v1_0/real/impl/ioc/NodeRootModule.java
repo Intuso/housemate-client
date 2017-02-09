@@ -8,9 +8,11 @@ import com.google.inject.multibindings.Multibinder;
 import com.intuso.housemate.client.v1_0.api.object.Node;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
+import com.intuso.housemate.client.v1_0.api.plugin.PluginListener;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
+import com.intuso.housemate.client.v1_0.real.impl.HardwareDetectorPluginListener;
 import com.intuso.housemate.client.v1_0.real.impl.RealNodeImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealObject;
 import com.intuso.housemate.client.v1_0.real.impl.annotation.ioc.AnnotationParserV1_0Module;
@@ -46,6 +48,9 @@ public class NodeRootModule extends AbstractModule {
         bind(RealNodeImpl.class).in(Scopes.SINGLETON);
 
         bind(RealHardware.Container.class).to(RealNodeImpl.class);
+
+        // bind hardware detector NB this comes after the types listener binding so the driver should be available already
+        bind(HardwareDetectorPluginListener.class).in(Scopes.SINGLETON);
 
         Multibinder.newSetBinder(binder(), Service.class).addBinding().to(RealNodeImpl.Service.class);
     }

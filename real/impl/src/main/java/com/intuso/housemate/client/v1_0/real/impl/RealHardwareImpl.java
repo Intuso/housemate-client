@@ -293,8 +293,6 @@ public final class RealHardwareImpl
         // do driver last as it's better to have the devices loaded already
         driverProperty.init(ChildUtil.name(name, UsesDriver.DRIVER_ID), connection);
         driverLoadedValue.init(ChildUtil.name(name, UsesDriver.DRIVER_LOADED_ID), connection);
-        if(isRunning())
-            startDriver();
     }
 
     @Override

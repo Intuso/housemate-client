@@ -27,7 +27,7 @@ public class RealTypesModule extends AbstractModule {
         bind(TypeRepository.class).in(Scopes.SINGLETON);
         bind(TypeSerialiser.Repository.class).to(TypeRepository.class);
 
-        // bind driver plugin listener
+        // bind types plugin listener NB this needs to be bound before the hardware detector so the driver is already available
         bind(TypesV1_0PluginsListener.class).in(Scopes.SINGLETON);
         Multibinder.newSetBinder(binder(), PluginListener.class).addBinding().to(TypesV1_0PluginsListener.class);
     }

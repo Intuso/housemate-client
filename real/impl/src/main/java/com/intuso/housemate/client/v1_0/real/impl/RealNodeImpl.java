@@ -11,6 +11,7 @@ import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.Connection;
@@ -62,6 +63,10 @@ public class RealNodeImpl
                 "Add hardware",
                 this,
                 hardwares.getRemoveCallback());
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     @Override
