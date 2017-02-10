@@ -8,7 +8,6 @@ import com.google.inject.multibindings.Multibinder;
 import com.intuso.housemate.client.v1_0.api.object.Node;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
-import com.intuso.housemate.client.v1_0.api.plugin.PluginListener;
 import com.intuso.housemate.client.v1_0.real.api.RealHardware;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.ChildUtil;
@@ -28,7 +27,7 @@ import java.util.UUID;
  */
 public class NodeRootModule extends AbstractModule {
 
-    public NodeRootModule(WriteableMapPropertyRepository defaultProperties) {
+    public static void configureDefaults(WriteableMapPropertyRepository defaultProperties) {
         String defaultId = UUID.randomUUID().toString();
         defaultProperties.set(RealNodeImpl.NODE_ID, defaultId);
         defaultProperties.set(RealNodeImpl.NODE_NAME, defaultId);
