@@ -1,6 +1,6 @@
 package com.intuso.housemate.client.v1_0.rest;
 
-import com.intuso.housemate.client.v1_0.api.object.System;
+import com.intuso.housemate.client.v1_0.api.object.Device;
 import com.intuso.housemate.client.v1_0.rest.model.Page;
 
 import javax.ws.rs.*;
@@ -13,7 +13,7 @@ public interface PowerResource {
 
     @GET
     @Produces("application/json")
-    Page<System.Data> list(@QueryParam("offset") @DefaultValue("0") int offset, @QueryParam("limit") @DefaultValue("20") int limit);
+    Page<Device.Data> list(@QueryParam("offset") @DefaultValue("0") int offset, @QueryParam("limit") @DefaultValue("20") int limit);
 
     @GET
     @Path("/{id}")
