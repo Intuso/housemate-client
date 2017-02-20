@@ -40,7 +40,6 @@
         <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
-            <version>${jms.version}</version>
         </dependency>
 
         <dependency>

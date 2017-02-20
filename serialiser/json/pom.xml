@@ -12,10 +12,6 @@
     <name>Housemate Client 1.0 Serialiser JSON</name>
     <description>JSON serialiser for Client 1.0 for the Housemate framework</description>
 
-    <properties>
-        <gson.version>2.2.4</gson.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -26,7 +22,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
         </dependency>
 
         <dependency>
