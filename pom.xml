@@ -28,7 +28,7 @@
         <module>proxy</module>
         <module>real</module>
         <module>rest</module>
-        <module>serialiser</module>
+        <module>serialisation</module>
     </modules>
 
     <build>
