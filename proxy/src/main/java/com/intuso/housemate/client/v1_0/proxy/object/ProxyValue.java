@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.Value;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -20,8 +21,10 @@ public abstract class ProxyValue<
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxyValue(Logger logger, ManagedCollectionFactory managedCollectionFactory) {
-        super(logger, Value.Data.class, managedCollectionFactory);
+    public ProxyValue(Logger logger,
+                      ManagedCollectionFactory managedCollectionFactory,
+                      Receiver.Factory receiverFactory) {
+        super(logger, Value.Data.class, managedCollectionFactory, receiverFactory);
     }
 
     @Override
@@ -39,9 +42,10 @@ public abstract class ProxyValue<
     public static final class Simple extends ProxyValue<ProxyType.Simple, Simple> {
 
         @Inject
-        public Simple(ManagedCollectionFactory managedCollectionFactory,
-                      @Assisted Logger logger) {
-            super(logger, managedCollectionFactory);
+        public Simple(@Assisted Logger logger,
+                      ManagedCollectionFactory managedCollectionFactory,
+                      Receiver.Factory receiverFactory) {
+            super(logger, managedCollectionFactory, receiverFactory);
         }
     }
 }

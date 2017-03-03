@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.List;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
+import com.intuso.housemate.client.v1_0.messaging.api.Type;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -25,34 +25,33 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
     private final Map<String, ELEMENT> elements = Maps.newHashMap();
     private final ProxyObject.Factory<ELEMENT> elementFactory;
 
-    private JMSUtil.Receiver<Object.Data> existingObjectReceiver;
+    private Receiver<Object.Data> existingObjectReceiver;
 
     /**
      * @param logger {@inheritDoc}
      * @param elementFactory
      */
-    public ProxyList(Logger logger, ManagedCollectionFactory managedCollectionFactory, Factory<ELEMENT> elementFactory) {
-        super(logger, List.Data.class, managedCollectionFactory);
+    public ProxyList(Logger logger,
+                     ManagedCollectionFactory managedCollectionFactory,
+                     Receiver.Factory receiverFactory,
+                     Factory<ELEMENT> elementFactory) {
+        super(logger, List.Data.class, managedCollectionFactory, receiverFactory);
         this.elementFactory = elementFactory;
     }
 
     @Override
-    protected void initChildren(final String name, final Connection connection) throws JMSException {
-        super.initChildren(name, connection);
+    protected void initChildren(final String name) {
+        super.initChildren(name);
         // subscribe to all child topics and create children as new topics are discovered
-        existingObjectReceiver = new JMSUtil.Receiver<>(logger, connection, JMSUtil.Type.Topic, ChildUtil.name(name, "*"), Object.Data.class,
-                new JMSUtil.Receiver.Listener<Object.Data>() {
+        existingObjectReceiver = receiverFactory.create(logger, Type.Topic, ChildUtil.name(name, "*"), Object.Data.class);
+        existingObjectReceiver.listen(new Receiver.Listener<Object.Data>() {
                     @Override
                     public void onMessage(Object.Data data, boolean wasPersisted) {
                         if (!elements.containsKey(data.getId())) {
                             ELEMENT element = elementFactory.create(ChildUtil.logger(logger, data.getId()));
                             if (element != null) {
                                 elements.put(data.getId(), element);
-                                try {
-                                    element.init(ChildUtil.name(name, data.getId()), connection);
-                                } catch (JMSException e) {
-                                    logger.error("Failed to init child {}", data.getId(), e);
-                                }
+                                element.init(ChildUtil.name(name, data.getId()));
                                 for (List.Listener<? super ELEMENT, ? super LIST> listener : listeners)
                                     listener.elementAdded((LIST) ProxyList.this, element);
                                 for(Map.Entry<ObjectReferenceImpl, Integer> reference : getMissingReferences(data.getId()).entrySet())
@@ -122,8 +121,9 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
         @Inject
         public Simple(@Assisted Logger logger,
                       ManagedCollectionFactory managedCollectionFactory,
+                      Receiver.Factory receiverFactory,
                       Factory<ELEMENT> elementFactory) {
-            super(logger, managedCollectionFactory, elementFactory);
+            super(logger, managedCollectionFactory, receiverFactory, elementFactory);
         }
     }
 }

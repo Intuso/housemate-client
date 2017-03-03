@@ -4,12 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.type.ObjectReference;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
+import com.intuso.housemate.client.v1_0.messaging.api.Type;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,18 +26,24 @@ public abstract class ProxyObject<
     protected final Logger logger;
     private final Class<DATA> dataClass;
     private final ManagedCollectionFactory managedCollectionFactory;
-    protected final ManagedCollection<LISTENER> listeners;
+    protected final Receiver.Factory receiverFactory;
 
+    protected final ManagedCollection<LISTENER> listeners;
     private final List<ObjectReferenceImpl> references = Lists.newArrayList();
     private final Map<String, Map<ObjectReferenceImpl, Integer>> missingReferences = Maps.newHashMap();
 
     protected DATA data = null;
-    private JMSUtil.Receiver<DATA> receiver;
+    private Receiver<DATA> receiver;
 
     /**
      * @param logger the log
+     * @param receiverFactory
      */
-    protected ProxyObject(Logger logger, Class<DATA> dataClass, ManagedCollectionFactory managedCollectionFactory) {
+    protected ProxyObject(Logger logger,
+                          Class<DATA> dataClass,
+                          ManagedCollectionFactory managedCollectionFactory,
+                          Receiver.Factory receiverFactory) {
+        this.receiverFactory = receiverFactory;
         logger.debug("Creating");
         this.logger = logger;
         this.managedCollectionFactory = managedCollectionFactory;
@@ -70,20 +76,20 @@ public abstract class ProxyObject<
         return listeners.add(listener);
     }
 
-    protected final void init(String name, Connection connection) throws JMSException {
+    protected final void init(String name) {
         logger.debug("Init {}", name);
-        receiver = new JMSUtil.Receiver<>(logger, connection, JMSUtil.Type.Topic, name, dataClass,
-                new JMSUtil.Receiver.Listener<DATA>() {
+        receiver = receiverFactory.create(logger, Type.Topic, name, dataClass);
+        receiver.listen(new Receiver.Listener<DATA>() {
                     @Override
                     public void onMessage(DATA data, boolean wasPersisted) {
                         ProxyObject.this.data = data;
                         dataUpdated();
                     }
                 });
-        initChildren(name, connection);
+        initChildren(name);
     }
 
-    protected void initChildren(String name, Connection connection) throws JMSException {}
+    protected void initChildren(String name) {}
 
     protected final void uninit() {
         logger.debug("Uninit");

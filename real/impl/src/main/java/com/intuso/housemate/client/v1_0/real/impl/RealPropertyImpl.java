@@ -6,12 +6,12 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Command;
 import com.intuso.housemate.client.v1_0.api.object.Property;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
+import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealProperty;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
 import java.util.List;
 
 /**
@@ -39,9 +39,11 @@ public class RealPropertyImpl<O>
                             @Assisted("max") int maxValues,
                             @Assisted Iterable values,
                             ManagedCollectionFactory managedCollectionFactory,
+                            Receiver.Factory receiverFactory,
+                            Sender.Factory senderFactory,
                             RealCommandImpl.Factory commandFactory,
                             RealParameterImpl.Factory parameterFactory) {
-        super(logger, new Property.Data(id, name, description, type.getId(), minValues, maxValues), managedCollectionFactory, type, values);
+        super(logger, new Property.Data(id, name, description, type.getId(), minValues, maxValues), managedCollectionFactory, receiverFactory, senderFactory, type, values);
         setCommand = commandFactory.create(ChildUtil.logger(logger, Property.SET_COMMAND_ID),
                 Property.SET_COMMAND_ID,
                 Property.SET_COMMAND_ID,
@@ -64,9 +66,9 @@ public class RealPropertyImpl<O>
     }
 
     @Override
-    protected void initChildren(String name, Connection connection) throws JMSException {
-        super.initChildren(name, connection);
-        setCommand.init(ChildUtil.name(name, Property.SET_COMMAND_ID), connection);
+    protected void initChildren(String name) {
+        super.initChildren(name);
+        setCommand.init(ChildUtil.name(name, Property.SET_COMMAND_ID));
     }
 
     @Override

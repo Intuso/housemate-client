@@ -3,19 +3,16 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
-import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Hardware;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Server;
+import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jms.Connection;
-import javax.jms.JMSException;
 
 public class RealNodeImpl
         extends RealObject<com.intuso.housemate.client.v1_0.api.object.Node.Data, com.intuso.housemate.client.v1_0.api.object.Node.Listener<? super RealNodeImpl>>
@@ -27,16 +24,15 @@ public class RealNodeImpl
     public final static String NODE_DESCRIPTION = "node.description";
 
     private final String id;
-    private final Connection connection;
 
     private final RealListGeneratedImpl<RealTypeImpl<?>> types;
     private final RealListPersistedImpl<Hardware.Data, RealHardwareImpl> hardwares;
     private final RealCommandImpl addHardwareCommand;
 
     @Inject
-    public RealNodeImpl(Connection connection,
-                        PropertyRepository propertyRepository,
+    public RealNodeImpl(PropertyRepository propertyRepository,
                         ManagedCollectionFactory managedCollectionFactory,
+                        Sender.Factory senderFactory,
                         RealListGeneratedImpl.Factory<RealTypeImpl<?>> typesFactory,
                         RealListPersistedImpl.Factory<Hardware.Data, RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
@@ -44,9 +40,8 @@ public class RealNodeImpl
                 new com.intuso.housemate.client.v1_0.api.object.Node.Data(propertyRepository.get(NODE_ID),
                         propertyRepository.get(NODE_NAME),
                         propertyRepository.get(NODE_DESCRIPTION)),
-                managedCollectionFactory);
+                managedCollectionFactory, senderFactory);
         this.id = propertyRepository.get(NODE_ID);
-        this.connection = connection;
         this.types = typesFactory.create(ChildUtil.logger(logger, TYPES_ID),
                 TYPES_ID,
                 "Types",
@@ -70,11 +65,11 @@ public class RealNodeImpl
     }
 
     @Override
-    protected void initChildren(String name, Connection connection) throws JMSException {
-        super.initChildren(name, connection);
-        types.init(ChildUtil.name(name, TYPES_ID), connection);
-        hardwares.init(ChildUtil.name(name, HARDWARES_ID), connection);
-        addHardwareCommand.init(ChildUtil.name(name, ADD_HARDWARE_ID), connection);
+    protected void initChildren(String name) {
+        super.initChildren(name);
+        types.init(ChildUtil.name(name, TYPES_ID));
+        hardwares.init(ChildUtil.name(name, HARDWARES_ID));
+        addHardwareCommand.init(ChildUtil.name(name, ADD_HARDWARE_ID));
     }
 
     @Override
@@ -106,11 +101,7 @@ public class RealNodeImpl
     }
 
     public void start() {
-        try {
-            init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, Server.NODES_ID, id), connection);
-        } catch(JMSException e) {
-            throw new HousemateException("Failed to initalise objects");
-        }
+        init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, Server.NODES_ID, id));
     }
 
     public void stop() {

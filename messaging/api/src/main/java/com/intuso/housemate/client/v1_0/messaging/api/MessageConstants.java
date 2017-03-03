@@ -1,4 +1,4 @@
-package com.intuso.housemate.client.v1_0.api;
+package com.intuso.housemate.client.v1_0.messaging.api;
 
 /**
  * Created by tomc on 28/06/16.

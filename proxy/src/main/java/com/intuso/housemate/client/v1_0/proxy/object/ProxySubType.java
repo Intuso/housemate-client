@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.SubType;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -17,8 +18,10 @@ public abstract class ProxySubType<TYPE extends ProxyType<?>,
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxySubType(Logger logger, ManagedCollectionFactory managedCollectionFactory) {
-        super(logger, SubType.Data.class, managedCollectionFactory);
+    public ProxySubType(Logger logger,
+                        ManagedCollectionFactory managedCollectionFactory,
+                        Receiver.Factory receiverFactory) {
+        super(logger, SubType.Data.class, managedCollectionFactory, receiverFactory);
     }
 
     @Override
@@ -42,8 +45,9 @@ public abstract class ProxySubType<TYPE extends ProxyType<?>,
 
         @Inject
         public Simple(@Assisted Logger logger,
-                      ManagedCollectionFactory managedCollectionFactory) {
-            super(logger, managedCollectionFactory);
+                      ManagedCollectionFactory managedCollectionFactory,
+                      Receiver.Factory receiverFactory) {
+            super(logger, managedCollectionFactory, receiverFactory);
         }
     }
 }

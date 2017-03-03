@@ -5,13 +5,11 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Server;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.ProxyRenameable;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
-
-import javax.jms.Connection;
-import javax.jms.JMSException;
 
 /**
  * @param <COMMAND> the type of the command
@@ -32,8 +30,6 @@ public abstract class ProxyServer<
         implements Server<COMMAND, AUTOMATIONS, SYSTEMS, USERS, NODES, SERVER>,
             ProxyRenameable<COMMAND> {
 
-    private final Connection connection;
-
     private final COMMAND renameCommand;
     private final AUTOMATIONS automations;
     private final COMMAND addAutomationCommand;
@@ -43,16 +39,15 @@ public abstract class ProxyServer<
     private final COMMAND addUserCommand;
     private final NODES nodes;
 
-    public ProxyServer(Connection connection,
-                       Logger logger,
+    public ProxyServer(Logger logger,
                        ManagedCollectionFactory managedCollectionFactory,
+                       Receiver.Factory receiverFactory,
                        Factory<COMMAND> commandFactory,
                        Factory<AUTOMATIONS> automationsFactory,
                        Factory<SYSTEMS> systemsFactory,
                        Factory<USERS> usersFactory,
                        Factory<NODES> nodesFactory) {
-        super(logger, Server.Data.class, managedCollectionFactory);
-        this.connection = connection;
+        super(logger, Server.Data.class, managedCollectionFactory, receiverFactory);
         renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID));
         automations = automationsFactory.create(ChildUtil.logger(logger, AUTOMATIONS_ID));
         addAutomationCommand = commandFactory.create(ChildUtil.logger(logger, ADD_AUTOMATION_ID));
@@ -64,11 +59,7 @@ public abstract class ProxyServer<
     }
 
     public void start() {
-        try {
-            init(ChildUtil.name(null, PROXY, VERSION), connection);
-        } catch(JMSException e) {
-            throw new HousemateException("Failed to initalise objects");
-        }
+        init(ChildUtil.name(null, PROXY, VERSION));
     }
 
     public void stop() {
@@ -76,16 +67,16 @@ public abstract class ProxyServer<
     }
 
     @Override
-    protected void initChildren(String name, Connection connection) throws JMSException {
-        super.initChildren(name, connection);
-        renameCommand.init(ChildUtil.name(name, RENAME_ID), connection);
-        automations.init(ChildUtil.name(name, AUTOMATIONS_ID), connection);
-        addAutomationCommand.init(ChildUtil.name(name, ADD_AUTOMATION_ID), connection);
-        systems.init(ChildUtil.name(name, SYSTEMS_ID), connection);
-        addSystemCommand.init(ChildUtil.name(name, ADD_SYSTEM_ID), connection);
-        users.init(ChildUtil.name(name, USERS_ID), connection);
-        addUserCommand.init(ChildUtil.name(name, ADD_USER_ID), connection);
-        nodes.init(ChildUtil.name(name, NODES_ID), connection);
+    protected void initChildren(String name) {
+        super.initChildren(name);
+        renameCommand.init(ChildUtil.name(name, RENAME_ID));
+        automations.init(ChildUtil.name(name, AUTOMATIONS_ID));
+        addAutomationCommand.init(ChildUtil.name(name, ADD_AUTOMATION_ID));
+        systems.init(ChildUtil.name(name, SYSTEMS_ID));
+        addSystemCommand.init(ChildUtil.name(name, ADD_SYSTEM_ID));
+        users.init(ChildUtil.name(name, USERS_ID));
+        addUserCommand.init(ChildUtil.name(name, ADD_USER_ID));
+        nodes.init(ChildUtil.name(name, NODES_ID));
     }
 
     @Override
@@ -219,14 +210,14 @@ public abstract class ProxyServer<
 
         @Inject
         public Simple(@com.intuso.housemate.client.v1_0.proxy.object.ioc.Server Logger logger,
-                      Connection connection,
                       ManagedCollectionFactory managedCollectionFactory,
+                      Receiver.Factory receiverFactory,
                       Factory<ProxyCommand.Simple> commandFactory,
                       Factory<ProxyList.Simple<ProxyAutomation.Simple>> automationsFactory,
                       Factory<ProxyList.Simple<ProxySystem.Simple>> systemsFactory,
                       Factory<ProxyList.Simple<ProxyUser.Simple>> usersFactory,
                       Factory<ProxyList.Simple<ProxyNode.Simple>> nodesFactory) {
-            super(connection, logger, managedCollectionFactory, commandFactory, automationsFactory, systemsFactory, usersFactory, nodesFactory);
+            super(logger, managedCollectionFactory, receiverFactory, commandFactory, automationsFactory, systemsFactory, usersFactory, nodesFactory);
         }
     }
 }

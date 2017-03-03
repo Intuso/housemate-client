@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Task;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.ProxyFailable;
 import com.intuso.housemate.client.v1_0.proxy.ProxyRemoveable;
@@ -10,20 +11,17 @@ import com.intuso.housemate.client.v1_0.proxy.ProxyUsesDriver;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
-
 /**
  * @param <VALUE> the type of the value
  * @param <PROPERTIES> the type of the properties list
  * @param <TASK> the type of the task
  */
 public abstract class ProxyTask<
-            COMMAND extends ProxyCommand<?, ?, COMMAND>,
-            VALUE extends ProxyValue<?, VALUE>,
-            PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
-            PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
-            TASK extends ProxyTask<COMMAND, VALUE, PROPERTY, PROPERTIES, TASK>>
+        COMMAND extends ProxyCommand<?, ?, COMMAND>,
+        VALUE extends ProxyValue<?, VALUE>,
+        PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
+        PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
+        TASK extends ProxyTask<COMMAND, VALUE, PROPERTY, PROPERTIES, TASK>>
         extends ProxyObject<Task.Data, Task.Listener<? super TASK>>
         implements Task<COMMAND, COMMAND, VALUE, PROPERTY, VALUE, VALUE, PROPERTIES, TASK>,
         ProxyFailable<VALUE>,
@@ -42,12 +40,13 @@ public abstract class ProxyTask<
      * @param logger {@inheritDoc}
      */
     public ProxyTask(Logger logger,
-                          ManagedCollectionFactory managedCollectionFactory,
-                          ProxyObject.Factory<COMMAND> commandFactory,
-                          ProxyObject.Factory<VALUE> valueFactory,
-                          ProxyObject.Factory<PROPERTY> propertyFactory,
-                          ProxyObject.Factory<PROPERTIES> propertiesFactory) {
-        super(logger, Task.Data.class, managedCollectionFactory);
+                     ManagedCollectionFactory managedCollectionFactory,
+                     Receiver.Factory receiverFactory,
+                     ProxyObject.Factory<COMMAND> commandFactory,
+                     ProxyObject.Factory<VALUE> valueFactory,
+                     ProxyObject.Factory<PROPERTY> propertyFactory,
+                     ProxyObject.Factory<PROPERTIES> propertiesFactory) {
+        super(logger, Task.Data.class, managedCollectionFactory, receiverFactory);
         renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID));
         removeCommand = commandFactory.create(ChildUtil.logger(logger, REMOVE_ID));
         errorValue = valueFactory.create(ChildUtil.logger(logger, ERROR_ID));
@@ -58,15 +57,15 @@ public abstract class ProxyTask<
     }
 
     @Override
-    protected void initChildren(String name, Connection connection) throws JMSException {
-        super.initChildren(name, connection);
-        renameCommand.init(ChildUtil.name(name, RENAME_ID), connection);
-        removeCommand.init(ChildUtil.name(name, REMOVE_ID), connection);
-        errorValue.init(ChildUtil.name(name, ERROR_ID), connection);
-        driverProperty.init(ChildUtil.name(name, DRIVER_ID), connection);
-        driverLoadedValue.init(ChildUtil.name(name, DRIVER_LOADED_ID), connection);
-        properties.init(ChildUtil.name(name, PROPERTIES_ID), connection);
-        executingValue.init(ChildUtil.name(name, EXECUTING_ID), connection);
+    protected void initChildren(String name) {
+        super.initChildren(name);
+        renameCommand.init(ChildUtil.name(name, RENAME_ID));
+        removeCommand.init(ChildUtil.name(name, REMOVE_ID));
+        errorValue.init(ChildUtil.name(name, ERROR_ID));
+        driverProperty.init(ChildUtil.name(name, DRIVER_ID));
+        driverLoadedValue.init(ChildUtil.name(name, DRIVER_LOADED_ID));
+        properties.init(ChildUtil.name(name, PROPERTIES_ID));
+        executingValue.init(ChildUtil.name(name, EXECUTING_ID));
     }
 
     @Override
@@ -153,12 +152,12 @@ public abstract class ProxyTask<
     }
 
     /**
-    * Created with IntelliJ IDEA.
-    * User: tomc
-    * Date: 14/01/14
-    * Time: 13:21
-    * To change this template use File | Settings | File Templates.
-    */
+     * Created with IntelliJ IDEA.
+     * User: tomc
+     * Date: 14/01/14
+     * Time: 13:21
+     * To change this template use File | Settings | File Templates.
+     */
     public static final class Simple extends ProxyTask<
             ProxyCommand.Simple,
             ProxyValue.Simple,
@@ -169,11 +168,12 @@ public abstract class ProxyTask<
         @Inject
         public Simple(@Assisted Logger logger,
                       ManagedCollectionFactory managedCollectionFactory,
+                      Receiver.Factory receiverFactory,
                       Factory<ProxyCommand.Simple> commandFactory,
                       Factory<ProxyValue.Simple> valueFactory,
                       Factory<ProxyProperty.Simple> propertyFactory,
                       Factory<ProxyList.Simple<ProxyProperty.Simple>> propertiesFactory) {
-            super(logger, managedCollectionFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory);
+            super(logger, managedCollectionFactory, receiverFactory, commandFactory, valueFactory, propertyFactory, propertiesFactory);
         }
     }
 }

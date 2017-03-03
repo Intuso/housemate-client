@@ -36,12 +36,6 @@
             <version>${intuso.utilities.version}</version>
         </dependency>
 
-        <!-- Active MQ -->
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>

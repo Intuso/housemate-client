@@ -14,16 +14,16 @@
     <description>Housemate Client 1.0 Proxy</description>
 
     <dependencies>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>housemate-client-1-0-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Active MQ -->
         <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>housemate-client-1-0-messaging-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

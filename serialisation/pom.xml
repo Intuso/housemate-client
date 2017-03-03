@@ -15,6 +15,7 @@
 
     <modules>
         <module>api</module>
+        <module>javabin</module>
         <module>json</module>
     </modules>
 
