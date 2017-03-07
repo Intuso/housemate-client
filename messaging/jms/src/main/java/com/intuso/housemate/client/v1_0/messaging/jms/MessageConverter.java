@@ -12,6 +12,7 @@ import java.io.Serializable;
  * Created by tomc on 02/03/17.
  */
 public interface MessageConverter {
+
     Message toMessage(Session session, Serializable object) throws JMSException;
     <T extends Serializable> T fromMessage(Message message, Class<T> tClass);
 
