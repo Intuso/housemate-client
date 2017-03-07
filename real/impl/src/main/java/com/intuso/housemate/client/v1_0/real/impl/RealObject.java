@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
-import com.intuso.housemate.client.v1_0.messaging.api.Type;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
@@ -33,7 +32,7 @@ public abstract class RealObject<DATA extends Object.Data,
 
     public final void init(String name) {
         logger.debug("Init {}", name);
-        sender = senderFactory.create(logger, Type.Topic, name);
+        sender = senderFactory.create(logger, name);
         sendData();
         initChildren(name);
     }

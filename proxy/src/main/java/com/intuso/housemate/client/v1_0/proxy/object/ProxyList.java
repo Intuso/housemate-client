@@ -6,7 +6,6 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.List;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
-import com.intuso.housemate.client.v1_0.messaging.api.Type;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
@@ -43,7 +42,7 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
     protected void initChildren(final String name) {
         super.initChildren(name);
         // subscribe to all child topics and create children as new topics are discovered
-        existingObjectReceiver = receiverFactory.create(logger, Type.Topic, ChildUtil.name(name, "*"), Object.Data.class);
+        existingObjectReceiver = receiverFactory.create(logger, ChildUtil.name(name, "*"), Object.Data.class);
         existingObjectReceiver.listen(new Receiver.Listener<Object.Data>() {
                     @Override
                     public void onMessage(Object.Data data, boolean wasPersisted) {

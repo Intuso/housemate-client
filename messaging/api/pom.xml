@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>housemate-client-1-0-messaging-api</artifactId>
-    <name>Housemate Client 1.0 Nessaging API</name>
+    <name>Housemate Client 1.0 Messaging API</name>
     <description>API for messaging for Client 1.0 for the Housemate framework</description>
 
     <dependencies>
