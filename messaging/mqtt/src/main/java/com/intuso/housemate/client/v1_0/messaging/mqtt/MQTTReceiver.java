@@ -70,7 +70,7 @@ public class MQTTReceiver<T extends Serializable> implements Receiver<T> {
     @Override
     public void listen(Listener<T> listener) {
         try {
-            client.subscribe(name, 1, new ListenerWrapper(listener));
+            client.subscribe(name, 0, new ListenerWrapper(listener));
         } catch (MqttException e) {
             throw new MessagingException("Failed to subscribe to mqtt topic", e);
         }

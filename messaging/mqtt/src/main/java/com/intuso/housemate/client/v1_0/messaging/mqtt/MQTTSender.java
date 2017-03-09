@@ -38,7 +38,7 @@ public class MQTTSender implements Sender {
     public void send(Serializable object, boolean persistent) {
         try {
             byte[] bytes = messageConverter.toPayload(object);
-            topic.publish(bytes, 1, persistent);
+            topic.publish(bytes, 0, persistent);
             logger.trace("Sent {} on {}", object, topic.getName());
         } catch(MqttException e) {
             throw new RuntimeException("Failed to send message", e);
