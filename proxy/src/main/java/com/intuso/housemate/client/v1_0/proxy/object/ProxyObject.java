@@ -80,7 +80,7 @@ public abstract class ProxyObject<
         receiver = receiverFactory.create(logger, name, dataClass);
         receiver.listen(new Receiver.Listener<DATA>() {
                     @Override
-                    public void onMessage(DATA data, boolean wasPersisted) {
+                    public void onMessage(DATA data, boolean persistent) {
                         ProxyObject.this.data = data;
                         dataUpdated();
                     }

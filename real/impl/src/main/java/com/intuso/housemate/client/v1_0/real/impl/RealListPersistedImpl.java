@@ -97,7 +97,7 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
         // NB this will receive all the ones we received above, but in a different thread and probably not before we want to init them.
         existingObjectReceiver.listen(new Receiver.Listener<CHILD_DATA>() {
                     @Override
-                    public void onMessage(CHILD_DATA data, boolean wasPersisted) {
+                    public void onMessage(CHILD_DATA data, boolean persistent) {
                         if(!elements.containsKey(data.getId())) {
                             ELEMENT element = existingObjectHandler.create(ChildUtil.logger(logger, data.getId()), data, removeCallback);
                             if(element != null)

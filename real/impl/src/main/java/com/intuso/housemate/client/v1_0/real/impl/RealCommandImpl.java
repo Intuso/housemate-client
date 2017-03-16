@@ -75,7 +75,7 @@ public final class RealCommandImpl
         performReceiver = receiverFactory.create(logger, ChildUtil.name(name, Command.PERFORM_ID), PerformData.class);
         performReceiver.listen(new Receiver.Listener<PerformData>() {
                     @Override
-                    public void onMessage(final PerformData performData, boolean wasPersisted) {
+                    public void onMessage(final PerformData performData, boolean persistent) {
                         perform(performData.getInstanceMap(), new PerformListener<RealCommandImpl>() {
 
                             @Override

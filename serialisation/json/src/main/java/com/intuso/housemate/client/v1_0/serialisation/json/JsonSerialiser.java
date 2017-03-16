@@ -5,7 +5,6 @@ import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.serialisation.api.Serialiser;
 import com.intuso.housemate.client.v1_0.serialisation.json.config.GsonConfig;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -21,7 +20,7 @@ public class JsonSerialiser implements Serialiser<String> {
 
     private final Gson gson;
 
-    public JsonSerialiser() throws IOException {
+    public JsonSerialiser() {
         try {
             gson = GsonConfig.createGson();
         } catch(Throwable t) {

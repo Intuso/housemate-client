@@ -61,7 +61,7 @@ public abstract class ProxyCommand<
         performStatusReceiver = receiverFactory.create(logger, ChildUtil.name(name, PERFORM_STATUS_ID), PerformStatusData.class);
         performStatusReceiver.listen(new Receiver.Listener<PerformStatusData>() {
                     @Override
-                    public void onMessage(PerformStatusData performStatusData, boolean wasPersisted) {
+                    public void onMessage(PerformStatusData performStatusData, boolean persistent) {
                         if (listenerMap.containsKey(performStatusData.getOpId())) {
                             if (performStatusData.isFinished()) {
                                 if (performStatusData.getError() == null)

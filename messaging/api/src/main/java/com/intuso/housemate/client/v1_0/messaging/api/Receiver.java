@@ -16,7 +16,7 @@ public interface Receiver<T extends Serializable> {
     void listen(Listener<T> listener);
 
     interface Listener<T extends Serializable> {
-        void onMessage(T t, boolean wasPersisted);
+        void onMessage(T t, boolean persistent);
     }
 
     interface Factory {

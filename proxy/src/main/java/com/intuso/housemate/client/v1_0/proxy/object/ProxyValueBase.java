@@ -42,7 +42,7 @@ public abstract class ProxyValueBase<
         value = valueReceiver.getMessage();
         valueReceiver.listen(new Receiver.Listener<Type.Instances>() {
             @Override
-            public void onMessage(Type.Instances instances, boolean wasPersisted) {
+            public void onMessage(Type.Instances instances, boolean persistent) {
                 value = instances;
                 // todo call object listeners
             }

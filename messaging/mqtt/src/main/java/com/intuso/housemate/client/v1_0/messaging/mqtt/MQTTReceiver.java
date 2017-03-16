@@ -50,7 +50,7 @@ public class MQTTReceiver<T extends Serializable> implements Receiver<T> {
         final MessageFuture result = new MessageFuture();
         listen(new Listener<T>() {
             @Override
-            public void onMessage(T t, boolean wasPersisted) {
+            public void onMessage(T t, boolean persistent) {
                 result.set(t);
             }
         });
