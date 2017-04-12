@@ -50,6 +50,10 @@ public abstract class ProxyObject<
         this.listeners = managedCollectionFactory.create();
     }
 
+    public DATA getData() {
+        return data;
+    }
+
     @Override
     public String getObjectClass() {
         return data == null ? null : data.getObjectClass();
