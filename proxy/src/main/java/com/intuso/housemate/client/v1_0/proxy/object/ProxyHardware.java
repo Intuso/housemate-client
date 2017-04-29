@@ -19,7 +19,7 @@ public abstract class ProxyHardware<
             VALUES extends ProxyList<? extends ProxyValue<?, ?>, ?>,
             PROPERTY extends ProxyProperty<?, ?, PROPERTY>,
             PROPERTIES extends ProxyList<? extends ProxyProperty<?, ?, ?>, ?>,
-            DEVICES extends ProxyList<? extends ProxyDevice<?, ?, ?, ?, ?>, ?>,
+            DEVICES extends ProxyList<? extends ProxyDeviceConnected<?, ?, ?, ?>, ?>,
             HARDWARE extends ProxyHardware<COMMAND, COMMANDS, VALUE, VALUES, PROPERTY, PROPERTIES, DEVICES, HARDWARE>>
         extends ProxyObject<Hardware.Data, Hardware.Listener<? super HARDWARE>>
         implements Hardware<COMMAND, COMMAND, COMMAND, VALUE, VALUE, PROPERTY, VALUE, COMMANDS, VALUES, PROPERTIES, DEVICES, HARDWARE>,
@@ -179,7 +179,7 @@ public abstract class ProxyHardware<
     }
 
     @Override
-    public final DEVICES getDevices() {
+    public final DEVICES getDeviceConnecteds() {
         return devices;
     }
 
@@ -226,7 +226,7 @@ public abstract class ProxyHardware<
             ProxyList.Simple<ProxyValue.Simple>,
             ProxyProperty.Simple,
             ProxyList.Simple<ProxyProperty.Simple>,
-            ProxyList.Simple<ProxyDevice.Simple>,
+            ProxyList.Simple<ProxyDeviceConnected.Simple>,
             Simple> {
 
         @Inject
@@ -239,7 +239,7 @@ public abstract class ProxyHardware<
                       Factory<ProxyList.Simple<ProxyValue.Simple>> valuesFactory,
                       Factory<ProxyProperty.Simple> propertyFactory,
                       Factory<ProxyList.Simple<ProxyProperty.Simple>> propertiesFactory,
-                      Factory<ProxyList.Simple<ProxyDevice.Simple>> devicesFactory) {
+                      Factory<ProxyList.Simple<ProxyDeviceConnected.Simple>> devicesFactory) {
             super(logger, managedCollectionFactory, receiverFactory, commandFactory, commandsFactory, valueFactory, valuesFactory, propertyFactory, propertiesFactory, devicesFactory);
         }
     }

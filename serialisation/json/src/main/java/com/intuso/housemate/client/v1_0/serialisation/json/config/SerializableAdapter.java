@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.serialisation.json.config;
 
 import com.google.gson.typeadapters.RuntimeTypeAdapterFactory;
 import com.intuso.housemate.client.v1_0.api.object.*;
-import com.intuso.housemate.client.v1_0.api.object.System;
 
 import java.io.Serializable;
 
@@ -21,7 +20,7 @@ public class SerializableAdapter extends RuntimeTypeAdapterFactory<Serializable>
         registerSubtype(Command.PerformData.class, "commandPerform");
         registerSubtype(Command.PerformStatusData.class, "commandPerformStatus");
         registerSubtype(Condition.Data.class, "condition");
-        registerSubtype(System.Data.class, "device");
+        registerSubtype(Device.Data.class, "device");
         registerSubtype(Hardware.Data.class, "hardware");
         registerSubtype(List.Data.class, "list");
         registerSubtype(Option.Data.class, "option");
@@ -33,6 +32,7 @@ public class SerializableAdapter extends RuntimeTypeAdapterFactory<Serializable>
         registerSubtype(Type.CompositeData.class, "compoundType");
         registerSubtype(Type.ObjectData.class, "objectType");
         registerSubtype(Server.Data.class, "server");
+        registerSubtype(Device.Combi.Data.class, "system");
         registerSubtype(Type.RegexData.class, "regexType");
         registerSubtype(Type.PrimitiveData.class, "simpleType");
         registerSubtype(Type.Instance.class, "typeInstance");

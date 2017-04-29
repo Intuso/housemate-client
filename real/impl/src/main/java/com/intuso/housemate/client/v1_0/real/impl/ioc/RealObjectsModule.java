@@ -19,7 +19,7 @@ public class RealObjectsModule extends AbstractModule {
 
         // devices
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealDeviceImpl.Factory>() {}));
+                .build(new TypeLiteral<RealDeviceConnectedImpl.Factory>() {}));
 
         // lists
         // generated
@@ -39,14 +39,14 @@ public class RealObjectsModule extends AbstractModule {
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealValueImpl<?>>>() {}));
         // persisted
         install(new FactoryModuleBuilder()
-                .build(new TypeLiteral<RealListPersistedImpl.Factory<Device.Data, RealDeviceImpl>>() {}));
+                .build(new TypeLiteral<RealListPersistedImpl.Factory<Device.Connected.Data, RealDeviceConnectedImpl>>() {}));
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListPersistedImpl.Factory<Hardware.Data, RealHardwareImpl>>() {}));
         // persisted data classes
-        bind(new TypeLiteral<Class<Device.Data>>() {}).toInstance(Device.Data.class);
+        bind(new TypeLiteral<Class<Device.Connected.Data>>() {}).toInstance(Device.Connected.Data.class);
         bind(new TypeLiteral<Class<Hardware.Data>>() {}).toInstance(Hardware.Data.class);
         // persisted element factories
-        bind(new TypeLiteral<RealListPersistedImpl.ElementFactory<Device.Data, RealDeviceImpl>>() {}).to(RealDeviceImpl.LoadPersisted.class);
+        bind(new TypeLiteral<RealListPersistedImpl.ElementFactory<Device.Connected.Data, RealDeviceConnectedImpl>>() {}).to(RealDeviceConnectedImpl.LoadPersisted.class);
         bind(new TypeLiteral<RealListPersistedImpl.ElementFactory<Hardware.Data, RealHardwareImpl>>() {}).to(RealHardwareImpl.LoadPersisted.class);
 
         // hardwares
