@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.object.Device;
+import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
@@ -121,7 +122,18 @@ public abstract class RealDeviceImpl<DATA extends Device.Data,
             values.remove(value.getId());
     }
 
-    void wrap(Object object) {
+    @Override
+    public Object<?> getChild(String id) {
+        if(RENAME_ID.equals(id))
+            return renameCommand;
+        else if(COMMANDS_ID.equals(id))
+            return commands;
+        else if(VALUES_ID.equals(id))
+            return values;
+        return null;
+    }
+
+    void wrap(java.lang.Object object) {
         clear();
         // add the commands, values and properties specified by the object
         for(RealCommandImpl command : annotationParser.findCommands(ChildUtil.logger(logger, COMMANDS_ID), "", object))

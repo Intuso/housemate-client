@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.List;
-import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealList;
 import com.intuso.utilities.collection.ManagedCollection;
@@ -102,6 +101,11 @@ public final class RealListGeneratedImpl<ELEMENT extends RealObject<?, ?>>
             if (name.equalsIgnoreCase(element.getName()))
                 return element;
         return null;
+    }
+
+    @Override
+    public RealObject<?, ?> getChild(String id) {
+        return get(id);
     }
 
     @Override

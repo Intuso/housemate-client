@@ -1,16 +1,10 @@
 package com.intuso.housemate.client.v1_0.proxy.object;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intuso.housemate.client.v1_0.api.object.Object;
-import com.intuso.housemate.client.v1_0.api.type.ObjectReference;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @param <DATA> the type of the data
@@ -24,12 +18,9 @@ public abstract class ProxyObject<
 
     protected final Logger logger;
     private final Class<DATA> dataClass;
-    private final ManagedCollectionFactory managedCollectionFactory;
     protected final Receiver.Factory receiverFactory;
 
     protected final ManagedCollection<LISTENER> listeners;
-    private final List<ObjectReferenceImpl> references = Lists.newArrayList();
-    private final Map<String, Map<ObjectReferenceImpl, Integer>> missingReferences = Maps.newHashMap();
 
     protected DATA data = null;
     private Receiver<DATA> receiver;
@@ -38,15 +29,11 @@ public abstract class ProxyObject<
      * @param logger the log
      * @param receiverFactory
      */
-    protected ProxyObject(Logger logger,
-                          Class<DATA> dataClass,
-                          ManagedCollectionFactory managedCollectionFactory,
-                          Receiver.Factory receiverFactory) {
-        this.receiverFactory = receiverFactory;
+    protected ProxyObject(Logger logger, Class<DATA> dataClass, ManagedCollectionFactory managedCollectionFactory, Receiver.Factory receiverFactory) {
         logger.debug("Creating");
         this.logger = logger;
-        this.managedCollectionFactory = managedCollectionFactory;
         this.dataClass = dataClass;
+        this.receiverFactory = receiverFactory;
         this.listeners = managedCollectionFactory.create();
     }
 
@@ -83,12 +70,12 @@ public abstract class ProxyObject<
         logger.debug("Init {}", name);
         receiver = receiverFactory.create(logger, name, dataClass);
         receiver.listen(new Receiver.Listener<DATA>() {
-                    @Override
-                    public void onMessage(DATA data, boolean persistent) {
-                        ProxyObject.this.data = data;
-                        dataUpdated();
-                    }
-                });
+            @Override
+            public void onMessage(DATA data, boolean wasPersisted) {
+                ProxyObject.this.data = data;
+                dataUpdated();
+            }
+        });
         initChildren(name);
     }
 
@@ -109,35 +96,6 @@ public abstract class ProxyObject<
 
     public boolean isLoaded() {
         return data != null;
-    }
-
-    public abstract ProxyObject<?, ?> getChild(String id);
-
-    public <O extends ProxyObject<?, ?>> ObjectReference<O> reference(String[] path) {
-        ObjectReferenceImpl<O> reference = new ObjectReferenceImpl<>(managedCollectionFactory, path);
-        reference(reference, 0);
-        return reference;
-    }
-
-    protected void reference(ObjectReferenceImpl reference, int pathIndex) {
-        if(pathIndex == reference.getPath().length) {
-            references.add(reference);
-            reference.setObject(this);
-        } else {
-            String id = reference.getPath()[pathIndex];
-            ProxyObject<?, ?> child = getChild(id);
-            if(child != null)
-                child.reference(reference, pathIndex + 1);
-            else {
-                if(!missingReferences.containsKey(id))
-                    missingReferences.put(id, Maps.<ObjectReferenceImpl, Integer>newHashMap());
-                missingReferences.get(id).put(reference, pathIndex);
-            }
-        }
-    }
-
-    protected Map<ObjectReferenceImpl, Integer> getMissingReferences(String id) {
-        return missingReferences.containsKey(id) ? missingReferences.remove(id) : Maps.<ObjectReferenceImpl, Integer>newHashMap();
     }
 
     public interface Factory<OBJECT extends ProxyObject<?, ?>> {

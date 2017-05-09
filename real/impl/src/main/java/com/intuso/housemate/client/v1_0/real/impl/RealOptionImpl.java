@@ -3,7 +3,6 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Option;
-import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealOption;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
@@ -52,6 +51,13 @@ public final class RealOptionImpl
     @Override
     public final RealListGeneratedImpl<RealSubTypeImpl<?>> getSubTypes() {
         return subTypes;
+    }
+
+    @Override
+    public RealObject<?, ?> getChild(String id) {
+        if(SUB_TYPES_ID.equals(id))
+            return subTypes;
+        return null;
     }
 
     public interface Factory {

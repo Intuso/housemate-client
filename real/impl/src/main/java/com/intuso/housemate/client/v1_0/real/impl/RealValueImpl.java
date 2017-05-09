@@ -36,6 +36,11 @@ public final class RealValueImpl<O>
         super(logger, new Value.Data(id, name, description, type.getId(), minValues, maxValues), managedCollectionFactory, receiverFactory, senderFactory, type, values);
     }
 
+    @Override
+    public RealObject<?, ?> getChild(String id) {
+        return null;
+    }
+
     public interface Factory {
         RealValueImpl<?> create(Logger logger,
                                 @Assisted("id") String id,

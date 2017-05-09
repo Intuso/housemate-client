@@ -91,6 +91,13 @@ public class RealPropertyImpl<O>
         return setCommand;
     }
 
+    @Override
+    public RealObject<?, ?> getChild(String id) {
+        if(SET_COMMAND_ID.equals(id))
+            return setCommand;
+        return null;
+    }
+
     public interface Factory {
         RealPropertyImpl<?> create(Logger logger,
                                    @Assisted("id") String id,

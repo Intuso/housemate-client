@@ -44,21 +44,19 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
         // subscribe to all child topics and create children as new topics are discovered
         existingObjectReceiver = receiverFactory.create(logger, ChildUtil.name(name, "*"), Object.Data.class);
         existingObjectReceiver.listen(new Receiver.Listener<Object.Data>() {
-                    @Override
-                    public void onMessage(Object.Data data, boolean persistent) {
-                        if (!elements.containsKey(data.getId())) {
-                            ELEMENT element = elementFactory.create(ChildUtil.logger(logger, data.getId()));
-                            if (element != null) {
-                                elements.put(data.getId(), element);
-                                element.init(ChildUtil.name(name, data.getId()));
-                                for (List.Listener<? super ELEMENT, ? super LIST> listener : listeners)
-                                    listener.elementAdded((LIST) ProxyList.this, element);
-                                for(Map.Entry<ObjectReferenceImpl, Integer> reference : getMissingReferences(data.getId()).entrySet())
-                                    reference(reference.getKey(), reference.getValue());
-                            }
-                        }
+            @Override
+            public void onMessage(Object.Data data, boolean wasPersisted) {
+                if (!elements.containsKey(data.getId())) {
+                    ELEMENT element = elementFactory.create(ChildUtil.logger(logger, data.getId()));
+                    if (element != null) {
+                        elements.put(data.getId(), element);
+                        element.init(ChildUtil.name(name, data.getId()));
+                        for (List.Listener<? super ELEMENT, ? super LIST> listener : listeners)
+                            listener.elementAdded((LIST) ProxyList.this, element);
                     }
-                });
+                }
+            }
+        });
     }
 
     @Override
@@ -109,12 +107,12 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?>, LIST extends 
     }
 
     /**
-    * Created with IntelliJ IDEA.
-    * User: tomc
-    * Date: 14/01/14
-    * Time: 13:16
-    * To change this template use File | Settings | File Templates.
-    */
+     * Created with IntelliJ IDEA.
+     * User: tomc
+     * Date: 14/01/14
+     * Time: 13:16
+     * To change this template use File | Settings | File Templates.
+     */
     public static final class Simple<ELEMENT extends ProxyObject<?, ?>> extends ProxyList<ELEMENT, Simple<ELEMENT>> {
 
         @Inject

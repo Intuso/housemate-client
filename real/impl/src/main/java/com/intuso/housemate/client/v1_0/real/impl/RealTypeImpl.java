@@ -3,7 +3,6 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
-import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealType;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
@@ -29,6 +28,11 @@ public abstract class RealTypeImpl<O>
                            ManagedCollectionFactory managedCollectionFactory,
                            Sender.Factory senderFactory) {
         super(logger, data, managedCollectionFactory, senderFactory);
+    }
+
+    @Override
+    public RealObject<?, ?> getChild(String id) {
+        return null;
     }
 
     public static <O> Instances serialiseAll(TypeSerialiser<O> serialiser, O ... typedValues) {

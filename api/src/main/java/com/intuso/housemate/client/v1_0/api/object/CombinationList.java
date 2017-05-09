@@ -10,12 +10,12 @@ import java.util.NoSuchElementException;
 /**
  * Created by tomc on 02/05/17.
  */
-public class CombinationList<T> implements List<T, CombinationList<T>>, List.Listener<T, List<T, ?>> {
+public class CombinationList<T extends Object<?>> implements List<T, CombinationList<T>>, List.Listener<T, List<T, ?>> {
 
     private final String id;
     private final String name;
     private final String description;
-    private final ManagedCollection<Listener<? super T, ? super CombinationList<T>>> listeners;
+    private final ManagedCollection<List.Listener<? super T, ? super CombinationList<T>>> listeners;
     private final java.util.List<List<? extends T, ?>> lists = new ArrayList<>();
 
     public CombinationList(String id, String name, String description, ManagedCollectionFactory managedCollectionFactory) {
@@ -86,6 +86,11 @@ public class CombinationList<T> implements List<T, CombinationList<T>>, List.Lis
                 return element;
         }
         return null;
+    }
+
+    @Override
+    public Object<?> getChild(String id) {
+        return get(id);
     }
 
     @Override

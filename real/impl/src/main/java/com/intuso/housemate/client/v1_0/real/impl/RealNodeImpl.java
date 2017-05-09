@@ -100,6 +100,17 @@ public class RealNodeImpl
         return addHardwareCommand;
     }
 
+    @Override
+    public RealObject<?, ?> getChild(String id) {
+        if(ADD_HARDWARE_ID.equals(id))
+            return addHardwareCommand;
+        else if(HARDWARES_ID.equals(id))
+            return hardwares;
+        else if(TYPES_ID.equals(id))
+            return types;
+        return null;
+    }
+
     public void start() {
         init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, Server.NODES_ID, id));
     }
