@@ -7,7 +7,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 public interface Value<DATA_TYPE,
             TYPE extends Type<?>,
             VALUE extends Value<?, ?, ?>>
-        extends ValueBase<DATA_TYPE, TYPE, Value.Listener<? super VALUE>, VALUE> {
+        extends ValueBase<Value.Data, DATA_TYPE, TYPE, Value.Listener<? super VALUE>, VALUE> {
 
     /**
      *

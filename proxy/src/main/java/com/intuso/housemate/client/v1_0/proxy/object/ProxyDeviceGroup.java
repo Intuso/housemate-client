@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.ConvertingList;
 import com.intuso.housemate.client.v1_0.api.object.Device;
+import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.ProxyFailable;
@@ -197,29 +198,29 @@ public abstract class ProxyDeviceGroup<
     }
 
     @Override
-    public ProxyObject<?, ?> getChild(String id) {
+    public Object<?, ?> getChild(String id) {
         if(REMOVE_ID.equals(id))
             return removeCommand;
         else if(ERROR_ID.equals(id))
             return errorValue;
         else if(PLAYBACK.equals(id))
-            return playbackDeviceReferences;
+            return playbackDevices;
         else if(ADD_PLAYBACK.equals(id))
             return addPlaybackDeviceCommand;
         else if(POWER.equals(id))
-            return powerDeviceReferences;
+            return powerDevices;
         else if(ADD_POWER.equals(id))
             return addPowerDeviceCommand;
         else if(RUN.equals(id))
-            return runDeviceReferences;
+            return runDevices;
         else if(ADD_RUN.equals(id))
             return addRunDeviceCommand;
         else if(TEMPERATURE_SENSOR.equals(id))
-            return temperatureSensorDeviceReferences;
+            return temperatureSensorDevices;
         else if(ADD_TEMPERATURE_SENSOR.equals(id))
             return addTemperatureSensorDeviceCommand;
         else if(VOLUME.equals(id))
-            return volumeDeviceReferences;
+            return volumeDevices;
         else if(ADD_VOLUME.equals(id))
             return addVolumeDeviceCommand;
         return super.getChild(id);

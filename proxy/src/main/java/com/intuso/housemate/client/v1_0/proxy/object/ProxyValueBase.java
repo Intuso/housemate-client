@@ -1,6 +1,5 @@
 package com.intuso.housemate.client.v1_0.proxy.object;
 
-import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
@@ -14,12 +13,12 @@ import org.slf4j.Logger;
  * @param <VALUE> the type of the value
  */
 public abstract class ProxyValueBase<
-            DATA extends Object.Data,
+            DATA extends ValueBase.Data,
             TYPE extends ProxyType<?>,
             LISTENER extends ValueBase.Listener<? super VALUE>,
             VALUE extends ProxyValueBase<DATA, TYPE, LISTENER, VALUE>>
         extends ProxyObject<DATA, LISTENER>
-        implements ValueBase<Type.Instances, TYPE, LISTENER, VALUE> {
+        implements ValueBase<DATA, Type.Instances, TYPE, LISTENER, VALUE> {
 
     private Receiver<Type.Instances> valueReceiver;
 

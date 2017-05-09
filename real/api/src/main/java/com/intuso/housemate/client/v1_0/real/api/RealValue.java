@@ -8,7 +8,7 @@ import com.intuso.housemate.client.v1_0.api.object.Value;
 public interface RealValue<O,
         TYPE extends RealType<O, ?>,
         VALUE extends RealValue<O, TYPE, VALUE>>
-        extends RealValueBase<O, TYPE, Value.Listener<? super VALUE>, VALUE>,
+        extends RealValueBase<Value.Data, O, TYPE, Value.Listener<? super VALUE>, VALUE>,
         Value<O,
         TYPE,
         VALUE> {}
