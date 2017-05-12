@@ -227,11 +227,11 @@ public abstract class ProxyServer<
         return null;
     }
 
-    public <OBJECT extends ProxyObject<?, ?>> ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> findConverter() {
+    public <OBJECT extends Object<?, ?>> ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> findConverter() {
         return new ReferenceLoaderConverter<>();
     }
 
-    public <T extends ProxyObject<?, ?>> T find(String[] path) {
+    public <T extends Object<?, ?>> T find(String[] path) {
         return find(path, true);
     }
 
@@ -342,7 +342,7 @@ public abstract class ProxyServer<
         }
     }
 
-    private class ReferenceLoaderConverter<OBJECT extends ProxyObject<?, ?>> implements ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> {
+    private class ReferenceLoaderConverter<OBJECT extends Object<?, ?>> implements ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> {
 
         @Override
         public OBJECT apply(ProxyValue<?, ?> element) {

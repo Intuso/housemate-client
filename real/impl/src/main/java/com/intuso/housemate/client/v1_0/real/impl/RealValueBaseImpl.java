@@ -9,8 +9,6 @@ import com.intuso.housemate.client.v1_0.real.api.RealValueBase;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
-import java.util.List;
-
 /**
  * @param <O> the type of the value's value
  * @param <DATA> the type of the data object
@@ -52,11 +50,22 @@ public abstract class RealValueBaseImpl<O,
     @Override
     protected void initChildren(String name) {
         super.initChildren(name);
-        valueSender = senderFactory.create(logger, ChildUtil.name(name, ValueBase.VALUE_ID));
-        // get the persisted value
+
+        boolean gotPersisted = false;
+
+        // get the persisted value, if there is one
         Type.Instances instances = receiverFactory.create(logger, ChildUtil.name(name, ValueBase.VALUE_ID), Type.Instances.class).getMessage();
-        if(instances != null)
+        if(instances != null) {
+            gotPersisted = true;
             setValues(RealTypeImpl.deserialiseAll(type, instances));
+        }
+
+        // create the sender
+        valueSender = senderFactory.create(logger, ChildUtil.name(name, ValueBase.VALUE_ID));
+
+        // if it there wasn't a persisted value, and we have a value, then publish it
+        if(!gotPersisted && values != null)
+            setValues(values);
     }
 
     @Override
@@ -95,7 +104,7 @@ public abstract class RealValueBaseImpl<O,
      * Sets the object representation of this value
      * @param values the new value
      */
-    public final void setValues(List<O> values) {
+    public final void setValues(Iterable<O> values) {
         for(LISTENER listener : listeners)
             listener.valueChanging((VALUE)this);
         this.values = values;
