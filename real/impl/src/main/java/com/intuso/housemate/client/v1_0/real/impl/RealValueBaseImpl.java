@@ -15,13 +15,14 @@ import org.slf4j.Logger;
  * @param <VALUE> the type of the value
  */
 public abstract class RealValueBaseImpl<O,
-            DATA extends ValueBase.Data,
-            LISTENER extends ValueBase.Listener<? super VALUE>,
-            VALUE extends RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VALUE>>
+        DATA extends ValueBase.Data,
+        LISTENER extends ValueBase.Listener<? super VALUE>,
+        VALUE extends RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VALUE>>
         extends RealObject<DATA, LISTENER>
         implements RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VALUE> {
 
     private final Receiver.Factory receiverFactory;
+
     private final RealTypeImpl<O> type;
 
     private Sender valueSender;
@@ -110,7 +111,9 @@ public abstract class RealValueBaseImpl<O,
         this.values = values;
         if(valueSender != null) {
             try {
-                valueSender.send(RealTypeImpl.serialiseAll(type, values), true);
+                Type.Instances serialisedValues = RealTypeImpl.serialiseAll(type, values);
+                valueSender.send(serialisedValues, true);
+                logger.trace("Set to {}", serialisedValues);
             } catch (Throwable t) {
                 logger.error("Failed to send value update", t);
             }

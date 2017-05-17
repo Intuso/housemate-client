@@ -13,10 +13,10 @@ import org.slf4j.Logger;
  * @param <VALUE> the type of the value
  */
 public abstract class ProxyValueBase<
-            DATA extends ValueBase.Data,
-            TYPE extends ProxyType<?>,
-            LISTENER extends ValueBase.Listener<? super VALUE>,
-            VALUE extends ProxyValueBase<DATA, TYPE, LISTENER, VALUE>>
+        DATA extends ValueBase.Data,
+        TYPE extends ProxyType<?>,
+        LISTENER extends ValueBase.Listener<? super VALUE>,
+        VALUE extends ProxyValueBase<DATA, TYPE, LISTENER, VALUE>>
         extends ProxyObject<DATA, LISTENER>
         implements ValueBase<DATA, Type.Instances, TYPE, LISTENER, VALUE> {
 
@@ -39,10 +39,12 @@ public abstract class ProxyValueBase<
         super.initChildren(name);
         valueReceiver = receiverFactory.create(logger, ChildUtil.name(name, VALUE_ID), Type.Instances.class);
         value = valueReceiver.getMessage();
+        logger.trace("Got initial value {}", value);
         valueReceiver.listen(new Receiver.Listener<Type.Instances>() {
             @Override
-            public void onMessage(Type.Instances instances, boolean persistent) {
+            public void onMessage(Type.Instances instances, boolean wasPersisted) {
                 value = instances;
+                logger.trace("Got new value {}", value);
                 // todo call object listeners
             }
         });
