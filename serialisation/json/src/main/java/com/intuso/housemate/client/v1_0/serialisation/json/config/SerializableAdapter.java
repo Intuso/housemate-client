@@ -32,7 +32,7 @@ public class SerializableAdapter extends RuntimeTypeAdapterFactory<Serializable>
         registerSubtype(Type.CompositeData.class, "compoundType");
         registerSubtype(Type.ObjectData.class, "objectType");
         registerSubtype(Server.Data.class, "server");
-        registerSubtype(Device.Group.Data.class, "system");
+        registerSubtype(Device.Group.Data.class, "deviceGroup");
         registerSubtype(Type.RegexData.class, "regexType");
         registerSubtype(Type.PrimitiveData.class, "simpleType");
         registerSubtype(Type.Instance.class, "typeInstance");

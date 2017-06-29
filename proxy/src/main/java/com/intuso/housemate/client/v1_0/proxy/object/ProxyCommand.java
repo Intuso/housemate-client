@@ -9,6 +9,10 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
+import com.intuso.housemate.client.v1_0.proxy.object.view.CommandView;
+import com.intuso.housemate.client.v1_0.proxy.object.view.ListView;
+import com.intuso.housemate.client.v1_0.proxy.object.view.ValueView;
+import com.intuso.housemate.client.v1_0.proxy.object.view.View;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -22,16 +26,17 @@ import java.util.concurrent.TimeUnit;
  * @param <COMMAND> the type of the command
  */
 public abstract class ProxyCommand<
-            VALUE extends ProxyValue<?, VALUE>,
-            PARAMETERS extends ProxyList<? extends ProxyParameter<?, ?>, ?>,
-            COMMAND extends ProxyCommand<VALUE, PARAMETERS, COMMAND>>
-        extends ProxyObject<Command.Data, Command.Listener<? super COMMAND>>
+        VALUE extends ProxyValue<?, ?>,
+        PARAMETERS extends ProxyList<? extends ProxyParameter<?, ?>, ?>,
+        COMMAND extends ProxyCommand<VALUE, PARAMETERS, COMMAND>>
+        extends ProxyObject<Command.Data, Command.Listener<? super COMMAND>, CommandView>
         implements Command<Type.InstanceMap, VALUE, PARAMETERS, COMMAND> {
 
-    private final Sender.Factory senderFactory;
+    private final ProxyObject.Factory<VALUE> valueFactory;
+    private final ProxyObject.Factory<PARAMETERS> parametersFactory;
 
-    private final VALUE enabledValue;
-    private final PARAMETERS parameters;
+    private VALUE enabledValue;
+    private PARAMETERS parameters;
 
     private Sender performSender;
     private Receiver<PerformStatusData> performStatusReceiver;
@@ -43,46 +48,85 @@ public abstract class ProxyCommand<
      * @param logger {@inheritDoc}
      */
     protected ProxyCommand(Logger logger,
+                           String name,
                            ManagedCollectionFactory managedCollectionFactory,
                            Receiver.Factory receiverFactory,
                            Sender.Factory senderFactory,
                            ProxyObject.Factory<VALUE> valueFactory,
                            ProxyObject.Factory<PARAMETERS> parametersFactory) {
-        super(logger, Command.Data.class, managedCollectionFactory, receiverFactory);
-        this.senderFactory = senderFactory;
-        enabledValue = valueFactory.create(ChildUtil.logger(logger, ENABLED_ID));
-        parameters = parametersFactory.create(ChildUtil.logger(logger, PARAMETERS_ID));
-    }
+        super(logger, name, Command.Data.class, managedCollectionFactory, receiverFactory);
+        this.valueFactory = valueFactory;
+        this.parametersFactory = parametersFactory;
 
-    @Override
-    protected void initChildren(String name) {
-        super.initChildren(name);
-        enabledValue.init(ChildUtil.name(name, ENABLED_ID));
-        parameters.init(ChildUtil.name(name, PARAMETERS_ID));
         performSender = senderFactory.create(logger, ChildUtil.name(name, PERFORM_ID));
         performStatusReceiver = receiverFactory.create(logger, ChildUtil.name(name, PERFORM_STATUS_ID), PerformStatusData.class);
         performStatusReceiver.listen(new Receiver.Listener<PerformStatusData>() {
-                    @Override
-                    public void onMessage(PerformStatusData performStatusData, boolean persistent) {
-                        if (listenerMap.containsKey(performStatusData.getOpId())) {
-                            if (performStatusData.isFinished()) {
-                                if (performStatusData.getError() == null)
-                                    listenerMap.remove(performStatusData.getOpId()).commandFinished(getThis());
-                                else
-                                    listenerMap.remove(performStatusData.getOpId()).commandFailed(getThis(), performStatusData.getError());
-                            } else
-                                listenerMap.get(performStatusData.getOpId()).commandStarted(getThis());
-                        }
-                        // todo call object listeners
-                    }
-                });
+            @Override
+            public void onMessage(PerformStatusData performStatusData, boolean wasPersisted) {
+                if (listenerMap.containsKey(performStatusData.getOpId())) {
+                    if (performStatusData.isFinished()) {
+                        if (performStatusData.getError() == null)
+                            listenerMap.remove(performStatusData.getOpId()).commandFinished(ProxyCommand.this.getThis());
+                        else
+                            listenerMap.remove(performStatusData.getOpId()).commandFailed(ProxyCommand.this.getThis(), performStatusData.getError());
+                    } else
+                        listenerMap.get(performStatusData.getOpId()).commandStarted(ProxyCommand.this.getThis());
+                }
+                // todo call object listeners
+            }
+        });
+    }
+
+    @Override
+    public CommandView createView() {
+        return new CommandView();
+    }
+
+    @Override
+    public void view(CommandView view) {
+
+        super.view(view);
+
+        // create things according to the view's mode, sub-views, and what's already created
+        switch (view.getMode()) {
+            case ANCESTORS:
+            case CHILDREN:
+                if (enabledValue == null)
+                    enabledValue = valueFactory.create(ChildUtil.logger(logger, ENABLED_ID), ChildUtil.name(name, ENABLED_ID));
+                if (parameters == null)
+                    parameters = parametersFactory.create(ChildUtil.logger(logger, PARAMETERS_ID), ChildUtil.name(name, PARAMETERS_ID));
+                break;
+            case SELECTION:
+                if (enabledValue == null && view.getEnabledValueView() != null)
+                    enabledValue = valueFactory.create(ChildUtil.logger(logger, ENABLED_ID), ChildUtil.name(name, ENABLED_ID));
+                if (parameters == null && view.getParametersView() != null)
+                    parameters = parametersFactory.create(ChildUtil.logger(logger, PARAMETERS_ID), ChildUtil.name(name, PARAMETERS_ID));
+                break;
+        }
+
+        // view things according to the view's mode and sub-views
+        switch (view.getMode()) {
+            case ANCESTORS:
+                enabledValue.view(new ValueView(View.Mode.ANCESTORS));
+                parameters.view(new ListView(View.Mode.ANCESTORS));
+                break;
+            case CHILDREN:
+            case SELECTION:
+                if (view.getEnabledValueView() != null)
+                    enabledValue.view(view.getEnabledValueView());
+                if (view.getParametersView() != null)
+                    parameters.view(view.getParametersView());
+                break;
+        }
     }
 
     @Override
     protected void uninitChildren() {
         super.uninitChildren();
-        enabledValue.uninit();
-        parameters.uninit();
+        if(enabledValue != null)
+            enabledValue.uninit();
+        if(parameters != null)
+            parameters.uninit();
         if(performSender != null) {
             performSender.close();
             performSender = null;
@@ -159,7 +203,7 @@ public abstract class ProxyCommand<
     }
 
     @Override
-    public ProxyObject<?, ?> getChild(String id) {
+    public ProxyObject<?, ?, ?> getChild(String id) {
         if(ENABLED_ID.equals(id))
             return enabledValue;
         else if(PARAMETERS_ID.equals(id))
@@ -168,12 +212,12 @@ public abstract class ProxyCommand<
     }
 
     /**
-    * Created with IntelliJ IDEA.
-    * User: tomc
-    * Date: 14/01/14
-    * Time: 13:16
-    * To change this template use File | Settings | File Templates.
-    */
+     * Created with IntelliJ IDEA.
+     * User: tomc
+     * Date: 14/01/14
+     * Time: 13:16
+     * To change this template use File | Settings | File Templates.
+     */
     public static final class Simple extends ProxyCommand<
             ProxyValue.Simple,
             ProxyList.Simple<ProxyParameter.Simple>,
@@ -181,12 +225,13 @@ public abstract class ProxyCommand<
 
         @Inject
         public Simple(@Assisted Logger logger,
+                      @Assisted String name,
                       ManagedCollectionFactory managedCollectionFactory,
                       Receiver.Factory receiverFactory,
                       Sender.Factory senderFactory,
                       Factory<ProxyValue.Simple> valueFactory,
                       Factory<ProxyList.Simple<ProxyParameter.Simple>> parametersFactory) {
-            super(logger, managedCollectionFactory, receiverFactory, senderFactory, valueFactory, parametersFactory);
+            super(logger, name, managedCollectionFactory, receiverFactory, senderFactory, valueFactory, parametersFactory);
         }
     }
 

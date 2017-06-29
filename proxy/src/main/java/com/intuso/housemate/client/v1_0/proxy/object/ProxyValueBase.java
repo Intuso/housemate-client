@@ -4,6 +4,7 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
+import com.intuso.housemate.client.v1_0.proxy.object.view.ValueBaseView;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -14,10 +15,11 @@ import org.slf4j.Logger;
  */
 public abstract class ProxyValueBase<
         DATA extends ValueBase.Data,
-        TYPE extends ProxyType<?>,
         LISTENER extends ValueBase.Listener<? super VALUE>,
-        VALUE extends ProxyValueBase<DATA, TYPE, LISTENER, VALUE>>
-        extends ProxyObject<DATA, LISTENER>
+        VIEW extends ValueBaseView<?>,
+        TYPE extends ProxyType<?>,
+        VALUE extends ProxyValueBase<DATA, LISTENER, VIEW, TYPE, VALUE>>
+        extends ProxyObject<DATA, LISTENER, VIEW>
         implements ValueBase<DATA, Type.Instances, TYPE, LISTENER, VALUE> {
 
     private Receiver<Type.Instances> valueReceiver;
@@ -27,16 +29,12 @@ public abstract class ProxyValueBase<
     /**
      * @param logger {@inheritDoc}
      */
-    public ProxyValueBase(Logger logger,
+    public ProxyValueBase(final Logger logger,
+                          String name,
                           Class<DATA> dataClass,
                           ManagedCollectionFactory managedCollectionFactory,
                           Receiver.Factory receiverFactory) {
-        super(logger, dataClass, managedCollectionFactory, receiverFactory);
-    }
-
-    @Override
-    protected void initChildren(String name) {
-        super.initChildren(name);
+        super(logger, name, dataClass, managedCollectionFactory, receiverFactory);
         valueReceiver = receiverFactory.create(logger, ChildUtil.name(name, VALUE_ID), Type.Instances.class);
         value = valueReceiver.getMessage();
         logger.trace("Got initial value {}", value);
