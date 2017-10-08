@@ -6,6 +6,7 @@ import com.intuso.housemate.client.v1_0.api.object.User;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
 import com.intuso.housemate.client.v1_0.proxy.ProxyRemoveable;
+import com.intuso.housemate.client.v1_0.proxy.ProxyRenameable;
 import com.intuso.housemate.client.v1_0.proxy.object.view.CommandView;
 import com.intuso.housemate.client.v1_0.proxy.object.view.PropertyView;
 import com.intuso.housemate.client.v1_0.proxy.object.view.UserView;
@@ -23,7 +24,8 @@ public abstract class ProxyUser<
         USER extends ProxyUser<COMMAND, PROPERTY, USER>>
         extends ProxyObject<User.Data, User.Listener<? super USER>, UserView>
         implements User<COMMAND, COMMAND, PROPERTY, USER>,
-        ProxyRemoveable<COMMAND> {
+        ProxyRemoveable<COMMAND>,
+        ProxyRenameable<COMMAND> {
 
     private final ProxyObject.Factory<COMMAND> commandFactory;
     private final ProxyObject.Factory<PROPERTY> propertyFactory;
@@ -94,6 +96,20 @@ public abstract class ProxyUser<
                     emailProperty.view(view.getEmailPropertyView());
                 break;
         }
+    }
+
+    @Override
+    public void viewRemoveCommand(CommandView commandView) {
+        if(removeCommand == null)
+            removeCommand = commandFactory.create(ChildUtil.logger(logger, REMOVE_ID), ChildUtil.name(name, REMOVE_ID));
+        removeCommand.view(commandView);
+    }
+
+    @Override
+    public void viewRenameCommand(CommandView commandView) {
+        if(renameCommand == null)
+            renameCommand = commandFactory.create(ChildUtil.logger(logger, RENAME_ID), ChildUtil.name(name, RENAME_ID));
+        renameCommand.view(commandView);
     }
 
     @Override
