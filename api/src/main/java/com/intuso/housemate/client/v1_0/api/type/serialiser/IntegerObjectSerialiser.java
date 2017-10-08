@@ -5,9 +5,9 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 /**
  * Created by tomc on 11/01/17.
  */
-public class IntegerSerialiser implements TypeSerialiser<Integer> {
+public class IntegerObjectSerialiser implements TypeSerialiser<Integer> {
 
-    public final static IntegerSerialiser INSTANCE = new IntegerSerialiser();
+    public final static IntegerObjectSerialiser INSTANCE = new IntegerObjectSerialiser();
 
     @Override
     public Type.Instance serialise(Integer i) {

@@ -5,9 +5,9 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 /**
  * Created by tomc on 11/01/17.
  */
-public class ByteSerialiser implements TypeSerialiser<Byte> {
+public class BytePrimitiveSerialiser implements TypeSerialiser<Byte> {
 
-    public final static ByteSerialiser INSTANCE = new ByteSerialiser();
+    public final static BytePrimitiveSerialiser INSTANCE = new BytePrimitiveSerialiser();
 
     @Override
     public Type.Instance serialise(Byte b) {
@@ -16,6 +16,6 @@ public class ByteSerialiser implements TypeSerialiser<Byte> {
 
     @Override
     public Byte deserialise(Type.Instance value) {
-        return value != null && value.getValue() != null ? Byte.parseByte(value.getValue()) : null;
+        return value != null && value.getValue() != null ? Byte.parseByte(value.getValue()) : (byte) 0;
     }
 }
