@@ -2,9 +2,11 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.view.TypeView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
-import com.intuso.housemate.client.v1_0.proxy.object.view.TypeView;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -26,8 +28,13 @@ public abstract class ProxyType<TYPE extends ProxyType<TYPE>>
     }
 
     @Override
-    public TypeView createView() {
-        return new TypeView();
+    public TypeView createView(View.Mode mode) {
+        return new TypeView(mode);
+    }
+
+    @Override
+    public Tree getTree(TypeView view) {
+        return new Tree(getData());
     }
 
     @Override

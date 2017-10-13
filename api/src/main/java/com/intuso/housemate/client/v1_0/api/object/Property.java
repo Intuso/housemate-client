@@ -1,5 +1,7 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
+import com.intuso.housemate.client.v1_0.api.object.view.PropertyView;
+
 /**
  * @param <DATA_TYPE> the type of the value
  * @param <SET_COMMAND> the type of the set command
@@ -10,7 +12,7 @@ public interface Property<
             TYPE extends Type<?>,
             SET_COMMAND extends Command<?, ?, ?, ?>,
             PROPERTY extends Property<?, ?, ?, ?>>
-        extends ValueBase<Property.Data, DATA_TYPE, TYPE, Property.Listener<? super PROPERTY>, PROPERTY> {
+        extends ValueBase<Property.Data, DATA_TYPE, TYPE, Property.Listener<? super PROPERTY>, PropertyView, PROPERTY> {
 
     String SET_COMMAND_ID = "set-command";
     String VALUE_PARAM = "value";

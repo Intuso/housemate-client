@@ -15,6 +15,7 @@ public class GsonConfig {
         GsonBuilder builder = new GsonBuilder()
                 // register main sub-class type adapters
                 .registerTypeAdapterFactory(new DataAdapter())
+                .registerTypeAdapterFactory(new ViewAdapter())
                 .registerTypeAdapterFactory(new SerializableAdapter());
 
         // add fixes for enums

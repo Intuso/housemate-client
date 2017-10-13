@@ -2,7 +2,7 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
-import com.intuso.housemate.client.v1_0.proxy.object.view.View;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 public abstract class ProxyObject<
         DATA extends Object.Data,
         LISTENER extends Object.Listener,
-        VIEW extends View<?>>
-        implements Object<DATA, LISTENER> {
+        VIEW extends View>
+        implements Object<DATA, LISTENER, VIEW> {
 
     public final static String PROXY = "proxy";
 
@@ -77,9 +77,7 @@ public abstract class ProxyObject<
         return listeners.add(listener);
     }
 
-    public abstract VIEW createView();
-
-    public void view(VIEW view) {}
+    public void load(VIEW view) {}
 
     protected final void uninit() {
         logger.debug("Uninit");

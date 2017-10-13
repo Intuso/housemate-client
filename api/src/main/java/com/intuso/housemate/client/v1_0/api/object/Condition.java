@@ -4,6 +4,7 @@ import com.intuso.housemate.client.v1_0.api.Failable;
 import com.intuso.housemate.client.v1_0.api.Removeable;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.UsesDriver;
+import com.intuso.housemate.client.v1_0.api.object.view.ConditionView;
 
 /**
  * @param <ERROR_VALUE> the type of the error value
@@ -23,7 +24,7 @@ public interface Condition<REMOVE_COMMAND extends Command<?, ?, ?, ?>,
         ADD_COMMAND extends Command<?, ?, ?, ?>,
         CHILD_CONDITIONS extends List<? extends Condition<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         CONDITION extends Condition<REMOVE_COMMAND, RENAME_COMMAND, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, SATISFIED_VALUE, PROPERTIES, ADD_COMMAND, CHILD_CONDITIONS, CONDITION>>
-        extends Object<Condition.Data, Condition.Listener<? super CONDITION>>,
+        extends Object<Condition.Data, Condition.Listener<? super CONDITION>, ConditionView>,
         Property.Container<PROPERTIES>,
         Renameable<RENAME_COMMAND>,
         Removeable<REMOVE_COMMAND>,

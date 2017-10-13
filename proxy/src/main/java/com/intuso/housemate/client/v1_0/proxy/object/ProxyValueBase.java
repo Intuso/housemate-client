@@ -4,7 +4,7 @@ import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ValueBaseView;
+import com.intuso.housemate.client.v1_0.api.object.view.ValueBaseView;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -16,11 +16,11 @@ import org.slf4j.Logger;
 public abstract class ProxyValueBase<
         DATA extends ValueBase.Data,
         LISTENER extends ValueBase.Listener<? super VALUE>,
-        VIEW extends ValueBaseView<?>,
+        VIEW extends ValueBaseView,
         TYPE extends ProxyType<?>,
         VALUE extends ProxyValueBase<DATA, LISTENER, VIEW, TYPE, VALUE>>
         extends ProxyObject<DATA, LISTENER, VIEW>
-        implements ValueBase<DATA, Type.Instances, TYPE, LISTENER, VALUE> {
+        implements ValueBase<DATA, Type.Instances, TYPE, LISTENER, VIEW, VALUE> {
 
     private Receiver<Type.Instances> valueReceiver;
 

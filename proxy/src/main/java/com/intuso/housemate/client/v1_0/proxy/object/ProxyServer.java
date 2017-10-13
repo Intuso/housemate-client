@@ -6,17 +6,12 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.inject.Inject;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
-import com.intuso.housemate.client.v1_0.api.object.ConvertingList;
-import com.intuso.housemate.client.v1_0.api.object.List;
+import com.intuso.housemate.client.v1_0.api.object.*;
 import com.intuso.housemate.client.v1_0.api.object.Object;
-import com.intuso.housemate.client.v1_0.api.object.Server;
+import com.intuso.housemate.client.v1_0.api.object.view.*;
 import com.intuso.housemate.client.v1_0.api.type.ObjectReference;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
-import com.intuso.housemate.client.v1_0.proxy.object.view.CommandView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ListView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ServerView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.View;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -46,7 +41,7 @@ public abstract class ProxyServer<
 
     private final ManagedCollectionFactory managedCollectionFactory;
     private final Map<List<?, ?>, Map<String, Map<ObjectReferenceImpl, Integer>>> missingReferences = new HashMap<>();
-    private final Map<Object<?, ?>, java.util.List<ObjectReferenceImpl>> references = Maps.newHashMap();
+    private final Map<Object<?, ?, ?>, java.util.List<ObjectReferenceImpl>> references = Maps.newHashMap();
 
     private ProxyObject.Factory<COMMAND> commandFactory;
     private ProxyObject.Factory<VALUES> valuesFactory;
@@ -56,7 +51,7 @@ public abstract class ProxyServer<
     private ProxyObject.Factory<NODES> nodesFactory;
 
     private final VALUES deviceReferences;
-    private final ConvertingList<VALUE, DEVICE> devices;
+    private final ProxyConvertingList<VALUE, DEVICE> devices;
 
     private AUTOMATIONS automations;
     private COMMAND addAutomationCommand;
@@ -66,14 +61,14 @@ public abstract class ProxyServer<
     private COMMAND addUserCommand;
     private NODES nodes;
 
-    private List.Listener<Object<?, ?>, List<? extends Object<?, ?>, ?>> missingReferenceLoader = new List.Listener<Object<?, ?>, List<? extends Object<?, ?>, ?>>() {
+    private List.Listener<Object<?, ?, ?>, List<? extends Object<?, ?, ?>, ?>> missingReferenceLoader = new List.Listener<Object<?, ?, ?>, List<? extends Object<?, ?, ?>, ?>>() {
         @Override
-        public void elementAdded(List<? extends Object<?, ?>, ?> list, Object<?, ?> element) {
+        public void elementAdded(List<? extends Object<?, ?, ?>, ?> list, Object<?, ?, ?> element) {
             updateMissingReferences(list, element.getId());
         }
 
         @Override
-        public void elementRemoved(List<? extends Object<?, ?>, ?> list, Object<?, ?> element) {
+        public void elementRemoved(List<? extends Object<?, ?, ?>, ?> list, Object<?, ?, ?> element) {
             // todo should update references at or below this object to say that the object has been removed!
         }
     };
@@ -84,8 +79,8 @@ public abstract class ProxyServer<
         super(logger, ChildUtil.name(null, PROXY, VERSION), Server.Data.class, managedCollectionFactory, receiverFactory);
         this.managedCollectionFactory = managedCollectionFactory;
         deviceReferences = valuesFactory.create(ChildUtil.logger(logger, DEVICES_ID), ChildUtil.name(name, DEVICES_ID));
-        devices = new ConvertingList<>(deviceReferences, new ReferenceLoaderConverter<DEVICE>());
-        deviceReferences.view(new ListView(View.Mode.ANCESTORS));
+        devices = new ProxyConvertingList<>(deviceReferences, new ReferenceLoaderConverter<DEVICE>());
+        deviceReferences.load(new ListView(View.Mode.ANCESTORS));
     }
 
     public ProxyServer(Logger logger,
@@ -106,8 +101,8 @@ public abstract class ProxyServer<
         this.usersFactory = usersFactory;
         this.nodesFactory = nodesFactory;
         deviceReferences = valuesFactory.create(ChildUtil.logger(logger, DEVICES_ID), ChildUtil.name(name, DEVICES_ID));
-        devices = new ConvertingList<>(deviceReferences, new ReferenceLoaderConverter<DEVICE>());
-        deviceReferences.view(new ListView(View.Mode.ANCESTORS));
+        devices = new ProxyConvertingList<>(deviceReferences, new ReferenceLoaderConverter<DEVICE>());
+        deviceReferences.load(new ListView(View.Mode.ANCESTORS));
     }
 
     public void setCommandFactory(Factory<COMMAND> commandFactory) {
@@ -143,14 +138,79 @@ public abstract class ProxyServer<
     }
 
     @Override
-    public ServerView createView() {
-        return new ServerView();
+    public ServerView createView(View.Mode mode) {
+        return new ServerView(mode);
     }
 
     @Override
-    public void view(ServerView view) {
+    public Tree getTree(ServerView view) {
 
-        super.view(view);
+        // make sure what they want is loaded
+        load(view);
+
+        // create a result even for a null view
+        Tree result = new Tree(getData());
+
+        // get anything else the view wants
+        if(view != null && view.getMode() != null) {
+            switch (view.getMode()) {
+
+                // get recursively
+                case ANCESTORS:
+                    result.getChildren().put(AUTOMATIONS_ID, automations.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(ADD_AUTOMATION_ID, addAutomationCommand.getTree(new CommandView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(DEVICES_ID, devices.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(DEVICE_GROUPS_ID, deviceGroups.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(ADD_DEVICE_GROUP_ID, addDeviceGroupCommand.getTree(new CommandView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(USERS_ID, users.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(ADD_USER_ID, addUserCommand.getTree(new CommandView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(NODES_ID, nodes.getTree(new ListView(View.Mode.ANCESTORS)));
+                    break;
+
+                    // get all children using inner view. NB all children non-null because of load(). Can give children null views
+                case CHILDREN:
+                    result.getChildren().put(AUTOMATIONS_ID, automations.getTree(view.getAutomationsView()));
+                    result.getChildren().put(ADD_AUTOMATION_ID, addAutomationCommand.getTree(view.getAddAutomationCommandView()));
+                    result.getChildren().put(DEVICES_ID, devices.getTree(view.getDevicesView()));
+                    result.getChildren().put(DEVICE_GROUPS_ID, deviceGroups.getTree(view.getDeviceGroupsView()));
+                    result.getChildren().put(ADD_DEVICE_GROUP_ID, addDeviceGroupCommand.getTree(view.getAddDeviceGroupCommandView()));
+                    result.getChildren().put(USERS_ID, users.getTree(view.getUsersView()));
+                    result.getChildren().put(ADD_USER_ID, addUserCommand.getTree(view.getAddUserCommandView()));
+                    result.getChildren().put(NODES_ID, nodes.getTree(view.getNodesView()));
+                    break;
+
+                case SELECTION:
+                    if(view.getAutomationsView() != null)
+                        result.getChildren().put(AUTOMATIONS_ID, automations.getTree(view.getAutomationsView()));
+                    if(view.getAddAutomationCommandView() != null)
+                        result.getChildren().put(ADD_AUTOMATION_ID, addAutomationCommand.getTree(view.getAddAutomationCommandView()));
+                    if(view.getDevicesView() != null)
+                        result.getChildren().put(DEVICES_ID, devices.getTree(view.getDevicesView()));
+                    if(view.getDeviceGroupsView() != null)
+                        result.getChildren().put(DEVICE_GROUPS_ID, deviceGroups.getTree(view.getDeviceGroupsView()));
+                    if(view.getAddDeviceGroupCommandView() != null)
+                        result.getChildren().put(ADD_DEVICE_GROUP_ID, addDeviceGroupCommand.getTree(view.getAddDeviceGroupCommandView()));
+                    if(view.getUsersView() != null)
+                        result.getChildren().put(USERS_ID, users.getTree(view.getUsersView()));
+                    if(view.getAddUserCommandView() != null)
+                        result.getChildren().put(ADD_USER_ID, addUserCommand.getTree(view.getAddUserCommandView()));
+                    if(view.getNodesView() != null)
+                        result.getChildren().put(NODES_ID, nodes.getTree(view.getNodesView()));
+                    break;
+            }
+
+        }
+
+        return result;
+    }
+
+    @Override
+    public void load(ServerView view) {
+
+        super.load(view);
+
+        if(view == null || view.getMode() == null)
+            return;
 
         // create things according to the view's mode, sub-views, and what's already created
         switch (view.getMode()) {
@@ -192,30 +252,34 @@ public abstract class ProxyServer<
         // view things according to the view's mode and sub-views
         switch (view.getMode()) {
             case ANCESTORS:
-                automations.view(new ListView(View.Mode.ANCESTORS));
-                addAutomationCommand.view(new CommandView(View.Mode.ANCESTORS));
-                deviceGroups.view(new ListView(View.Mode.ANCESTORS));
-                addDeviceGroupCommand.view(new CommandView(View.Mode.ANCESTORS));
-                users.view(new ListView(View.Mode.ANCESTORS));
-                addUserCommand.view(new CommandView(View.Mode.ANCESTORS));
-                nodes.view(new ListView(View.Mode.ANCESTORS));
+                automations.load(new ListView(View.Mode.ANCESTORS));
+                addAutomationCommand.load(new CommandView(View.Mode.ANCESTORS));
+                for(DEVICE device : devices)
+                    ((ProxyObject) device).load(device.createView(View.Mode.ANCESTORS));
+                deviceGroups.load(new ListView(View.Mode.ANCESTORS));
+                addDeviceGroupCommand.load(new CommandView(View.Mode.ANCESTORS));
+                users.load(new ListView(View.Mode.ANCESTORS));
+                addUserCommand.load(new CommandView(View.Mode.ANCESTORS));
+                nodes.load(new ListView(View.Mode.ANCESTORS));
                 break;
             case CHILDREN:
             case SELECTION:
                 if(view.getAutomationsView() != null)
-                    automations.view(view.getAutomationsView());
+                    automations.load(view.getAutomationsView());
                 if(view.getAddAutomationCommandView() != null)
-                    addAutomationCommand.view(view.getAddAutomationCommandView());
+                    addAutomationCommand.load(view.getAddAutomationCommandView());
+                if(view.getDevicesView() != null)
+                    devices.load(view.getDevicesView());
                 if(view.getDeviceGroupsView() != null)
-                    deviceGroups.view(view.getDeviceGroupsView());
+                    deviceGroups.load(view.getDeviceGroupsView());
                 if(view.getAddDeviceGroupCommandView() != null)
-                    addDeviceGroupCommand.view(view.getAddDeviceGroupCommandView());
+                    addDeviceGroupCommand.load(view.getAddDeviceGroupCommandView());
                 if(view.getUsersView() != null)
-                    users.view(view.getUsersView());
+                    users.load(view.getUsersView());
                 if(view.getAddUserCommandView() != null)
-                    addUserCommand.view(view.getAddUserCommandView());
+                    addUserCommand.load(view.getAddUserCommandView());
                 if(view.getNodesView() != null)
-                    nodes.view(view.getNodesView());
+                    nodes.load(view.getNodesView());
                 break;
         }
     }
@@ -284,7 +348,7 @@ public abstract class ProxyServer<
     }
 
     @Override
-    public Object<?, ?> getChild(String id) {
+    public Object<?, ?, ?> getChild(String id) {
         if(ADD_AUTOMATION_ID.equals(id)) {
             if(addAutomationCommand == null)
                 addAutomationCommand = commandFactory.create(ChildUtil.logger(logger, ADD_AUTOMATION_ID), ChildUtil.name(name, ADD_AUTOMATION_ID));
@@ -319,16 +383,16 @@ public abstract class ProxyServer<
         return null;
     }
 
-    public <OBJECT extends Object<?, ?>> ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> findConverter() {
+    public <OBJECT extends Object<?, ?, ?>> ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> findConverter() {
         return new ReferenceLoaderConverter<>();
     }
 
-    public <T extends Object<?, ?>> T find(String[] path) {
+    public <T extends Object<?, ?, ?>> T find(String[] path) {
         return find(path, true);
     }
 
-    public <T extends Object<?, ?>> T find(String[] path, boolean fail) {
-        Object<?, ?> current = this;
+    public <T extends Object<?, ?, ?>> T find(String[] path, boolean fail) {
+        Object<?, ?, ?> current = this;
         for(int i = 0; i < path.length; i++) {
             current = current.getChild(path[i]);
             if(current == null) {
@@ -347,13 +411,13 @@ public abstract class ProxyServer<
         return (T) current;
     }
 
-    public <O extends Object<?, ?>> ObjectReference<O> reference(String[] path) {
+    public <O extends Object<?, ?, ?>> ObjectReference<O> reference(String[] path) {
         ObjectReferenceImpl<O> reference = new ObjectReferenceImpl<>(managedCollectionFactory, path);
         reference(this, reference, 0);
         return reference;
     }
 
-    protected void reference(Object<?, ?> object, ObjectReferenceImpl reference, int pathIndex) {
+    protected void reference(Object<?, ?, ?> object, ObjectReferenceImpl reference, int pathIndex) {
         if(pathIndex == reference.getPath().length) {
             if(!references.containsKey(object))
                 references.put(object, Lists.<ObjectReferenceImpl>newArrayList());
@@ -361,11 +425,11 @@ public abstract class ProxyServer<
             reference.setObject(this);
         } else {
             String id = reference.getPath()[pathIndex];
-            Object<?, ?> child = object.getChild(id);
+            Object<?, ?, ?> child = object.getChild(id);
             if(child != null)
                 reference(child, reference, pathIndex + 1);
             else if(object instanceof List) {
-                List<? extends Object<?, ?>, ?> list = (List<? extends Object<?, ?>, ?>) object;
+                List<? extends Object<?, ?, ?>, ?> list = (List<? extends Object<?, ?, ?>, ?>) object;
                 if(!missingReferences.containsKey(list))
                     missingReferences.put(list, new HashMap<String, Map<ObjectReferenceImpl, Integer>>());
                 if(!missingReferences.get(list).containsKey(id))
@@ -434,7 +498,7 @@ public abstract class ProxyServer<
         }
     }
 
-    private class ReferenceLoaderConverter<OBJECT extends Object<?, ?>> implements ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> {
+    private class ReferenceLoaderConverter<OBJECT extends Object<?, ?, ?>> implements ConvertingList.Converter<ProxyValue<?, ?>, OBJECT> {
 
         @Override
         public OBJECT apply(ProxyValue<?, ?> element) {

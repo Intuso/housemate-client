@@ -1,17 +1,16 @@
-package com.intuso.housemate.client.v1_0.proxy.object.view;
+package com.intuso.housemate.client.v1_0.api.object.view;
 
-import com.google.common.collect.Sets;
-
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by tomc on 19/06/17.
  */
-public class ListView<CHILD_VIEW extends View> extends View<ListView<CHILD_VIEW>> {
+public class ListView<CHILD_VIEW extends View> extends View {
 
     private CHILD_VIEW elementView;
-    private boolean viewAll = false;
-    private Set<String> elements = Sets.newHashSet();
+    private Set<String> elements = new HashSet<>();
 
     public ListView() {}
 
@@ -19,8 +18,13 @@ public class ListView<CHILD_VIEW extends View> extends View<ListView<CHILD_VIEW>
         super(mode);
     }
 
+    public ListView(CHILD_VIEW elementView) {
+        super(Mode.CHILDREN);
+        this.elementView = elementView;
+    }
+
     public ListView(CHILD_VIEW elementView, String... elements) {
-        this(elementView, Sets.newHashSet(elements));
+        this(elementView, new HashSet<>(Arrays.asList(elements)));
     }
 
     public ListView(CHILD_VIEW elementView, Set<String> elements) {
@@ -38,15 +42,6 @@ public class ListView<CHILD_VIEW extends View> extends View<ListView<CHILD_VIEW>
         return this;
     }
 
-    public boolean isViewAll() {
-        return viewAll;
-    }
-
-    public ListView<CHILD_VIEW> setViewAll(boolean viewAll) {
-        this.viewAll = viewAll;
-        return this;
-    }
-
     public Set<String> getElements() {
         return elements;
     }
@@ -58,8 +53,8 @@ public class ListView<CHILD_VIEW extends View> extends View<ListView<CHILD_VIEW>
 
     public ListView<CHILD_VIEW> addElement(String... elements) {
         if(this.elements == null)
-            this.elements = Sets.newHashSet();
-        this.elements.addAll(Sets.newHashSet(elements));
+            this.elements = new HashSet<>();
+        this.elements.addAll(new HashSet<>(Arrays.asList(elements)));
         return this;
     }
 }

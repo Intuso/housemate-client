@@ -1,11 +1,13 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
+import com.intuso.housemate.client.v1_0.api.object.view.NoView;
+
 /**
  * @param <SUB_TYPE> the type of the sub type's type
  */
 public interface SubType<TYPE extends Type<?>,
             SUB_TYPE extends SubType<?, ?>>
-        extends Object<SubType.Data, SubType.Listener<? super SUB_TYPE>> {
+        extends Object<SubType.Data, SubType.Listener<? super SUB_TYPE>, NoView> {
 
     /**
      * Gets the sub types' type's id

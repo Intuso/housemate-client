@@ -4,6 +4,7 @@ import com.intuso.housemate.client.v1_0.api.Failable;
 import com.intuso.housemate.client.v1_0.api.Removeable;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.Runnable;
+import com.intuso.housemate.client.v1_0.api.object.view.AutomationView;
 
 /**
  * @param <RENAME_COMMAND> the type of the command for renaming the automation
@@ -26,7 +27,7 @@ public interface Automation<RENAME_COMMAND extends Command<?, ?, ?, ?>,
         TASKS extends List<? extends Task<?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         AUTOMATION extends Automation<RENAME_COMMAND, REMOVE_COMMAND, RUNNING_VALUE, START_STOP_COMMAND, ERROR_VALUE, ADD_COMMMAND, CONDITIONS, TASKS, AUTOMATION>>
         extends
-        Object<Automation.Data, Automation.Listener<? super AUTOMATION>>,
+        Object<Automation.Data, Automation.Listener<? super AUTOMATION>, AutomationView>,
         Renameable<RENAME_COMMAND>,
         com.intuso.housemate.client.v1_0.api.Runnable<START_STOP_COMMAND, RUNNING_VALUE>,
         Failable<ERROR_VALUE>,

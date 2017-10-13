@@ -5,14 +5,12 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.view.*;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
-import com.intuso.housemate.client.v1_0.proxy.object.view.CommandView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ListView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ValueView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.View;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -78,14 +76,55 @@ public abstract class ProxyCommand<
     }
 
     @Override
-    public CommandView createView() {
-        return new CommandView();
+    public CommandView createView(View.Mode mode) {
+        return new CommandView(mode);
     }
 
     @Override
-    public void view(CommandView view) {
+    public Tree getTree(CommandView view) {
 
-        super.view(view);
+        // make sure what they want is loaded
+        load(view);
+
+        // create a result even for a null view
+        Tree result = new Tree(getData());
+
+        // get anything else the view wants
+        if(view != null && view.getMode() != null) {
+            switch (view.getMode()) {
+
+                // get recursively
+                case ANCESTORS:
+                    result.getChildren().put(ENABLED_ID, enabledValue.getTree(new ValueView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(PARAMETERS_ID, parameters.getTree(new ListView(View.Mode.ANCESTORS)));
+                    break;
+
+                    // get all children using inner view. NB all children non-null because of load(). Can give children null views
+                case CHILDREN:
+                    result.getChildren().put(ENABLED_ID, enabledValue.getTree(view.getEnabledValueView()));
+                    result.getChildren().put(PARAMETERS_ID, parameters.getTree(view.getParametersView()));
+                    break;
+
+                case SELECTION:
+                    if(view.getEnabledValueView() != null)
+                        result.getChildren().put(ENABLED_ID, enabledValue.getTree(view.getEnabledValueView()));
+                    if(view.getParametersView() != null)
+                        result.getChildren().put(PARAMETERS_ID, parameters.getTree(view.getParametersView()));
+                    break;
+            }
+
+        }
+
+        return result;
+    }
+
+    @Override
+    public void load(CommandView view) {
+
+        super.load(view);
+
+        if(view == null || view.getMode() == null)
+            return;
 
         // create things according to the view's mode, sub-views, and what's already created
         switch (view.getMode()) {
@@ -107,15 +146,15 @@ public abstract class ProxyCommand<
         // view things according to the view's mode and sub-views
         switch (view.getMode()) {
             case ANCESTORS:
-                enabledValue.view(new ValueView(View.Mode.ANCESTORS));
-                parameters.view(new ListView(View.Mode.ANCESTORS));
+                enabledValue.load(new ValueView(View.Mode.ANCESTORS));
+                parameters.load(new ListView(View.Mode.ANCESTORS));
                 break;
             case CHILDREN:
             case SELECTION:
                 if (view.getEnabledValueView() != null)
-                    enabledValue.view(view.getEnabledValueView());
+                    enabledValue.load(view.getEnabledValueView());
                 if (view.getParametersView() != null)
-                    parameters.view(view.getParametersView());
+                    parameters.load(view.getParametersView());
                 break;
         }
     }

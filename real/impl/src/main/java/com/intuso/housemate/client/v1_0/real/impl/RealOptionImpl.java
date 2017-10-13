@@ -3,13 +3,16 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Option;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.view.NoView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealOption;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 public final class RealOptionImpl
-        extends RealObject<Option.Data, Option.Listener<? super RealOptionImpl>>
+        extends RealObject<Option.Data, Option.Listener<? super RealOptionImpl>, NoView>
         implements RealOption<RealListGeneratedImpl<RealSubTypeImpl<?>>, RealOptionImpl> {
 
     private final RealListGeneratedImpl<RealSubTypeImpl<?>> subTypes;
@@ -37,6 +40,16 @@ public final class RealOptionImpl
     }
 
     @Override
+    public NoView createView(View.Mode mode) {
+        return new NoView(mode);
+    }
+
+    @Override
+    public Tree getTree(NoView view) {
+        return new Tree(getData());
+    }
+
+    @Override
     protected void initChildren(String name) {
         super.initChildren(name);
         subTypes.init(ChildUtil.name(name, Option.SUB_TYPES_ID));
@@ -54,7 +67,7 @@ public final class RealOptionImpl
     }
 
     @Override
-    public RealObject<?, ?> getChild(String id) {
+    public RealObject<?, ?, ?> getChild(String id) {
         if(SUB_TYPES_ID.equals(id))
             return subTypes;
         return null;

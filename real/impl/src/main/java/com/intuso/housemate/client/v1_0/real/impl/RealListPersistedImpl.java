@@ -6,6 +6,9 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.HousemateException;
 import com.intuso.housemate.client.v1_0.api.object.List;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.view.ListView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealList;
@@ -18,8 +21,8 @@ import java.util.Map;
 
 /**
  */
-public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT extends RealObject<CHILD_DATA, ?>>
-        extends RealObject<List.Data, List.Listener<? super ELEMENT, ? super RealListPersistedImpl<CHILD_DATA, ELEMENT>>>
+public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT extends RealObject<CHILD_DATA, ?, ?>>
+        extends RealObject<List.Data, List.Listener<? super ELEMENT, ? super RealListPersistedImpl<CHILD_DATA, ELEMENT>>, ListView<?>>
         implements RealList<ELEMENT, RealListPersistedImpl<CHILD_DATA, ELEMENT>> {
 
     private final Receiver.Factory receiverFactory;
@@ -56,6 +59,46 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
                 RealListPersistedImpl.this.remove(element.getId());
             }
         };
+    }
+
+    @Override
+    public ListView<?> createView(View.Mode mode) {
+        return new ListView<>(mode);
+    }
+
+    @Override
+    public Tree getTree(ListView<?> view) {
+
+        // create a result even for a null view
+        Tree result = new Tree(getData());
+
+        // get anything else the view wants
+        if(view != null && view.getMode() != null) {
+            switch (view.getMode()) {
+
+                // get recursively
+                case ANCESTORS:
+                    for(Map.Entry<String, ELEMENT> element : elements.entrySet())
+                        result.getChildren().put(element.getKey(), ((RealObject) element.getValue()).getTree(element.getValue().createView(View.Mode.ANCESTORS)));
+                    break;
+
+                    // get all children using inner view. NB all children non-null because of load(). Can give children null views
+                case CHILDREN:
+                    for(Map.Entry<String, ELEMENT> element : elements.entrySet())
+                        result.getChildren().put(element.getKey(), ((RealObject) element.getValue()).getTree(view.getElementView()));
+                    break;
+
+                case SELECTION:
+                    if(view.getElements() != null)
+                        for (String elementId : view.getElements())
+                            if (elements.containsKey(elementId))
+                                result.getChildren().put(elementId, ((RealObject) elements.get(elementId)).getTree(view.getElementView()));
+                    break;
+            }
+
+        }
+
+        return result;
     }
 
     public RemoveCallback<ELEMENT> getRemoveCallback() {
@@ -155,7 +198,7 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
     }
 
     @Override
-    public RealObject<?, ?> getChild(String id) {
+    public RealObject<?, ?, ?> getChild(String id) {
         return get(id);
     }
 
@@ -169,14 +212,14 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
         return elements.values().iterator();
     }
 
-    public interface Factory<CHILD_DATA extends Object.Data, ELEMENT extends RealObject<CHILD_DATA, ?>> {
+    public interface Factory<CHILD_DATA extends Object.Data, ELEMENT extends RealObject<CHILD_DATA, ?, ?>> {
         RealListPersistedImpl<CHILD_DATA, ELEMENT> create(Logger logger,
                                                           @Assisted("id") String id,
                                                           @Assisted("name") String name,
                                                           @Assisted("description") String description);
     }
 
-    public interface ElementFactory<DATA extends Object.Data, OBJECT extends RealObject<DATA, ?>> {
+    public interface ElementFactory<DATA extends Object.Data, OBJECT extends RealObject<DATA, ?, ?>> {
         OBJECT create(Logger logger, DATA data, RemoveCallback<OBJECT> removeCallback);
     }
 

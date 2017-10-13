@@ -1,6 +1,9 @@
 package com.intuso.housemate.client.v1_0.rest;
 
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 
 import javax.ws.rs.*;
 
@@ -18,6 +21,12 @@ public interface ObjectResource {
     @Produces("application/json")
     void delete(@QueryParam("path") String path);
 
+    @Path("/view")
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    Tree view(@QueryParam("path") String path, View view);
+
     @Path("/rename")
     @POST
     @Consumes("application/json")
@@ -32,4 +41,9 @@ public interface ObjectResource {
     @POST
     @Consumes("application/json")
     void stop(@QueryParam("path") String path);
+
+    @Path("/perform")
+    @POST
+    @Consumes("application/json")
+    void perform(@QueryParam("path") String path, Type.InstanceMap values);
 }

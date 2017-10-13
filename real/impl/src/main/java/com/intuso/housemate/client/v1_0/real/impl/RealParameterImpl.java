@@ -3,6 +3,9 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Parameter;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.view.ParameterView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealParameter;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
@@ -12,7 +15,7 @@ import org.slf4j.Logger;
  * @param <O> the type of the parameter's value
  */
 public final class RealParameterImpl<O>
-        extends RealObject<Parameter.Data, Parameter.Listener<? super RealParameterImpl<O>>>
+        extends RealObject<Parameter.Data, Parameter.Listener<? super RealParameterImpl<O>>, ParameterView>
         implements RealParameter<O, RealTypeImpl<O>, RealParameterImpl<O>> {
 
     private RealTypeImpl<O> type;
@@ -37,12 +40,22 @@ public final class RealParameterImpl<O>
     }
 
     @Override
+    public ParameterView createView(View.Mode mode) {
+        return new ParameterView(mode);
+    }
+
+    @Override
+    public Tree getTree(ParameterView view) {
+        return new Tree(getData());
+    }
+
+    @Override
     public final RealTypeImpl<O> getType() {
         return type;
     }
 
     @Override
-    public RealObject<?, ?> getChild(String id) {
+    public RealObject<?, ?, ?> getChild(String id) {
         return null;
     }
 

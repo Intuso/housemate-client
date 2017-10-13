@@ -3,12 +3,10 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Node;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.view.*;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
-import com.intuso.housemate.client.v1_0.proxy.object.view.CommandView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ListView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.NodeView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.View;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -48,14 +46,59 @@ public abstract class ProxyNode<
     }
 
     @Override
-    public NodeView createView() {
-        return new NodeView();
+    public NodeView createView(View.Mode mode) {
+        return new NodeView(mode);
     }
 
     @Override
-    public void view(NodeView view) {
+    public Tree getTree(NodeView view) {
 
-        super.view(view);
+        // make sure what they want is loaded
+        load(view);
+
+        // create a result even for a null view
+        Tree result = new Tree(getData());
+
+        // get anything else the view wants
+        if(view != null && view.getMode() != null) {
+            switch (view.getMode()) {
+
+                // get recursively
+                case ANCESTORS:
+                    result.getChildren().put(TYPES_ID, types.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(new CommandView(View.Mode.ANCESTORS)));
+                    break;
+
+                    // get all children using inner view. NB all children non-null because of load(). Can give children null views
+                case CHILDREN:
+                    result.getChildren().put(TYPES_ID, types.getTree(view.getTypesView()));
+                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwaresView()));
+                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommandView()));
+                    break;
+
+                case SELECTION:
+                    if(view.getTypesView() != null)
+                        result.getChildren().put(TYPES_ID, types.getTree(view.getTypesView()));
+                    if(view.getHardwaresView() != null)
+                        result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwaresView()));
+                    if(view.getAddHardwareCommandView() != null)
+                        result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommandView()));
+                    break;
+            }
+
+        }
+
+        return result;
+    }
+
+    @Override
+    public void load(NodeView view) {
+
+        super.load(view);
+
+        if(view == null || view.getMode() == null)
+            return;
 
         // create things according to the view's mode, sub-views, and what's already created
         switch (view.getMode()) {
@@ -81,18 +124,18 @@ public abstract class ProxyNode<
         // view things according to the view's mode and sub-views
         switch (view.getMode()) {
             case ANCESTORS:
-                types.view(new ListView(View.Mode.ANCESTORS));
-                hardwares.view(new ListView(View.Mode.ANCESTORS));
-                addHardwareCommand.view(new CommandView(View.Mode.ANCESTORS));
+                types.load(new ListView(View.Mode.ANCESTORS));
+                hardwares.load(new ListView(View.Mode.ANCESTORS));
+                addHardwareCommand.load(new CommandView(View.Mode.ANCESTORS));
                 break;
             case CHILDREN:
             case SELECTION:
                 if(view.getTypesView() != null)
-                    types.view(view.getTypesView());
+                    types.load(view.getTypesView());
                 if(view.getHardwaresView() != null)
-                    hardwares.view(view.getHardwaresView());
+                    hardwares.load(view.getHardwaresView());
                 if(view.getAddHardwareCommandView() != null)
-                    addHardwareCommand.view(view.getAddHardwareCommandView());
+                    addHardwareCommand.load(view.getAddHardwareCommandView());
                 break;
         }
     }

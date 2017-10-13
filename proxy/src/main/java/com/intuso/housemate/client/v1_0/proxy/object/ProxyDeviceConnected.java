@@ -3,8 +3,9 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Device;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
-import com.intuso.housemate.client.v1_0.proxy.object.view.DeviceConnectedView;
+import com.intuso.housemate.client.v1_0.api.object.view.DeviceConnectedView;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -33,8 +34,8 @@ public abstract class ProxyDeviceConnected<COMMAND extends ProxyCommand<?, ?, ?>
     }
 
     @Override
-    public DeviceConnectedView createView() {
-        return new DeviceConnectedView();
+    public DeviceConnectedView createView(View.Mode mode) {
+        return new DeviceConnectedView(mode);
     }
 
     /**

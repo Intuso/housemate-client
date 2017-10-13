@@ -1,5 +1,7 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
+import com.intuso.housemate.client.v1_0.api.object.view.ValueView;
+
 /**
  * @param <DATA_TYPE> the type of the value's type
  * @param <VALUE> the type of the value
@@ -7,7 +9,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 public interface Value<DATA_TYPE,
             TYPE extends Type<?>,
             VALUE extends Value<?, ?, ?>>
-        extends ValueBase<Value.Data, DATA_TYPE, TYPE, Value.Listener<? super VALUE>, VALUE> {
+        extends ValueBase<Value.Data, DATA_TYPE, TYPE, Value.Listener<? super VALUE>, ValueView, VALUE> {
 
     /**
      *

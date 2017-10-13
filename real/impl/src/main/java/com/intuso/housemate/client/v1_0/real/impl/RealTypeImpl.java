@@ -1,7 +1,10 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.common.collect.Lists;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.view.TypeView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.api.type.serialiser.TypeSerialiser;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealType;
@@ -15,7 +18,7 @@ import java.util.List;
  * @param <O> the type of the type instances
  */
 public abstract class RealTypeImpl<O>
-        extends RealObject<Type.Data, Type.Listener<? super RealTypeImpl<O>>>
+        extends RealObject<Type.Data, Type.Listener<? super RealTypeImpl<O>>, TypeView>
         implements RealType<O, RealTypeImpl<O>> {
 
     /**
@@ -31,7 +34,17 @@ public abstract class RealTypeImpl<O>
     }
 
     @Override
-    public RealObject<?, ?> getChild(String id) {
+    public TypeView createView(View.Mode mode) {
+        return new TypeView(mode);
+    }
+
+    @Override
+    public Tree getTree(TypeView view) {
+        return new Tree(getData());
+    }
+
+    @Override
+    public RealObject<?, ?, ?> getChild(String id) {
         return null;
     }
 

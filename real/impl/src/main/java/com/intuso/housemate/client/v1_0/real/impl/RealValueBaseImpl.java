@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
+import com.intuso.housemate.client.v1_0.api.object.view.ValueBaseView;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealValueBase;
@@ -17,9 +18,10 @@ import org.slf4j.Logger;
 public abstract class RealValueBaseImpl<O,
         DATA extends ValueBase.Data,
         LISTENER extends ValueBase.Listener<? super VALUE>,
-        VALUE extends RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VALUE>>
-        extends RealObject<DATA, LISTENER>
-        implements RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VALUE> {
+        VIEW extends ValueBaseView,
+        VALUE extends RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VIEW, VALUE>>
+        extends RealObject<DATA, LISTENER, VIEW>
+        implements RealValueBase<DATA, O, RealTypeImpl<O>, LISTENER, VIEW, VALUE> {
 
     private final Receiver.Factory receiverFactory;
 

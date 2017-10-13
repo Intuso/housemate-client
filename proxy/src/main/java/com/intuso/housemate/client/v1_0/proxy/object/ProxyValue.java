@@ -2,10 +2,12 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.Value;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ValueView;
+import com.intuso.housemate.client.v1_0.api.object.view.ValueView;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -30,8 +32,13 @@ public abstract class ProxyValue<
     }
 
     @Override
-    public ValueView createView() {
-        return new ValueView();
+    public ValueView createView(View.Mode mode) {
+        return new ValueView(mode);
+    }
+
+    @Override
+    public Tree getTree(ValueView view) {
+        return new Tree(getData());
     }
 
     @Override

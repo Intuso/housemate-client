@@ -2,7 +2,10 @@ package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Value;
+import com.intuso.housemate.client.v1_0.api.object.view.ValueView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealValue;
@@ -15,7 +18,7 @@ import javax.annotation.Nullable;
  * @param <O> the type of this value's value
  */
 public final class RealValueImpl<O>
-        extends RealValueBaseImpl<O, Value.Data, Value.Listener<? super RealValueImpl<O>>, RealValueImpl<O>>
+        extends RealValueBaseImpl<O, Value.Data, Value.Listener<? super RealValueImpl<O>>, ValueView, RealValueImpl<O>>
         implements RealValue<O, RealTypeImpl<O>, RealValueImpl<O>> {
 
     /**
@@ -39,7 +42,17 @@ public final class RealValueImpl<O>
     }
 
     @Override
-    public RealObject<?, ?> getChild(String id) {
+    public ValueView createView(View.Mode mode) {
+        return new ValueView(mode);
+    }
+
+    @Override
+    public Tree getTree(ValueView view) {
+        return new Tree(getData());
+    }
+
+    @Override
+    public RealObject<?, ?, ?> getChild(String id) {
         return null;
     }
 

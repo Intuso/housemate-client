@@ -4,7 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Command;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.view.CommandView;
+import com.intuso.housemate.client.v1_0.api.object.view.ListView;
+import com.intuso.housemate.client.v1_0.api.object.view.ValueView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
@@ -16,7 +21,7 @@ import org.slf4j.Logger;
 /**
  */
 public final class RealCommandImpl
-        extends RealObject<Command.Data, Command.Listener<? super RealCommandImpl>>
+        extends RealObject<Command.Data, Command.Listener<? super RealCommandImpl>, CommandView>
         implements RealCommand<RealValueImpl<Boolean>, RealListGeneratedImpl<RealParameterImpl<?>>, RealCommandImpl> {
 
     private final static String ENABLED_DESCRIPTION = "Whether the command is enabled or not";
@@ -64,6 +69,46 @@ public final class RealCommandImpl
                 Command.PARAMETERS_ID,
                 "The parameters required by the command",
                 parameters);
+    }
+
+    @Override
+    public CommandView createView(View.Mode mode) {
+        return new CommandView(mode);
+    }
+
+    @Override
+    public Tree getTree(CommandView view) {
+
+        // create a result even for a null view
+        Tree result = new Tree(getData());
+
+        // get anything else the view wants
+        if(view != null && view.getMode() != null) {
+            switch (view.getMode()) {
+
+                // get recursively
+                case ANCESTORS:
+                    result.getChildren().put(ENABLED_ID, enabledValue.getTree(new ValueView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(PARAMETERS_ID, parameters.getTree(new ListView(View.Mode.ANCESTORS)));
+                    break;
+
+                    // get all children using inner view. NB all children non-null because of load(). Can give children null views
+                case CHILDREN:
+                    result.getChildren().put(ENABLED_ID, enabledValue.getTree(view.getEnabledValueView()));
+                    result.getChildren().put(PARAMETERS_ID, parameters.getTree(view.getParametersView()));
+                    break;
+
+                case SELECTION:
+                    if(view.getEnabledValueView() != null)
+                        result.getChildren().put(ENABLED_ID, enabledValue.getTree(view.getEnabledValueView()));
+                    if(view.getParametersView() != null)
+                        result.getChildren().put(PARAMETERS_ID, parameters.getTree(view.getParametersView()));
+                    break;
+            }
+
+        }
+
+        return result;
     }
 
     @Override
@@ -124,7 +169,7 @@ public final class RealCommandImpl
     }
 
     @Override
-    public RealObject<?, ?> getChild(String id) {
+    public RealObject<?, ?, ?> getChild(String id) {
         if(ENABLED_ID.equals(id))
             return enabledValue;
         else if(PARAMETERS_ID.equals(id))

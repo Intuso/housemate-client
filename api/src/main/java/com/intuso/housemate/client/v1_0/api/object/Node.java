@@ -1,11 +1,13 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
+import com.intuso.housemate.client.v1_0.api.object.view.NodeView;
+
 public interface Node<
         COMMAND extends Command<?, ?, ?, ?>,
         TYPES extends List<? extends Type<?>, ?>,
         HARDWARES extends List<? extends Hardware<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>, ?>,
         NODE extends Node<COMMAND, TYPES, HARDWARES, NODE>>
-        extends Object<Node.Data, Node.Listener<? super NODE>>,
+        extends Object<Node.Data, Node.Listener<? super NODE>, NodeView>,
         Type.Container<TYPES>,
         Hardware.Container<HARDWARES> {
 

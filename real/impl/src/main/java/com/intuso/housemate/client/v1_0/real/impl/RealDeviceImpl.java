@@ -6,7 +6,12 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.Renameable;
 import com.intuso.housemate.client.v1_0.api.object.Device;
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.view.CommandView;
+import com.intuso.housemate.client.v1_0.api.object.view.DeviceView;
+import com.intuso.housemate.client.v1_0.api.object.view.ListView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.api.type.TypeSpec;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealCommand;
@@ -18,9 +23,10 @@ import org.slf4j.Logger;
 
 public abstract class RealDeviceImpl<DATA extends Device.Data,
         LISTENER extends Device.Listener<? super DEVICE>,
-        DEVICE extends RealDeviceImpl<DATA, LISTENER, DEVICE>>
-        extends RealObject<DATA, LISTENER>
-        implements RealDevice<DATA, LISTENER, RealCommandImpl, RealListGeneratedImpl<RealCommandImpl>, RealListGeneratedImpl<RealValueImpl<?>>, DEVICE> {
+        VIEW extends DeviceView<?>,
+        DEVICE extends RealDeviceImpl<DATA, LISTENER, VIEW, DEVICE>>
+        extends RealObject<DATA, LISTENER, VIEW>
+        implements RealDevice<DATA, LISTENER, RealCommandImpl, RealListGeneratedImpl<RealCommandImpl>, RealListGeneratedImpl<RealValueImpl<?>>, VIEW, DEVICE> {
 
     private final static String PROPERTIES_DESCRIPTION = "The device's properties";
 
@@ -76,6 +82,44 @@ public abstract class RealDeviceImpl<DATA extends Device.Data,
                 Lists.<RealValueImpl<?>>newArrayList());
     }
 
+    @Override
+    public Tree getTree(VIEW view) {
+
+        // create a result even for a null view
+        Tree result = new Tree(getData());
+
+        // get anything else the view wants
+        if(view != null && view.getMode() != null) {
+            switch (view.getMode()) {
+
+                // get recursively
+                case ANCESTORS:
+                    result.getChildren().put(RENAME_ID, renameCommand.getTree(new CommandView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(COMMANDS_ID, commands.getTree(new ListView(View.Mode.ANCESTORS)));
+                    result.getChildren().put(VALUES_ID, values.getTree(new ListView(View.Mode.ANCESTORS)));
+                    break;
+
+                    // get all children using inner view. NB all children non-null because of load(). Can give children null views
+                case CHILDREN:
+                    result.getChildren().put(RENAME_ID, renameCommand.getTree(view.getRenameCommandView()));
+                    result.getChildren().put(COMMANDS_ID, commands.getTree(view.getCommandsView()));
+                    result.getChildren().put(VALUES_ID, values.getTree(view.getValuesView()));
+                    break;
+
+                case SELECTION:
+                    if(view.getRenameCommandView() != null)
+                        result.getChildren().put(RENAME_ID, renameCommand.getTree(view.getRenameCommandView()));
+                    if(view.getCommandsView() != null)
+                        result.getChildren().put(COMMANDS_ID, commands.getTree(view.getCommandsView()));
+                    if(view.getValuesView() != null)
+                        result.getChildren().put(VALUES_ID, values.getTree(view.getValuesView()));
+                    break;
+            }
+        }
+
+        return result;
+    }
+
     private void setName(String newName) {
         getData().setName(newName);
         for(Device.Listener<? super DEVICE> listener : listeners)
@@ -123,7 +167,7 @@ public abstract class RealDeviceImpl<DATA extends Device.Data,
     }
 
     @Override
-    public Object<?, ?> getChild(String id) {
+    public Object<?, ?, ?> getChild(String id) {
         if(RENAME_ID.equals(id))
             return renameCommand;
         else if(COMMANDS_ID.equals(id))

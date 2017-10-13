@@ -1,14 +1,16 @@
 package com.intuso.housemate.client.v1_0.real.impl;
 
 import com.intuso.housemate.client.v1_0.api.object.Object;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
 public abstract class RealObject<DATA extends Object.Data,
-        LISTENER extends com.intuso.housemate.client.v1_0.api.object.Object.Listener>
-        implements Object<DATA, LISTENER> {
+        LISTENER extends Object.Listener,
+        VIEW extends View>
+        implements Object<DATA, LISTENER, VIEW> {
 
     public final static String REAL = "real";
 

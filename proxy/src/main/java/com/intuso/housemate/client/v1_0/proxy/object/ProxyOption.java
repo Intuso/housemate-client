@@ -3,11 +3,12 @@ package com.intuso.housemate.client.v1_0.proxy.object;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Option;
+import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.view.ListView;
+import com.intuso.housemate.client.v1_0.api.object.view.NoView;
+import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
-import com.intuso.housemate.client.v1_0.proxy.object.view.ListView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.NoView;
-import com.intuso.housemate.client.v1_0.proxy.object.view.View;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
 
@@ -33,12 +34,17 @@ public abstract class ProxyOption<
                        ProxyObject.Factory<SUB_TYPES> subTypesFactory) {
         super(logger, name, Option.Data.class, managedCollectionFactory, receiverFactory);
         subTypes = subTypesFactory.create(ChildUtil.logger(logger, SUB_TYPES_ID), ChildUtil.name(name, SUB_TYPES_ID));
-        subTypes.view(new ListView(View.Mode.ANCESTORS));
+        subTypes.load(new ListView(View.Mode.ANCESTORS));
     }
 
     @Override
-    public NoView createView() {
-        return new NoView();
+    public NoView createView(View.Mode mode) {
+        return new NoView(mode);
+    }
+
+    @Override
+    public Tree getTree(NoView view) {
+        return new Tree(getData());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.intuso.housemate.client.v1_0.real.api;
 
 import com.intuso.housemate.client.v1_0.api.object.ValueBase;
+import com.intuso.housemate.client.v1_0.api.object.view.ValueBaseView;
 
 /**
  * @param <O> the type of the value's value
@@ -10,11 +11,13 @@ public interface RealValueBase<DATA extends ValueBase.Data,
         O,
         TYPE extends RealType<O, ?>,
         LISTENER extends ValueBase.Listener<? super VALUE>,
-        VALUE extends RealValueBase<DATA, O, TYPE, LISTENER, VALUE>>
+        VIEW extends ValueBaseView,
+        VALUE extends RealValueBase<DATA, O, TYPE, LISTENER, VIEW, VALUE>>
         extends ValueBase<DATA,
         O,
         TYPE,
         LISTENER,
+        VIEW,
         VALUE> {
 
     /**

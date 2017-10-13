@@ -1,5 +1,7 @@
 package com.intuso.housemate.client.v1_0.api.object;
 
+import com.intuso.housemate.client.v1_0.api.object.view.CommandView;
+
 import java.io.Serializable;
 
 /**
@@ -13,7 +15,7 @@ public interface Command<
             PARAMETERS extends List<? extends Parameter<?, ?>, ?>,
             COMMAND extends Command<?, ?, ?, ?>>
         extends
-        Object<Command.Data, Command.Listener<? super COMMAND>>,
+        Object<Command.Data, Command.Listener<? super COMMAND>, CommandView>,
         Parameter.Container<PARAMETERS> {
 
     String ENABLED_ID = "enabled";

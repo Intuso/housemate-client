@@ -2,6 +2,7 @@ package com.intuso.housemate.client.v1_0.api.object;
 
 import com.intuso.housemate.client.v1_0.api.*;
 import com.intuso.housemate.client.v1_0.api.Runnable;
+import com.intuso.housemate.client.v1_0.api.object.view.HardwareView;
 
 /**
  * @param <COMMANDS> the type of the commands list
@@ -22,7 +23,7 @@ public interface Hardware<RENAME_COMMAND extends Command<?, ?, ?, ?>,
         DEVICES extends List<? extends Device.Connected<?, ?, ?, ?>, ?>,
         HARDWARE extends Hardware<RENAME_COMMAND, REMOVE_COMMAND, START_STOP_COMMAND, RUNNING_VALUE, ERROR_VALUE, DRIVER_PROPERTY, DRIVER_LOADED_VALUE, COMMANDS, VALUES, PROPERTIES, DEVICES, HARDWARE>>
         extends
-        Object<Hardware.Data, Hardware.Listener<? super HARDWARE>>,
+        Object<Hardware.Data, Hardware.Listener<? super HARDWARE>, HardwareView>,
         Renameable<RENAME_COMMAND>,
         Runnable<START_STOP_COMMAND, RUNNING_VALUE>,
         Failable<ERROR_VALUE>,
