@@ -7,7 +7,7 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for controlling volume
  */
 @Id(value = "volume", name = "Volume", description = "Volume")
-public interface Volume {
+public interface Volume extends Ability {
 
     String ID = Volume.class.getAnnotation(Id.class).value();
 

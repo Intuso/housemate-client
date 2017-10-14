@@ -7,7 +7,7 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for controlling playback
  */
 @Id(value = "playback", name = "Playback", description = "Playback")
-public interface Playback {
+public interface Playback extends Ability {
 
     String ID = Playback.class.getAnnotation(Id.class).value();
 

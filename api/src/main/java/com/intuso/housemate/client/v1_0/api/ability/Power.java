@@ -7,7 +7,7 @@ import com.intuso.utilities.collection.ManagedCollection;
  * API for controlling power
  */
 @Id(value = "power", name = "Power", description = "Power")
-public interface Power {
+public interface Power extends Ability {
 
     String ID = Power.class.getAnnotation(Id.class).value();
 

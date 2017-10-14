@@ -13,6 +13,8 @@ public class GsonConfig {
     public static Gson createGson() {
 
         GsonBuilder builder = new GsonBuilder()
+                // enable pretty printing
+                .setPrettyPrinting()
                 // register main sub-class type adapters
                 .registerTypeAdapterFactory(new DataAdapter())
                 .registerTypeAdapterFactory(new ViewAdapter())
