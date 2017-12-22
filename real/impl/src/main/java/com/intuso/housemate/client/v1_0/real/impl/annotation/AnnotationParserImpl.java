@@ -21,6 +21,11 @@ public class AnnotationParserImpl implements AnnotationParser {
     }
 
     @Override
+    public Set<String> findClasses(Logger logger, Object object) {
+        return annotationParserV1_0.findClasses(logger, object);
+    }
+
+    @Override
     public Set<String> findAbilities(Logger logger, Object object) {
         return annotationParserV1_0.findAbilities(logger, object);
     }
