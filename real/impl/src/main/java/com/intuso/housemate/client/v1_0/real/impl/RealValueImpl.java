@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Value;
+import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.ValueView;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
@@ -47,7 +48,7 @@ public final class RealValueImpl<O>
     }
 
     @Override
-    public Tree getTree(ValueView view) {
+    public Tree getTree(ValueView view, ValueBase.Listener listener) {
         return new Tree(getData());
     }
 

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
+import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.TypeView;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
@@ -33,7 +34,7 @@ public abstract class ProxyType<TYPE extends ProxyType<TYPE>>
     }
 
     @Override
-    public Tree getTree(TypeView view) {
+    public Tree getTree(TypeView view, ValueBase.Listener listener) {
         return new Tree(getData());
     }
 

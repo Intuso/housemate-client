@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Option;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
+import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.ListView;
 import com.intuso.housemate.client.v1_0.api.object.view.NoView;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
@@ -43,7 +44,7 @@ public abstract class ProxyOption<
     }
 
     @Override
-    public Tree getTree(NoView view) {
+    public Tree getTree(NoView view, ValueBase.Listener listener) {
         return new Tree(getData());
     }
 
