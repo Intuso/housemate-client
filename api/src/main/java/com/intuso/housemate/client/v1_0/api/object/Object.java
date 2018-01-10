@@ -4,6 +4,7 @@ import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.utilities.collection.ManagedCollection;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Base interface for all other object interfaces
@@ -53,7 +54,7 @@ public interface Object<
 
     VIEW createView(View.Mode mode);
 
-    Tree getTree(VIEW view, ValueBase.Listener listener);
+    Tree getTree(VIEW view, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations);
 
     /**
      *

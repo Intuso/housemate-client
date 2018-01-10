@@ -4,13 +4,15 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.SubType;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
-import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.NoView;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealSubType;
+import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * @param <O> the type of the sub type's value
@@ -46,7 +48,11 @@ public final class RealSubTypeImpl<O>
     }
 
     @Override
-    public Tree getTree(NoView view, ValueBase.Listener listener) {
+    public Tree getTree(NoView view, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations) {
+
+        // register the listener
+        addTreeListener(view, listener, listenerRegistrations);
+
         return new Tree(getData());
     }
 

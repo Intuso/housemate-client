@@ -32,7 +32,7 @@ public class TestJsonSerialisation {
 
     @Test
     public void testValueData() {
-        Value.Data startData = new Value.Data("testValue", "Test Value", "A value for testing", "type", 1, 1);
+        Value.Data startData = new Value.Data("testValue", "Test Value", "A value for testing", "type", 1, 1, new Type.Instances());
         String json = serialiser.serialise(startData);
         Value.Data endData = serialiser.deserialise(json, Value.Data.class);
         assertEquals(startData.getId(), endData.getId());
@@ -42,7 +42,7 @@ public class TestJsonSerialisation {
 
     @Test
     public void testPropertyData() {
-        Property.Data startData = new Property.Data("testProperty", "Test Property", "A property for testing", "type", 1, 1);
+        Property.Data startData = new Property.Data("testProperty", "Test Property", "A property for testing", "type", 1, 1, new Type.Instances());
         String json = serialiser.serialise(startData);
         Property.Data endData = serialiser.deserialise(json, Property.Data.class);
         assertEquals(startData.getId(), endData.getId());

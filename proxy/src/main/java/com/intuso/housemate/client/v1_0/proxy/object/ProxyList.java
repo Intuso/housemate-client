@@ -8,7 +8,6 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.List;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
-import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.*;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
@@ -75,7 +74,10 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?, ?>, LIST exten
     }
 
     @Override
-    public Tree getTree(ListView<?> view, ValueBase.Listener listener) {
+    public Tree getTree(ListView<?> view, Tree.Listener listener, java.util.List<ManagedCollection.Registration> listenerRegistrations) {
+
+        // register the listener
+        addTreeListener(view, listener, listenerRegistrations);
 
         // make sure what they want is loaded
         load(view);
@@ -90,20 +92,20 @@ public abstract class ProxyList<ELEMENT extends ProxyObject<?, ?, ?>, LIST exten
                 // get recursively
                 case ANCESTORS:
                     for(Map.Entry<String, ELEMENT> element : elements.entrySet())
-                        result.getChildren().put(element.getKey(), ((ProxyObject) element.getValue()).getTree(element.getValue().createView(View.Mode.ANCESTORS), listener));
+                        result.getChildren().put(element.getKey(), ((ProxyObject) element.getValue()).getTree(element.getValue().createView(View.Mode.ANCESTORS), listener, listenerRegistrations));
                     break;
 
                     // get all children using inner view. NB all children non-null because of load(). Can give children null views
                 case CHILDREN:
                     for(Map.Entry<String, ELEMENT> element : elements.entrySet())
-                        result.getChildren().put(element.getKey(), ((ProxyObject) element.getValue()).getTree(view.getView(), listener));
+                        result.getChildren().put(element.getKey(), ((ProxyObject) element.getValue()).getTree(view.getView(), listener, listenerRegistrations));
                     break;
 
                 case SELECTION:
                     if(view.getElements() != null)
                         for (String elementId : view.getElements())
                             if (elements.containsKey(elementId))
-                                result.getChildren().put(elementId, ((ProxyObject) elements.get(elementId)).getTree(view.getView(), listener));
+                                result.getChildren().put(elementId, ((ProxyObject) elements.get(elementId)).getTree(view.getView(), listener, listenerRegistrations));
                     break;
             }
 

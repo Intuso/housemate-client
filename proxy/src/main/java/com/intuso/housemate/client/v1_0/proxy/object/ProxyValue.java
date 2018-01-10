@@ -5,12 +5,14 @@ import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
 import com.intuso.housemate.client.v1_0.api.object.Value;
-import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.api.object.view.ValueView;
+import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * @param <TYPE> the type of the type
@@ -38,7 +40,11 @@ public abstract class ProxyValue<
     }
 
     @Override
-    public Tree getTree(ValueView view, ValueBase.Listener listener) {
+    public Tree getTree(ValueView view, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations) {
+
+        // register the listener
+        addTreeListener(view, listener, listenerRegistrations);
+
         return new Tree(getData());
     }
 

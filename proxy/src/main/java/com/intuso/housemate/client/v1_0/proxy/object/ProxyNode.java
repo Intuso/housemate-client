@@ -4,12 +4,14 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.intuso.housemate.client.v1_0.api.object.Node;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
-import com.intuso.housemate.client.v1_0.api.object.ValueBase;
 import com.intuso.housemate.client.v1_0.api.object.view.*;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.proxy.ChildUtil;
+import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * @param <COMMAND> the type of the command
@@ -52,7 +54,10 @@ public abstract class ProxyNode<
     }
 
     @Override
-    public Tree getTree(NodeView view, ValueBase.Listener listener) {
+    public Tree getTree(NodeView view, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations) {
+
+        // register the listener
+        addTreeListener(view, listener, listenerRegistrations);
 
         // make sure what they want is loaded
         load(view);
@@ -66,25 +71,25 @@ public abstract class ProxyNode<
 
                 // get recursively
                 case ANCESTORS:
-                    result.getChildren().put(TYPES_ID, types.getTree(new ListView(View.Mode.ANCESTORS), listener));
-                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(new ListView(View.Mode.ANCESTORS), listener));
-                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(new CommandView(View.Mode.ANCESTORS), listener));
+                    result.getChildren().put(TYPES_ID, types.getTree(new ListView(View.Mode.ANCESTORS), listener, listenerRegistrations));
+                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(new ListView(View.Mode.ANCESTORS), listener, listenerRegistrations));
+                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(new CommandView(View.Mode.ANCESTORS), listener, listenerRegistrations));
                     break;
 
                     // get all children using inner view. NB all children non-null because of load(). Can give children null views
                 case CHILDREN:
-                    result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener));
-                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener));
-                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener));
+                    result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener, listenerRegistrations));
+                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener, listenerRegistrations));
+                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener, listenerRegistrations));
                     break;
 
                 case SELECTION:
                     if(view.getTypes() != null)
-                        result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener));
+                        result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener, listenerRegistrations));
                     if(view.getHardwares() != null)
-                        result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener));
+                        result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener, listenerRegistrations));
                     if(view.getAddHardwareCommand() != null)
-                        result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener));
+                        result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener, listenerRegistrations));
                     break;
             }
 

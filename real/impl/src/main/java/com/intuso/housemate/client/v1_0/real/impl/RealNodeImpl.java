@@ -12,10 +12,13 @@ import com.intuso.housemate.client.v1_0.api.object.view.View;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
+import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import com.intuso.utilities.properties.api.PropertyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class RealNodeImpl
         extends RealObject<com.intuso.housemate.client.v1_0.api.object.Node.Data, com.intuso.housemate.client.v1_0.api.object.Node.Listener<? super RealNodeImpl>, NodeView>
@@ -73,7 +76,10 @@ public class RealNodeImpl
     }
 
     @Override
-    public Tree getTree(NodeView view, ValueBase.Listener listener) {
+    public Tree getTree(NodeView view, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations) {
+
+        // register the listener
+        addTreeListener(view, listener, listenerRegistrations);
 
         // create a result even for a null view
         Tree result = new Tree(getData());
@@ -84,25 +90,25 @@ public class RealNodeImpl
 
                 // get recursively
                 case ANCESTORS:
-                    result.getChildren().put(TYPES_ID, types.getTree(new ListView(View.Mode.ANCESTORS), listener));
-                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(new ListView(View.Mode.ANCESTORS), listener));
-                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(new CommandView(View.Mode.ANCESTORS), listener));
+                    result.getChildren().put(TYPES_ID, types.getTree(new ListView(View.Mode.ANCESTORS), listener, listenerRegistrations));
+                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(new ListView(View.Mode.ANCESTORS), listener, listenerRegistrations));
+                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(new CommandView(View.Mode.ANCESTORS), listener, listenerRegistrations));
                     break;
 
                     // get all children using inner view. NB all children non-null because of load(). Can give children null views
                 case CHILDREN:
-                    result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener));
-                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener));
-                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener));
+                    result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener, listenerRegistrations));
+                    result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener, listenerRegistrations));
+                    result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener, listenerRegistrations));
                     break;
 
                 case SELECTION:
                     if(view.getTypes() != null)
-                        result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener));
+                        result.getChildren().put(TYPES_ID, types.getTree(view.getTypes(), listener, listenerRegistrations));
                     if(view.getHardwares() != null)
-                        result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener));
+                        result.getChildren().put(HARDWARES_ID, hardwares.getTree(view.getHardwares(), listener, listenerRegistrations));
                     if(view.getAddHardwareCommand() != null)
-                        result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener));
+                        result.getChildren().put(ADD_HARDWARE_ID, addHardwareCommand.getTree(view.getAddHardwareCommand(), listener, listenerRegistrations));
                     break;
             }
 
