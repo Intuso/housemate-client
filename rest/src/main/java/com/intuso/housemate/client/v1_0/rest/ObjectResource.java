@@ -3,7 +3,7 @@ package com.intuso.housemate.client.v1_0.rest;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.api.object.view.View;
+import com.intuso.housemate.client.v1_0.api.object.view.ServerView;
 
 import javax.ws.rs.*;
 
@@ -25,7 +25,7 @@ public interface ObjectResource {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    Tree view(@QueryParam("path") String path, View view);
+    Tree view(ServerView view);
 
     @Path("/rename")
     @POST

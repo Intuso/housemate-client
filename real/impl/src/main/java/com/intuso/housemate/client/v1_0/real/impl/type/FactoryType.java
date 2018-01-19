@@ -5,7 +5,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.intuso.housemate.client.v1_0.api.driver.PluginDependency;
 import com.intuso.housemate.client.v1_0.api.object.Type;
-import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.impl.RealListGeneratedImpl;
 import com.intuso.housemate.client.v1_0.real.impl.RealOptionImpl;
@@ -70,7 +69,7 @@ public class FactoryType<FACTORY> extends RealChoiceType<FactoryType.Entry<FACTO
         private final ManagedCollection<Listener<FACTORY>> listeners;
 
         public Entry(ManagedCollectionFactory managedCollectionFactory) {
-            this.listeners = managedCollectionFactory.create();
+            this.listeners = managedCollectionFactory.createSet();
         }
 
         @Override

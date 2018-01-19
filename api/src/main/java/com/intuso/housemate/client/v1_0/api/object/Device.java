@@ -156,23 +156,23 @@ public interface Device<
             ERROR_VALUE extends Value<?, ?, ?>,
             COMMANDS extends List<? extends Command<?, ?, ?, ?>, ?>,
             VALUES extends List<? extends Value<?, ?, ?>, ?>,
-            DEVICES extends List<? extends Device<?, ?, ?, ?, ?, ?, ?>, ?>,
+            DEVICES extends List<? extends Reference<?, ? extends Device<?, ?, ?, ?, ?, ?, ?>, ?>, ?>,
             DEVICE extends Group<RENAME_COMMAND, REMOVE_COMMAND, ADD_COMMAND, ERROR_VALUE, COMMANDS, VALUES, DEVICES, DEVICE>>
             extends
             Device<Group.Data, Group.Listener<? super DEVICE>, RENAME_COMMAND, COMMANDS, VALUES, DeviceGroupView, DEVICE>,
             Failable<ERROR_VALUE>,
             Removeable<REMOVE_COMMAND> {
 
-        String PLAYBACK = "playbacks";
-        String ADD_PLAYBACK = "addPlayback";
-        String POWER = "powers";
-        String ADD_POWER = "addPower";
-        String RUN = "runs";
-        String ADD_RUN = "addRun";
-        String TEMPERATURE_SENSOR = "temperatureSensors";
-        String ADD_TEMPERATURE_SENSOR = "addTemperatureSensor";
-        String VOLUME = "volumes";
-        String ADD_VOLUME = "addVolume";
+        String PLAYBACK = "playbackDevices";
+        String ADD_PLAYBACK = "addPlaybackDevice";
+        String POWER = "powerDevices";
+        String ADD_POWER = "addPowerDevice";
+        String RUN = "runDevices";
+        String ADD_RUN = "addRunDevice";
+        String TEMPERATURE_SENSOR = "temperatureSensorDevices";
+        String ADD_TEMPERATURE_SENSOR = "addTemperatureSensorDevice";
+        String VOLUME = "volumeDevices";
+        String ADD_VOLUME = "addVolumeDevice";
 
         DEVICES getPlaybackDevices();
         ADD_COMMAND getAddPlaybackDeviceCommand();

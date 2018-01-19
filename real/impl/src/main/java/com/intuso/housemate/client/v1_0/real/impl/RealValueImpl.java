@@ -49,7 +49,7 @@ public final class RealValueImpl<O>
     }
 
     @Override
-    public Tree getTree(ValueView view, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations) {
+    public Tree getTree(ValueView view, Tree.ReferenceHandler referenceHandler, Tree.Listener listener, List<ManagedCollection.Registration> listenerRegistrations) {
 
         // register the listener
         addTreeListener(view, listener, listenerRegistrations);
