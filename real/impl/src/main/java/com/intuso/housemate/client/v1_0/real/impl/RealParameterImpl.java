@@ -6,7 +6,6 @@ import com.intuso.housemate.client.v1_0.api.object.Parameter;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.view.ParameterView;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
-import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.api.RealParameter;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
@@ -36,9 +35,8 @@ public final class RealParameterImpl<O>
                              @Assisted RealTypeImpl type,
                              @Assisted("min") int minValues,
                              @Assisted("max") int maxValues,
-                             ManagedCollectionFactory managedCollectionFactory,
-                             Sender.Factory senderFactory) {
-        super(logger, new Parameter.Data(id, name, description, type.getId(), minValues, maxValues), managedCollectionFactory, senderFactory);
+                             ManagedCollectionFactory managedCollectionFactory) {
+        super(logger, new Parameter.Data(id, name, description, type.getId(), minValues, maxValues), managedCollectionFactory);
         this.type = type;
     }
 

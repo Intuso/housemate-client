@@ -9,7 +9,9 @@ import com.intuso.housemate.client.v1_0.api.object.view.CommandView;
 import com.intuso.housemate.client.v1_0.api.object.view.ListView;
 import com.intuso.housemate.client.v1_0.api.object.view.NodeView;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
+import com.intuso.housemate.client.v1_0.messaging.api.ioc.Messaging;
 import com.intuso.housemate.client.v1_0.real.api.RealNode;
 import com.intuso.housemate.client.v1_0.real.impl.utils.AddHardwareCommand;
 import com.intuso.utilities.collection.ManagedCollection;
@@ -31,6 +33,9 @@ public class RealNodeImpl
 
     private final String id;
 
+    private final Sender.Factory senderFactory;
+    private final Receiver.Factory receiverFactory;
+
     private final RealListGeneratedImpl<RealTypeImpl<?>> types;
     private final RealListPersistedImpl<Hardware.Data, RealHardwareImpl> hardwares;
     private final RealCommandImpl addHardwareCommand;
@@ -38,7 +43,8 @@ public class RealNodeImpl
     @Inject
     public RealNodeImpl(PropertyRepository propertyRepository,
                         ManagedCollectionFactory managedCollectionFactory,
-                        Sender.Factory senderFactory,
+                        @Messaging(transport = "jms", contentType = "application/javabin") Sender.Factory senderFactory,
+                        @Messaging(transport = "jms", contentType = "application/javabin") Receiver.Factory receiverFactory,
                         RealListGeneratedImpl.Factory<RealTypeImpl<?>> typesFactory,
                         RealListPersistedImpl.Factory<Hardware.Data, RealHardwareImpl> hardwaresFactory,
                         AddHardwareCommand.Factory addHardwareCommandFactory) {
@@ -46,8 +52,10 @@ public class RealNodeImpl
                 new com.intuso.housemate.client.v1_0.api.object.Node.Data(propertyRepository.get(NODE_ID),
                         propertyRepository.get(NODE_NAME),
                         propertyRepository.get(NODE_DESCRIPTION)),
-                managedCollectionFactory, senderFactory);
+                managedCollectionFactory);
         this.id = propertyRepository.get(NODE_ID);
+        this.senderFactory = senderFactory;
+        this.receiverFactory = receiverFactory;
         this.types = typesFactory.create(ChildUtil.logger(logger, TYPES_ID),
                 TYPES_ID,
                 "Types",
@@ -118,11 +126,11 @@ public class RealNodeImpl
     }
 
     @Override
-    protected void initChildren(String name) {
-        super.initChildren(name);
-        types.init(ChildUtil.name(name, TYPES_ID));
-        hardwares.init(ChildUtil.name(name, HARDWARES_ID));
-        addHardwareCommand.init(ChildUtil.name(name, ADD_HARDWARE_ID));
+    protected void initChildren(String name, Sender.Factory senderFactory, Receiver.Factory receiverFactory) {
+        super.initChildren(name, senderFactory, receiverFactory);
+        types.init(ChildUtil.name(name, TYPES_ID), senderFactory, receiverFactory);
+        hardwares.init(ChildUtil.name(name, HARDWARES_ID), senderFactory, receiverFactory);
+        addHardwareCommand.init(ChildUtil.name(name, ADD_HARDWARE_ID), senderFactory, receiverFactory);
     }
 
     @Override
@@ -165,7 +173,7 @@ public class RealNodeImpl
     }
 
     public void start() {
-        init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, Server.NODES_ID, id));
+        init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, "application/javabin" /* todo make this configurable? */, Server.NODES_ID, id), senderFactory, receiverFactory);
     }
 
     public void stop() {

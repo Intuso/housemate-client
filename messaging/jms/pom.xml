@@ -30,6 +30,7 @@
             <artifactId>housemate-client-1-0-serialisation-javabin</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.intuso.housemate</groupId>
             <artifactId>housemate-client-1-0-serialisation-json</artifactId>

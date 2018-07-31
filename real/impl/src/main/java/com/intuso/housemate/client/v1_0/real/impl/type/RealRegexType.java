@@ -2,7 +2,6 @@ package com.intuso.housemate.client.v1_0.real.impl.type;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.housemate.client.v1_0.real.impl.RealTypeImpl;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
 import org.slf4j.Logger;
@@ -26,12 +25,8 @@ public class RealRegexType extends RealTypeImpl<String> {
                             @Assisted("name") String name,
                             @Assisted("description") String description,
                             @Assisted("regexPattern") String regexPattern,
-                            ManagedCollectionFactory managedCollectionFactory,
-                            Sender.Factory senderFactory) {
-        super(logger,
-                new RegexData(id, name, description, regexPattern),
-                managedCollectionFactory,
-                senderFactory);
+                            ManagedCollectionFactory managedCollectionFactory) {
+        super(logger, new RegexData(id, name, description, regexPattern), managedCollectionFactory);
     }
 
     @Override

@@ -1,39 +1,71 @@
 package com.intuso.housemate.client.v1_0.messaging.jms.ioc;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.Singleton;
 import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
-import com.intuso.housemate.client.v1_0.messaging.jms.JMSReceiver;
-import com.intuso.housemate.client.v1_0.messaging.jms.JMSSender;
+import com.intuso.housemate.client.v1_0.messaging.api.ioc.Messaging;
+import com.intuso.housemate.client.v1_0.messaging.jms.JMS;
 import com.intuso.housemate.client.v1_0.messaging.jms.MessageConverter;
+import com.intuso.housemate.client.v1_0.serialisation.javabin.JavabinSerialiser;
+import com.intuso.housemate.client.v1_0.serialisation.javabin.ioc.JavabinSerialiserModule;
+import com.intuso.housemate.client.v1_0.serialisation.json.JsonSerialiser;
+import com.intuso.housemate.client.v1_0.serialisation.json.ioc.JsonSerialiserModule;
+
+import javax.jms.Connection;
 
 /**
  * Created by tomc on 02/03/17.
  */
-public abstract class JMSMessagingModule extends AbstractModule {
+public class JMSMessagingModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Sender.Factory.class).to(JMSSender.FactoryImpl.class);
-        bind(Receiver.Factory.class).to(JMSReceiver.FactoryImpl.class);
-        install(new FactoryModuleBuilder().build(JMSSender.Factory.class));
-        install(new FactoryModuleBuilder().build(JMSReceiver.Factory.class));
+        install(new JavabinSerialiserModule());
+        bind(MessageConverter.Javabin.class).in(Scopes.SINGLETON);
+        install(new JsonSerialiserModule());
+        bind(MessageConverter.Json.class).in(Scopes.SINGLETON);
     }
 
-    public static class Javabin extends JMSMessagingModule {
-        @Override
-        protected void configure() {
-            super.configure();
-            bind(MessageConverter.class).to(MessageConverter.Javabin.class);
-        }
+    @Provides
+    @Singleton
+    public Receiver.Factory getDefaultReceiver(MessageConverter.Javabin messageConverter, Connection connection) {
+        return new JMS.Receiver.FactoryImpl(messageConverter, connection);
     }
 
-    public static class Json extends JMSMessagingModule {
-        @Override
-        protected void configure() {
-            super.configure();
-            bind(MessageConverter.class).to(MessageConverter.Json.class);
-        }
+    @Provides
+    @Singleton
+    public Sender.Factory getDefaultSender(MessageConverter.Javabin messageConverter, Connection connection) {
+        return new JMS.Sender.FactoryImpl(messageConverter, connection);
+    }
+
+    @Provides
+    @Singleton
+    @Messaging(transport = JMS.TYPE, contentType = JavabinSerialiser.TYPE)
+    public Receiver.Factory getJavabinReceiver(MessageConverter.Javabin messageConverter, Connection connection) {
+        return new JMS.Receiver.FactoryImpl(messageConverter, connection);
+    }
+
+    @Provides
+    @Singleton
+    @Messaging(transport = JMS.TYPE, contentType = JavabinSerialiser.TYPE)
+    public Sender.Factory getJavabinSender(MessageConverter.Javabin messageConverter, Connection connection) {
+        return new JMS.Sender.FactoryImpl(messageConverter, connection);
+    }
+
+    @Provides
+    @Singleton
+    @Messaging(transport = JMS.TYPE, contentType = JsonSerialiser.TYPE)
+    public Receiver.Factory getJsonReceiver(MessageConverter.Json messageConverter, Connection connection) {
+        return new JMS.Receiver.FactoryImpl(messageConverter, connection);
+    }
+
+    @Provides
+    @Singleton
+    @Messaging(transport = JMS.TYPE, contentType = JsonSerialiser.TYPE)
+    public Sender.Factory getJsonSender(MessageConverter.Json messageConverter, Connection connection) {
+        return new JMS.Sender.FactoryImpl(messageConverter, connection);
     }
 }

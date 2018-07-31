@@ -25,7 +25,6 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
         extends RealObject<List.Data, List.Listener<? super ELEMENT, ? super RealListPersistedImpl<CHILD_DATA, ELEMENT>>, ListView<?>>
         implements RealList<ELEMENT, RealListPersistedImpl<CHILD_DATA, ELEMENT>> {
 
-    private final Receiver.Factory receiverFactory;
     private final Class<CHILD_DATA> childDataClass;
     private final ElementFactory<CHILD_DATA, ELEMENT> existingObjectHandler;
     private final RemoveCallback<ELEMENT> removeCallback;
@@ -33,8 +32,9 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
     private final Map<String, ELEMENT> elements = Maps.newHashMap();
 
     private String name;
-    private boolean initialised = false;
     private Receiver<CHILD_DATA> existingObjectReceiver;
+    private Sender.Factory senderFactory;
+    private Receiver.Factory receiverFactory;
 
     /**
      * @param logger {@inheritDoc}
@@ -46,12 +46,9 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
                                  @Assisted("name") String name,
                                  @Assisted("description") String description,
                                  ManagedCollectionFactory managedCollectionFactory,
-                                 Receiver.Factory receiverFactory,
-                                 Sender.Factory senderFactory,
                                  Class<CHILD_DATA> childDataClass,
                                  ElementFactory<CHILD_DATA, ELEMENT> elementFactory) {
-        super(logger, new List.Data(id, name, description), managedCollectionFactory, senderFactory);
-        this.receiverFactory = receiverFactory;
+        super(logger, new List.Data(id, name, description), managedCollectionFactory);
         this.childDataClass = childDataClass;
         this.existingObjectHandler = elementFactory;
         this.removeCallback = new RemoveCallback<ELEMENT>() {
@@ -119,14 +116,15 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
     }
 
     @Override
-    protected void initChildren(String name) {
-        super.initChildren(name);
+    protected void initChildren(String name, Sender.Factory senderFactory, Receiver.Factory receiverFactory) {
+        super.initChildren(name, senderFactory, receiverFactory);
         this.name = name;
-        this.initialised = true;
+        this.senderFactory = senderFactory;
+        this.receiverFactory = receiverFactory;
 
         // init any existing elements
         for(ELEMENT element : elements.values())
-            element.init(ChildUtil.name(name, element.getId()));
+            element.init(ChildUtil.name(name, element.getId()), senderFactory, receiverFactory);
 
         existingObjectReceiver = receiverFactory.create(logger, ChildUtil.name(name, "*"), childDataClass);
 
@@ -159,6 +157,8 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
     protected void uninitChildren() {
         super.uninitChildren();
         this.name = null;
+        this.senderFactory = null;
+        this.receiverFactory = null;
         for(ELEMENT element : elements.values())
             element.uninit();
         if(existingObjectReceiver != null) {
@@ -172,8 +172,8 @@ public final class RealListPersistedImpl<CHILD_DATA extends Object.Data, ELEMENT
         if(elements.containsKey(element.getId()))
             throw new HousemateException("Element with id " + element.getId() + " already exists");
         elements.put(element.getId(), element);
-        if(initialised)
-            element.init(ChildUtil.name(name, element.getId()));
+        if(senderFactory != null && receiverFactory != null)
+            element.init(ChildUtil.name(name, element.getId()), senderFactory, receiverFactory);
         for(List.Listener<? super ELEMENT, ? super RealListPersistedImpl<CHILD_DATA, ELEMENT>> listener : listeners)
             listener.elementAdded(this, element);
     }

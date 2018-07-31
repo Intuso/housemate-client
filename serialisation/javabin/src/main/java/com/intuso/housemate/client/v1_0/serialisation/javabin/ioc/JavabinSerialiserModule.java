@@ -1,7 +1,8 @@
 package com.intuso.housemate.client.v1_0.serialisation.javabin.ioc;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
+import com.google.inject.Scopes;
+import com.google.inject.name.Names;
 import com.intuso.housemate.client.v1_0.serialisation.api.Serialiser;
 import com.intuso.housemate.client.v1_0.serialisation.javabin.JavabinSerialiser;
 
@@ -12,9 +13,10 @@ import com.intuso.housemate.client.v1_0.serialisation.javabin.JavabinSerialiser;
  * Time: 08:32
  * To change this template use File | Settings | File Templates.
  */
-public class JavabinSerialiserServerModule extends AbstractModule {
+public class JavabinSerialiserModule extends AbstractModule {
     @Override
     protected void configure() {
-        Multibinder.newSetBinder(binder(), Serialiser.class).addBinding().to(JavabinSerialiser.class);
+        bind(Serialiser.class).annotatedWith(Names.named(JavabinSerialiser.TYPE)).to(JavabinSerialiser.class);
+        bind(JavabinSerialiser.class).in(Scopes.SINGLETON);
     }
 }

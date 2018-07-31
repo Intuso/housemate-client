@@ -18,14 +18,9 @@
             <artifactId>housemate-client-1-0-serialisation-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject.extensions</groupId>
-            <artifactId>guice-multibindings</artifactId>
         </dependency>
     </dependencies>
 

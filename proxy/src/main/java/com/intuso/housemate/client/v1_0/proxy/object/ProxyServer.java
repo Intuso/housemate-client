@@ -75,7 +75,7 @@ public abstract class ProxyServer<
     public ProxyServer(Logger logger,
                        ManagedCollectionFactory managedCollectionFactory,
                        Receiver.Factory receiverFactory) {
-        super(logger, null, ChildUtil.name(null, PROXY, VERSION), Server.Data.class, managedCollectionFactory, receiverFactory);
+        super(logger, null, ChildUtil.name(null, PROXY, VERSION, "application/javabin" /* todo make this configurable? */), Server.Data.class, managedCollectionFactory, receiverFactory);
         this.managedCollectionFactory = managedCollectionFactory;
     }
 
@@ -88,7 +88,7 @@ public abstract class ProxyServer<
                        Factory<DEVICE_GROUPS> deviceGroupsFactory,
                        Factory<USERS> usersFactory,
                        Factory<NODES> nodesFactory) {
-        super(logger, null, ChildUtil.name(null, PROXY, VERSION), Server.Data.class, managedCollectionFactory, receiverFactory);
+        super(logger, null, ChildUtil.name(null, PROXY, VERSION, "application/javabin" /* todo make this configurable? */), Server.Data.class, managedCollectionFactory, receiverFactory);
         this.managedCollectionFactory = managedCollectionFactory;
         this.commandFactory = commandFactory;
         this.automationsFactory = automationsFactory;

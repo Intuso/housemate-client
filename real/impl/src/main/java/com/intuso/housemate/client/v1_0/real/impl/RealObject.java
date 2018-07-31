@@ -3,6 +3,7 @@ package com.intuso.housemate.client.v1_0.real.impl;
 import com.intuso.housemate.client.v1_0.api.object.Object;
 import com.intuso.housemate.client.v1_0.api.object.Tree;
 import com.intuso.housemate.client.v1_0.api.object.view.View;
+import com.intuso.housemate.client.v1_0.messaging.api.Receiver;
 import com.intuso.housemate.client.v1_0.messaging.api.Sender;
 import com.intuso.utilities.collection.ManagedCollection;
 import com.intuso.utilities.collection.ManagedCollectionFactory;
@@ -21,15 +22,12 @@ public abstract class RealObject<DATA extends Object.Data,
     protected final DATA data;
     protected final ManagedCollection<LISTENER> listeners;
     private final ManagedCollection<Tree.Listener> treeListeners;
-    protected final Sender.Factory senderFactory;
 
     private Sender sender;
 
     protected RealObject(Logger logger,
                          DATA data,
-                         ManagedCollectionFactory managedCollectionFactory,
-                         Sender.Factory senderFactory) {
-        this.senderFactory = senderFactory;
+                         ManagedCollectionFactory managedCollectionFactory) {
         logger.debug("Creating");
         this.logger = logger;
         this.data = data;
@@ -37,14 +35,14 @@ public abstract class RealObject<DATA extends Object.Data,
         this.treeListeners = managedCollectionFactory.createSet();
     }
 
-    public final void init(String name) {
+    public final void init(String name, Sender.Factory senderFactory, Receiver.Factory receiverFactory) {
         logger.debug("Init {}", name);
         sender = senderFactory.create(logger, name);
         dataUpdated();
-        initChildren(name);
+        initChildren(name, senderFactory, receiverFactory);
     }
 
-    protected void initChildren(String name) {}
+    protected void initChildren(String name, Sender.Factory senderFactory, Receiver.Factory receiverFactory) {}
 
     public final void uninit() {
         logger.debug("Uninit");

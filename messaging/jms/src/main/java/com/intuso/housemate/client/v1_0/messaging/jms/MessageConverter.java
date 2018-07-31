@@ -34,19 +34,24 @@ public interface MessageConverter {
 
         @Override
         public <T extends Serializable> T fromMessage(Message message, Class<T> tClass) {
-            if (message instanceof StreamMessage) {
-                StreamMessage streamMessage = (StreamMessage) message;
-                try {
+            String destination = null;
+            try {
+                destination = message != null && message.getJMSDestination() != null ? message.getJMSDestination().toString() : "unknown";
+                if (message instanceof StreamMessage) {
+                    StreamMessage streamMessage = (StreamMessage) message;
                     Object messageObject = streamMessage.readObject();
                     if (messageObject instanceof byte[])
                         return javabinSerialiser.deserialise((byte[]) messageObject, tClass);
                     else
-                        throw new MessagingException("Message data was not a " + byte[].class.getName());
-                } catch (JMSException e) {
-                    throw new MessagingException("Could not read object from received message", e);
-                }
-            } else
-                throw new MessagingException("Received message that wasn't a " + StreamMessage.class.getName() + " but a " + message.getClass().getName());
+                        throw new MessagingException("Received message data on " + destination + " that was not a " + byte[].class.getName());
+                } else
+                    throw new MessagingException("Received message on " + destination + " that wasn't a " + StreamMessage.class.getName() + " but a " + message.getClass().getName());
+            } catch (JMSException e) {
+                if(destination == null)
+                    throw new MessagingException("Could not get destination from message", e);
+                else
+                    throw new MessagingException("Could not read object from message received on " + destination, e);
+            }
         }
     }
 
@@ -66,15 +71,24 @@ public interface MessageConverter {
 
         @Override
         public <T extends Serializable> T fromMessage(Message message, Class<T> tClass) {
-            if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage) message;
-                try {
-                    return jsonSerialiser.deserialise(textMessage.getText(), tClass);
-                } catch (JMSException e) {
-                    throw new MessagingException("Could not read object from received message", e);
-                }
-            } else
-                throw new MessagingException("Received message that wasn't a " + StreamMessage.class.getName() + " but a " + message.getClass().getName());
+            String destination = null;
+            try {
+                destination = message != null && message.getJMSDestination() != null ? message.getJMSDestination().toString() : "unknown";
+                if (message instanceof TextMessage) {
+                    return jsonSerialiser.deserialise(((TextMessage) message).getText(), tClass);
+                } else if (message instanceof BytesMessage) {
+                    BytesMessage bytesMessage = (BytesMessage) message;
+                    byte[] bytes = new byte[(int) bytesMessage.getBodyLength()];
+                    bytesMessage.readBytes(bytes);
+                    return jsonSerialiser.deserialise(new String(bytes), tClass);
+                } else
+                    throw new MessagingException("Received message on " + destination + " that wasn't a " + StreamMessage.class.getName() + " but a " + message.getClass().getName());
+            } catch (JMSException e) {
+                if(destination == null)
+                    throw new MessagingException("Could not get destination from message", e);
+                else
+                    throw new MessagingException("Could not read object from message received on " + destination, e);
+            }
         }
     }
 }
