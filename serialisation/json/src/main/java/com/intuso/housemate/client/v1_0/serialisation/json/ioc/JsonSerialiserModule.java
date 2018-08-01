@@ -17,7 +17,7 @@ public class JsonSerialiserModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Serialiser.class).annotatedWith(Names.named(JsonSerialiser.TYPE)).to(JsonSerialiser.class);
+        bind(Serialiser.class).annotatedWith(Names.named(JsonSerialiser.CONTENT_TYPE)).to(JsonSerialiser.class);
         bind(JsonSerialiser.class).in(Scopes.SINGLETON);
     }
 }

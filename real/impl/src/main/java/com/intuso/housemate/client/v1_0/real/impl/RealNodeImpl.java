@@ -173,7 +173,7 @@ public class RealNodeImpl
     }
 
     public void start() {
-        init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, "application/javabin" /* todo make this configurable? */, Server.NODES_ID, id), senderFactory, receiverFactory);
+        init(ChildUtil.name(null, RealObject.REAL, Object.VERSION, "javabin" /* todo make this configurable? */, Server.NODES_ID, id), senderFactory, receiverFactory);
     }
 
     public void stop() {

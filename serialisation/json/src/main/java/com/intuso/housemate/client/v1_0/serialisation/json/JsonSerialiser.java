@@ -16,7 +16,8 @@ import java.io.Serializable;
  */
 public class JsonSerialiser implements Serialiser<String> {
 
-    public final static String TYPE = "application/json";
+    public final static String CONTENT_TYPE = "application/json";
+    public final static String TOPIC = "json";
 
     private final Gson gson;
 
@@ -30,11 +31,6 @@ public class JsonSerialiser implements Serialiser<String> {
 
     public Gson getGson() {
         return gson;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
     }
 
     @Override
