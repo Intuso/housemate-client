@@ -65,7 +65,7 @@ public class TestJsonSerialisation {
         Type.Instances startTypeInstances = new Type.Instances(new Type.Instance("value"));
         String json = serialiser.serialise(startTypeInstances);
         Type.Instances endTypeInstances = serialiser.deserialise(json, Type.Instances.class);
-        assertEquals(startTypeInstances.getElements().size(), endTypeInstances.getElements().size());
+        assertEquals(startTypeInstances.size(), endTypeInstances.size());
         assertEquals(startTypeInstances.getFirstValue(), endTypeInstances.getFirstValue());
     }
 }
