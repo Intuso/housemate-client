@@ -3,7 +3,8 @@ package com.intuso.housemate.client.v1_0.real.impl.ioc;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.intuso.housemate.client.v1_0.api.object.*;
+import com.intuso.housemate.client.v1_0.api.object.Device;
+import com.intuso.housemate.client.v1_0.api.object.Hardware;
 import com.intuso.housemate.client.v1_0.real.impl.*;
 
 /**
@@ -17,7 +18,11 @@ public class RealObjectsModule extends AbstractModule {
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealCommandImpl.Factory>() {}));
 
-        // devices
+        // device components
+        install(new FactoryModuleBuilder()
+                .build(new TypeLiteral<RealDeviceComponentImpl.Factory>() {}));
+
+        // device connecteds
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealDeviceConnectedImpl.Factory>() {}));
 
@@ -25,6 +30,8 @@ public class RealObjectsModule extends AbstractModule {
         // generated
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealCommandImpl>>() {}));
+        install(new FactoryModuleBuilder()
+                .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealDeviceComponentImpl>>() {}));
         install(new FactoryModuleBuilder()
                 .build(new TypeLiteral<RealListGeneratedImpl.Factory<RealOptionImpl>>() {}));
         install(new FactoryModuleBuilder()

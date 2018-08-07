@@ -14,6 +14,7 @@ public class ViewAdapter extends RuntimeTypeAdapterFactory<View> {
         registerSubtype(CommandView.class, "command");
         registerSubtype(ConditionView.class, "condition");
         registerSubtype(DeviceView.class, "device");
+        registerSubtype(DeviceComponentView.class, "deviceComponent");
         registerSubtype(DeviceConnectedView.class, "deviceConnected");
         registerSubtype(DeviceGroupView.class, "deviceGroup");
         registerSubtype(HardwareView.class, "hardware");
